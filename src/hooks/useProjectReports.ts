@@ -91,7 +91,7 @@ export function useProjectReports() {
         const budgetPct = budgetTotal > 0 ? Math.round((billing.invoiced / budgetTotal) * 100) : 0;
 
         // Extract status name from joined relation
-        const statusObj = p.project_statuses as { name: string } | null;
+        const statusObj = p.project_statuses as unknown as { name: string } | null;
         const statusName = statusObj?.name || "No Status";
 
         return {
