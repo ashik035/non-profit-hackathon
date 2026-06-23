@@ -2096,6 +2096,92 @@ export type Database = {
         }
         Relationships: []
       }
+      mission_control_findings: {
+        Row: {
+          created_at: string
+          detail: string | null
+          id: string
+          metric: Json | null
+          recommended_action: string | null
+          run_id: string
+          severity: string
+          source_agent: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          metric?: Json | null
+          recommended_action?: string | null
+          run_id: string
+          severity?: string
+          source_agent: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          metric?: Json | null
+          recommended_action?: string | null
+          run_id?: string
+          severity?: string
+          source_agent?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_control_findings_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "mission_control_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_control_runs: {
+        Row: {
+          agents_completed: number | null
+          agents_failed: number | null
+          agents_total: number | null
+          completed_at: string | null
+          goal: string | null
+          health_score: number | null
+          id: string
+          started_at: string
+          status: string
+          synthesis: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          agents_completed?: number | null
+          agents_failed?: number | null
+          agents_total?: number | null
+          completed_at?: string | null
+          goal?: string | null
+          health_score?: number | null
+          id?: string
+          started_at?: string
+          status?: string
+          synthesis?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          agents_completed?: number | null
+          agents_failed?: number | null
+          agents_total?: number | null
+          completed_at?: string | null
+          goal?: string | null
+          health_score?: number | null
+          id?: string
+          started_at?: string
+          status?: string
+          synthesis?: Json | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       nonprofit_campaigns: {
         Row: {
           created_at: string | null
