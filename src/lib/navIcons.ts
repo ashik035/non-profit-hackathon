@@ -52,6 +52,7 @@ import {
   Rocket,
   ScanSearch,
   ScrollText,
+  Radio,
   Search,
   SearchCode,
   Settings,
