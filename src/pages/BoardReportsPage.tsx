@@ -57,6 +57,7 @@ function varianceClasses(v: number) {
 
 export default function BoardReportsPage() {
   const [isLoading, setIsLoading] = useState(true);
+  const { data: live } = useBoardReportLive();
   const [exporting, setExporting] = useState(false);
   const [approved, setApproved] = useState(false);
   const [draftModal, setDraftModal] = useState(false);
