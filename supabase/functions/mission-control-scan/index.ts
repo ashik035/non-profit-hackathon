@@ -342,7 +342,8 @@ serve(async (req) => {
     const body = req.method === "POST" ? await req.json().catch(() => ({})) : {};
     const userId: string | null = body.user_id ?? null;
     const goal: string = body.goal ?? "Full organizational scan";
-    const result = await runScan(userId, goal);
+    const runId: string | null = body.run_id ?? null;
+    const result = await runScan(userId, goal, runId);
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
