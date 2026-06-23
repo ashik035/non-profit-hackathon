@@ -57,7 +57,7 @@ export function useDonorChurnRisk() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (options?: { useSample?: boolean }): Promise<DonorChurnRiskRunResult> => {
+    mutationFn: async (options: { useSample?: boolean } | void = {} as any): Promise<DonorChurnRiskRunResult> => {
       const { data, error } = await supabase.functions.invoke(FN_NAME, {
         body: { log_run: true, use_sample: options?.useSample ?? false },
       });
