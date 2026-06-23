@@ -1,0 +1,13 @@
+id,event_id,name,title,bio,display_order,created_at
+9f189972-ea32-4826-9b11-b9c4786be1a6,2bb45d4f-1bc2-40dd-b956-d7c97800221f,Dr. Amara Osei,"Executive Director, Brightside Foundation","Dr. Osei has led Brightside Foundation for 12 years, growing its annual budget from $1.2M to $4.8M.",1,2026-05-24 21:02:42.495869+00
+0d95034b-6316-4c6c-a4b9-641926fd1ea1,2bb45d4f-1bc2-40dd-b956-d7c97800221f,Commissioner Janet Wu,NYC Department of Social Services,Commissioner Wu oversees $12B in social services for New York City residents.,2,2026-05-24 21:02:42.495869+00
+e55c96d5-3c4f-475b-8670-2d4a63b2d753,2bb45d4f-1bc2-40dd-b956-d7c97800221f,Marcus Reid,Program Alumnus & Current Board Member,Marcus participated in our Youth Leadership program at age 14 and is now a successful entrepreneur and board member.,3,2026-05-24 21:02:42.495869+00
+41512528-4a16-4686-902b-15bc6d4477a6,155e77c9-3d51-4e1f-bbc8-463fd68c4230,Keisha Owens,"Founder, NextGen Code Academy",Keisha started coding at 16 and now runs a coding school serving 500+ youth annually.,1,2026-05-24 21:02:42.495869+00
+e8cd51a5-8354-41ad-ba8a-98bb73f7beb3,155e77c9-3d51-4e1f-bbc8-463fd68c4230,Dr. Samuel Adeyemi,"Chief Medical Officer, Community Health Partners",Dr. Adeyemi is a first-generation college graduate who became a physician through mentorship programs like ours.,2,2026-05-24 21:02:42.495869+00
+1d45a323-5e63-4d69-8242-1503e07cf932,10084594-789d-4d15-89e9-a39949dcc0c7,Dr. Alicia Ramos,Director of Community Health,Health Partners Network,0,2026-06-15 17:02:18.692737+00
+91786a6c-bc5a-457b-887b-b110edd0375c,10084594-789d-4d15-89e9-a39949dcc0c7,Mayor Gloria Chen,Mayor,City of Boston,1,2026-06-15 17:02:18.692737+00
+7628aa48-6aca-47d6-8539-1db20d168809,10084594-789d-4d15-89e9-a39949dcc0c7,Robert Kim,Board Chair,Brightside Foundation,2,2026-06-15 17:02:18.692737+00
+81622477-8c70-4ea7-8346-d38a246a3331,886a4c37-21b9-4140-8820-eeb8221ac9e8,Dr. Alicia Ramos,Director of Community Health,Health Partners Network,0,2026-06-15 17:02:18.692737+00
+fc12d942-74a1-4411-8be6-4b695890b018,468e3db5-3070-4ea4-8347-5666a1a7d1f0,Patricia Lee,Board Chair,Brightside Foundation,0,2026-06-15 17:02:18.692737+00
+548ffd5a-e572-4614-873c-35ce5ecd0a36,468e3db5-3070-4ea4-8347-5666a1a7d1f0,Sarah Mitchell,Executive Director,Brightside Foundation,1,2026-06-15 17:02:18.692737+00
+361acb00-4426-410c-8394-7ce4d8e7779f,ecfbc23f-19d5-4958-84fa-2b66afad41e3,Patricia Lee,Board Chair,Brightside Foundation,0,2026-06-15 17:02:18.692737+00

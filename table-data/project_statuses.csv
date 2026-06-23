@@ -1,0 +1,6 @@
+id,name,slug,color,sort_order,is_active,is_default,created_at
+51be6e2c-856e-49aa-94bb-8d0a9f9b5470,Planning,planning,#6B7280,1,t,t,2026-03-05 07:06:20.411668+00
+7a51404a-4f41-4856-ae37-ee7fd97fdfb9,In Progress,in-progress,#3B82F6,2,t,f,2026-03-05 07:06:20.411668+00
+e3ed8a30-36de-49f3-a99a-46845080e6ba,On Hold,on-hold,#F59E0B,3,t,f,2026-03-05 07:06:20.411668+00
+5662ef23-6cfe-4ecc-914a-cd3a276dc2ad,Completed,completed,#10B981,4,t,f,2026-03-05 07:06:20.411668+00
+e6898209-6a67-4bae-ac51-994c9763b9f6,Cancelled,cancelled,#EF4444,5,t,f,2026-03-05 07:06:20.411668+00

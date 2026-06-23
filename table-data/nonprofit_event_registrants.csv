@@ -1,0 +1,27 @@
+id,event_id,name,email,ticket_tier,checked_in,registered_at,created_at
+38d53160-c93c-40ca-9399-b6a401249e01,2bb45d4f-1bc2-40dd-b956-d7c97800221f,Margaret Chen,margaret.chen@brightsidefoundation.org,VIP Table (10 seats),t,2026-05-24 21:02:42.495869+00,2026-05-24 21:02:42.495869+00
+c1fa4c8e-f05f-4b29-9427-4e1500bc00f5,2bb45d4f-1bc2-40dd-b956-d7c97800221f,James Rivera,james.rivera@brightsidefoundation.org,VIP Table (10 seats),t,2026-05-24 21:02:42.495869+00,2026-05-24 21:02:42.495869+00
+a89b5bd4-d8db-4b47-af59-4df1922aed19,2bb45d4f-1bc2-40dd-b956-d7c97800221f,Elena Vasquez,elena.vasquez@brightsidefoundation.org,VIP Table (10 seats),t,2026-05-24 21:02:42.495869+00,2026-05-24 21:02:42.495869+00
+3d8e8cdd-62c3-48e2-b804-ba833fed403e,2bb45d4f-1bc2-40dd-b956-d7c97800221f,David Okafor,david.okafor@email.com,Individual Gala Ticket,t,2026-05-24 21:02:42.495869+00,2026-05-24 21:02:42.495869+00
+698e5188-6090-4bc7-b851-fee360149445,2bb45d4f-1bc2-40dd-b956-d7c97800221f,Cynthia Brooks,cynthia.brooks@email.com,Individual Gala Ticket,t,2026-05-24 21:02:42.495869+00,2026-05-24 21:02:42.495869+00
+bbf9eec6-40e2-4afa-8190-7567812f83bd,2bb45d4f-1bc2-40dd-b956-d7c97800221f,Patricia Nguyen,patricia.nguyen@email.com,Individual Gala Ticket,f,2026-05-24 21:02:42.495869+00,2026-05-24 21:02:42.495869+00
+5d42a12d-bbd4-4aca-81a9-c75c82af54a8,2bb45d4f-1bc2-40dd-b956-d7c97800221f,Marcus Williams,marcus.williams@startup.io,Young Professional,t,2026-05-24 21:02:42.495869+00,2026-05-24 21:02:42.495869+00
+5bde0357-a795-46d0-a0ab-246e2864594e,2bb45d4f-1bc2-40dd-b956-d7c97800221f,Sarah Petrova,sarah.petrova@techcorp.com,Young Professional,t,2026-05-24 21:02:42.495869+00,2026-05-24 21:02:42.495869+00
+7c4d31c2-724d-4dea-87f0-7bb1244cf21e,10084594-789d-4d15-89e9-a39949dcc0c7,Sarah Mitchell,s.mitchell@email.com,VIP,f,2026-05-31 12:00:00+00,2026-06-15 17:02:18.692737+00
+0490fc80-4393-472a-8f63-152348d92814,10084594-789d-4d15-89e9-a39949dcc0c7,Kevin Park,kevin.park@kpmg.com,General Admission,f,2026-06-03 12:00:00+00,2026-06-15 17:02:18.692737+00
+30e1128f-3d9a-48b0-86ed-7fc9c731511f,10084594-789d-4d15-89e9-a39949dcc0c7,Angela Torres,angela.torres@email.com,Free,f,2026-06-05 12:00:00+00,2026-06-15 17:02:18.692737+00
+9d5dc58e-7713-45f3-8a55-d7b3a58f26d8,10084594-789d-4d15-89e9-a39949dcc0c7,Dr. Marcus Webb,mwebb@community.org,General Admission,f,2026-06-07 12:00:00+00,2026-06-15 17:02:18.692737+00
+ef41f45c-608e-4566-80f0-6f01525f5808,10084594-789d-4d15-89e9-a39949dcc0c7,Priya Mehta,priya.mehta@tech.com,VIP,f,2026-06-09 12:00:00+00,2026-06-15 17:02:18.692737+00
+2addb3e2-2df9-4b75-838b-63e1f220ccff,51299673-f35b-43a3-8dd1-955ab7af82ff,David Osei,david.osei@email.com,Free,f,2026-06-10 12:00:00+00,2026-06-15 17:02:18.692737+00
+a4799331-57f8-4b2e-818f-93989e527f18,51299673-f35b-43a3-8dd1-955ab7af82ff,Fatima Hassan,fatima.hassan@email.com,Free,f,2026-06-11 12:00:00+00,2026-06-15 17:02:18.692737+00
+47f8976a-0e72-449c-885d-40a59d6d2ac0,51299673-f35b-43a3-8dd1-955ab7af82ff,Carol Nguyen,carol.nguyen@email.com,Free,f,2026-06-12 12:00:00+00,2026-06-15 17:02:18.692737+00
+e1e3b25d-35ae-44c6-8bf9-2dab3cbd9d78,886a4c37-21b9-4140-8820-eeb8221ac9e8,Lisa Chen,lisa.chen@email.com,Free,t,2026-06-05 12:00:00+00,2026-06-15 17:02:18.692737+00
+268c6536-ae04-4f0a-8171-69d199b4651c,886a4c37-21b9-4140-8820-eeb8221ac9e8,Michelle Kim,michelle.kim@email.com,Free,t,2026-06-07 12:00:00+00,2026-06-15 17:02:18.692737+00
+3f64c228-9f53-4b79-8f51-256fd82f3f91,886a4c37-21b9-4140-8820-eeb8221ac9e8,Marcus Webb,marcus.webb@email.com,General Admission,f,2026-06-08 12:00:00+00,2026-06-15 17:02:18.692737+00
+e9cb08a2-3943-4ea9-8421-a82fa2486fd1,468e3db5-3070-4ea4-8347-5666a1a7d1f0,Robert Kim,robert.kim@email.com,VIP,t,2026-05-16 12:00:00+00,2026-06-15 17:02:18.692737+00
+a82b720f-b65f-44b6-801a-46572320668a,468e3db5-3070-4ea4-8347-5666a1a7d1f0,Jennifer Walsh,j.walsh@lawfirm.com,General Admission,t,2026-05-21 12:00:00+00,2026-06-15 17:02:18.692737+00
+d6812c02-f868-445a-8bf0-213b751e86b1,468e3db5-3070-4ea4-8347-5666a1a7d1f0,Thomas Rivera,t.rivera@email.com,Member-Only,f,2026-05-26 12:00:00+00,2026-06-15 17:02:18.692737+00
+800ef2f1-938e-4b88-8910-4ffe233b3c16,468e3db5-3070-4ea4-8347-5666a1a7d1f0,Mayor Gloria Chen,g.chen@boston.gov,VIP,t,2026-05-18 12:00:00+00,2026-06-15 17:02:18.692737+00
+e1096679-8d6e-460c-85db-98f9420018fe,ecfbc23f-19d5-4958-84fa-2b66afad41e3,Emily Saunders,emily.s@email.com,Member-Only,t,2026-05-18 12:00:00+00,2026-06-15 17:02:18.692737+00
+27f53bd3-c4de-4ac7-807e-9ef35e15bd57,ecfbc23f-19d5-4958-84fa-2b66afad41e3,Kevin Park,kevin.park@kpmg.com,Member-Only,t,2026-05-21 12:00:00+00,2026-06-15 17:02:18.692737+00
+0b948b4e-f4d4-40ff-8838-bb321685a748,ecfbc23f-19d5-4958-84fa-2b66afad41e3,Dr. Alicia Ramos,a.ramos@healthpartners.org,Member-Only,t,2026-05-19 12:00:00+00,2026-06-15 17:02:18.692737+00

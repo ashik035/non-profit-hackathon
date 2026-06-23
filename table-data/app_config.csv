@@ -1,0 +1,30 @@
+id,key,value,category,description,is_sensitive,created_at,updated_at
+fd86817c-a9d6-4b84-bc82-6f315b20e6fb,user.7c82547b-708e-42bb-bd07-56b3994fa160.onboarding_completed,true,user_preferences,User onboarding completion status,f,2026-03-05 10:32:51.068838+00,2026-03-05 10:32:51.068838+00
+34fb77ae-0c77-43ca-80ce-39c7eec2a007,user.97f64deb-e072-4c9f-9973-063db5e3acbc.onboarding_completed,true,user_preferences,User onboarding completion status,f,2026-03-05 18:10:11.429637+00,2026-03-05 18:10:11.429637+00
+62f88668-2603-4233-bccf-5e69d9eaba1f,user.3edc984f-b4b6-450d-8d59-3b4a25c0a5de.onboarding_completed,true,user_preferences,User onboarding completion status,f,2026-03-09 17:53:38.345835+00,2026-03-09 17:53:38.345835+00
+0db2ddb1-51cf-4ef3-8a63-1e225cd0f390,user.232896a3-8a84-4089-8e1d-43406e7641c6.onboarding_completed,true,user_preferences,User onboarding completion status,f,2026-05-04 21:25:44.899398+00,2026-05-04 21:25:44.899398+00
+594ea4cb-1214-4fa0-99d5-5ab5ff704d07,features.enableGoogleDrive,false,features,,f,2026-06-16 19:35:16.887422+00,2026-06-16 20:08:51.758+00
+0f82491d-4938-435e-98a2-de0c8390c0f2,features.enableKnowledgeBase,true,features,,f,2026-06-16 19:35:16.856153+00,2026-06-16 20:08:51.758+00
+685f2fc6-8419-4143-9c68-f90e406508ad,features.enableNotifications,true,features,,f,2026-06-16 19:35:16.909357+00,2026-06-16 20:08:51.758+00
+6e099244-8298-4206-a0ca-e28dda158a7d,features.enableAIAgents,true,features,,f,2026-06-16 19:35:16.828619+00,2026-06-16 20:08:51.758+00
+cf27be74-1a30-47df-9082-ccdf2130ac95,email.fromName,"""Control Tower""",email,,f,2026-06-16 19:35:16.851753+00,2026-06-16 20:08:51.758+00
+5df6720c-411e-4368-a4e6-7a0db96df24f,email.fromEmail,"""noreply@example.com""",email,,f,2026-06-16 19:35:16.856016+00,2026-06-16 20:08:51.758+00
+a38b83e6-3e11-4043-ba3f-9b6672758f3c,email.enableEmailNotifications,true,email,,f,2026-06-16 19:35:16.856417+00,2026-06-16 20:08:51.758+00
+0f6292d2-7055-4add-ad1e-f0c0a59a5466,system.allowSignups,true,system,,f,2026-06-16 19:35:17.376859+00,2026-06-16 20:08:51.758+00
+8738fa40-21c7-4a2f-9c2e-f3b13b4758b9,system.sessionTimeout,7,system,,f,2026-06-16 19:35:16.864013+00,2026-06-16 20:08:51.758+00
+23b688e5-4848-4727-a76c-8704f61fd7d5,branding.companyName,"""Nonprofit Control Tower""",branding,,f,2026-06-16 19:35:16.825767+00,2026-06-16 20:08:51.757+00
+7809cbf4-9fa3-4d75-9775-1ae32ffaeecb,branding.tagline,"""Operational Intelligence Layer for Modern Nonprofits""",branding,,f,2026-06-16 19:35:16.829803+00,2026-06-16 20:08:51.757+00
+6fc50f8a-dd68-4a5a-9893-26adef5ffb74,branding.supportEmail,"""support@nonprofitai.software""",branding,,f,2026-06-16 19:35:16.913663+00,2026-06-16 20:08:51.757+00
+05966d96-f8c8-4e7d-ae01-be78e5679f4d,branding.logoUrl,"""""",branding,,f,2026-06-16 20:08:30.93885+00,2026-06-16 20:08:51.757+00
+5b0b6d4c-98ba-4d8d-a757-84cb514b0a4a,features.enableZoomSync,false,features,,f,2026-06-16 19:35:16.846111+00,2026-06-16 20:08:51.757+00
+db0afce0-2686-4424-8c36-953bf27b37b2,features.enableTasks,true,features,,f,2026-06-16 19:35:17.368599+00,2026-06-16 20:08:51.757+00
+d47eb6cd-78d1-4e2c-8d3e-24282ca7a900,features.enableSemanticSearch,true,features,,f,2026-06-16 19:35:17.363108+00,2026-06-16 20:08:51.757+00
+5b0a4b42-5bb5-42b3-aee7-386be65d5f34,features.enableAIChat,true,features,,f,2026-06-16 19:35:17.360707+00,2026-06-16 20:08:51.758+00
+cbf8e7df-08d6-49b5-949f-5879f8accabd,features.enableClients,true,features,,f,2026-06-16 19:35:17.366027+00,2026-06-16 20:08:51.758+00
+21f5f5f9-934a-4cf7-b2f2-52d13dfe3ceb,features.enablePersonalKnowledge,true,features,,f,2026-06-16 19:35:16.837385+00,2026-06-16 20:08:51.758+00
+fe0a5417-110f-4fd3-8113-467e5600e814,features.enableFeedback,true,features,,f,2026-06-16 19:35:16.836341+00,2026-06-16 20:08:51.758+00
+8f65321b-88f7-4d4e-b45b-3b4e56c63834,features.useGenericMeetings,false,features,,f,2026-06-16 19:35:16.847649+00,2026-06-16 20:08:51.758+00
+7f15c2b4-0de8-4e3d-a8f6-2eae47f6f5d0,features.enableMeetings,true,features,,f,2026-06-16 19:35:16.853743+00,2026-06-16 20:08:51.758+00
+e031513b-ed88-44c5-a7d6-d2d861346178,system.maintenanceMode,false,system,,f,2026-06-16 19:35:16.925132+00,2026-06-16 20:08:51.758+00
+193aaeaa-3329-41b1-9dae-8a1a73a4ab7d,system.requireEmailVerification,false,system,,f,2026-06-16 19:35:16.908076+00,2026-06-16 20:08:51.758+00
+fd4935bb-5a48-4930-b4f0-7f2c416f80d4,user.da3fab49-76d4-422a-9873-e2bcaf2f5801.onboarding_completed,true,user_preferences,User onboarding completion status,f,2026-06-16 21:24:26.460006+00,2026-06-16 21:24:26.460006+00

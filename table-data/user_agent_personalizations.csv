@@ -1,0 +1,1 @@
+id,user_id,agent_id,is_enabled,additional_prompt,attached_knowledge_files,use_all_knowledge,max_context_files,relevance_threshold,created_at,updated_at

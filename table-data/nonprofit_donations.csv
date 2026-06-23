@@ -1,0 +1,36 @@
+id,campaign_id,donor_name,donor_email,amount,frequency,fund_designation,is_anonymous,payment_method,notes,created_at,updated_at
+881e9fc5-194a-4229-a5e5-4d49bda9d475,28d3f013-4df5-42b1-8fe1-cfadb2015078,Faith Johnson,faith.johnson@email.com,50,Monthly,General Operating,f,ACH,,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+0c7fb096-1bbb-4645-a1b4-aa3190a94c85,28d3f013-4df5-42b1-8fe1-cfadb2015078,Cynthia Brooks,cynthia.brooks@email.com,250,Monthly,General Operating,f,Credit Card,,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+f933618e-4d2c-4416-a223-78e3369cc269,28d3f013-4df5-42b1-8fe1-cfadb2015078,Sandra Mitchell,sandra.mitchell@email.com,100,Monthly,General Operating,f,ACH,,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+002f41b1-0fe6-41f4-ae59-c1c2273d6fbe,28d3f013-4df5-42b1-8fe1-cfadb2015078,Anonymous Donor,,2500,One-Time,General Operating,t,Credit Card,,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+06f8565f-a21d-4571-b585-5dd4e3e09d71,28d3f013-4df5-42b1-8fe1-cfadb2015078,James Rivera,james.rivera@brightsidefoundation.org,10000,Annual,General Operating,f,Check,Rivera Family Foundation gift,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+389a60d3-bb2f-48ad-87b9-da9f400251c0,28d3f013-4df5-42b1-8fe1-cfadb2015078,Margaret Chen,margaret.chen@brightsidefoundation.org,5000,Annual,General Operating,f,Credit Card,Board pledge - annual commitment,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+8ba459b9-5a46-4e59-8d1a-3da509bda93d,d8472554-f3fb-457c-a3a1-c355faf2e9ab,Anonymous Donor,,2500,One-Time,Youth Programs,t,Credit Card,,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+a08e1a5a-d56b-485f-bb3e-e9b7298d0689,d8472554-f3fb-457c-a3a1-c355faf2e9ab,Amara Diallo,amara.diallo@email.com,500,One-Time,Youth Programs,f,PayPal,,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+b792b70e-b48d-4b12-8538-9afa0f1a2e6d,d8472554-f3fb-457c-a3a1-c355faf2e9ab,David Okafor,david.okafor@email.com,1000,Quarterly,Youth Programs,f,Credit Card,,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+95039d75-79f7-4106-a851-dfb99a0464ff,d8472554-f3fb-457c-a3a1-c355faf2e9ab,Elena Vasquez,elena.vasquez@brightsidefoundation.org,15000,One-Time,Youth Programs,f,Check,Restricted to tutoring program expansion,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+9911b410-44b7-4c3a-9666-1ad1a4bc249f,9821089e-bfb1-40c1-b098-52c6f1db8272,Anonymous Donor,,750,One-Time,Health Initiative,t,Credit Card,,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+65cb35d2-8802-4acf-81d5-44faf6a51bbb,9821089e-bfb1-40c1-b098-52c6f1db8272,Marcus Williams,marcus.williams@startup.io,250,Quarterly,Health Initiative,f,ACH,,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+b06e4607-2734-482c-8176-8ce3592fdf77,9821089e-bfb1-40c1-b098-52c6f1db8272,Patricia Nguyen,patricia.nguyen@email.com,1500,One-Time,Health Initiative,f,Credit Card,In honor of her late mother,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+4ea48d0c-8e5a-4cc6-8328-b4fb6b9b9e49,93e238c0-1d26-4f20-8baf-f44d4782c75f,Liam Nguyen,liam.nguyen@email.com,100,Monthly,Technology Fund,f,Credit Card,,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+adc84767-1196-44ba-a376-e57f529f757e,93e238c0-1d26-4f20-8baf-f44d4782c75f,Kevin Park,kevin.park@email.com,500,One-Time,Technology Fund,f,PayPal,Employee matching eligible,2026-05-24 21:01:53.063889+00,2026-05-24 21:01:53.063889+00
+7a258763-251e-4889-8c8c-396fdd13eeb2,80f61bfc-83c0-41a3-8e5c-7b20dcbc99d8,Sarah Mitchell,,2500,Annual,General Operating,f,Credit Card,,2026-06-14 12:00:00+00,2026-06-15 17:02:06.100904+00
+480ad7a9-c7a8-4d12-841e-9a1b035e89cd,80f61bfc-83c0-41a3-8e5c-7b20dcbc99d8,Robert Kim,,500,Monthly,General Operating,f,ACH,,2026-06-14 12:00:00+00,2026-06-15 17:02:06.100904+00
+eac7653c-e636-4f18-8b65-ce914bf5178c,3b7cffbc-6b0d-4282-8e2a-e33c7ec28ea6,Anonymous,,1000,One-Time,Youth Programs,t,Credit Card,,2026-06-13 12:00:00+00,2026-06-15 17:02:06.100904+00
+7fc85a8d-52b2-443d-8e30-2f0ef65b56be,3b7cffbc-6b0d-4282-8e2a-e33c7ec28ea6,Patricia Lee,,5000,Annual,Youth Programs,f,Check,,2026-06-12 12:00:00+00,2026-06-15 17:02:06.100904+00
+06d30f58-2f96-4ef0-8549-cd033e4b84d2,80f61bfc-83c0-41a3-8e5c-7b20dcbc99d8,Margaret Chen,,150,Monthly,General Operating,f,Credit Card,,2026-06-11 12:00:00+00,2026-06-15 17:02:06.100904+00
+e7486550-a00c-479f-8645-8eb1437dc7ad,714d9071-f78c-49ed-8e9e-659cc1ece3b0,David Chen,,750,One-Time,Technology Fund,f,PayPal,,2026-06-10 12:00:00+00,2026-06-15 17:02:06.100904+00
+12d03547-a522-4405-8183-a01141a5ac4d,714d9071-f78c-49ed-8e9e-659cc1ece3b0,Jennifer Walsh,,250,Quarterly,Technology Fund,f,ACH,,2026-06-08 12:00:00+00,2026-06-15 17:02:06.100904+00
+e72e875d-8782-4066-8d84-8baf0cc3bf27,80f61bfc-83c0-41a3-8e5c-7b20dcbc99d8,Kevin Park,,1000,Annual,General Operating,f,Check,,2026-06-07 12:00:00+00,2026-06-15 17:02:06.100904+00
+b3a9409d-4569-4d1d-831d-8b9ab7b157d8,80f61bfc-83c0-41a3-8e5c-7b20dcbc99d8,Anonymous,,50,Monthly,General Operating,t,Credit Card,,2026-06-06 12:00:00+00,2026-06-15 17:02:06.100904+00
+3a060329-bdb0-4353-83b7-10d8011e97d6,3b7cffbc-6b0d-4282-8e2a-e33c7ec28ea6,Thomas Rivera,,300,One-Time,Youth Programs,f,Credit Card,,2026-06-05 12:00:00+00,2026-06-15 17:02:06.100904+00
+5f11ef22-1d28-4220-84f2-fc1929fdbe10,714d9071-f78c-49ed-8e9e-659cc1ece3b0,Dr. Alicia Ramos,,200,Monthly,Technology Fund,f,ACH,,2026-06-03 12:00:00+00,2026-06-15 17:02:06.100904+00
+2b3e6019-d9cf-4381-8d46-bb010f36a45c,3b7cffbc-6b0d-4282-8e2a-e33c7ec28ea6,Lisa Chen,,10000,Annual,Youth Programs,f,Check,,2026-06-01 12:00:00+00,2026-06-15 17:02:06.100904+00
+aa905779-c48b-45ea-8bf1-688150d0067d,80f61bfc-83c0-41a3-8e5c-7b20dcbc99d8,Carol Nguyen,,75,Monthly,General Operating,f,Credit Card,,2026-05-31 12:00:00+00,2026-06-15 17:02:06.100904+00
+613345cc-e169-435c-80bd-1265502a43e9,80f61bfc-83c0-41a3-8e5c-7b20dcbc99d8,Marcus Webb,,500,One-Time,General Operating,f,PayPal,,2026-05-29 12:00:00+00,2026-06-15 17:02:06.100904+00
+e7774689-95f5-45aa-8f35-1a34bc7956af,714d9071-f78c-49ed-8e9e-659cc1ece3b0,Priya Mehta,,1500,Annual,Technology Fund,f,ACH,,2026-05-26 12:00:00+00,2026-06-15 17:02:06.100904+00
+c720b8fe-2c1f-4c52-8ee7-5f5321ff0d1b,80f61bfc-83c0-41a3-8e5c-7b20dcbc99d8,Anonymous,,25,Monthly,General Operating,t,Credit Card,,2026-05-24 12:00:00+00,2026-06-15 17:02:06.100904+00
+536d5d02-735b-443d-851b-e2ff3529874d,3b7cffbc-6b0d-4282-8e2a-e33c7ec28ea6,Angela Torres,,400,Quarterly,Youth Programs,f,Credit Card,,2026-05-21 12:00:00+00,2026-06-15 17:02:06.100904+00
+524ddd6e-7043-473e-8838-cef2fd78c1f3,3b7cffbc-6b0d-4282-8e2a-e33c7ec28ea6,James Wright,,2000,Annual,Youth Programs,f,Check,,2026-05-16 12:00:00+00,2026-06-15 17:02:06.100904+00
+a60b50d0-a921-435b-8dfc-a2151adcb3dd,80f61bfc-83c0-41a3-8e5c-7b20dcbc99d8,Robert Okafor,,100,Monthly,General Operating,f,ACH,,2026-05-11 12:00:00+00,2026-06-15 17:02:06.100904+00
+f89fcd0f-88da-4700-88bb-73add85c96a9,714d9071-f78c-49ed-8e9e-659cc1ece3b0,Susan Park,,600,One-Time,Technology Fund,f,Credit Card,,2026-05-01 12:00:00+00,2026-06-15 17:02:06.100904+00

@@ -1,0 +1,1 @@
+id,user_id,provider_id,connection_status,config,credentials,last_sync_at,created_at,updated_at,enabled,connection_message,last_tested_at,oauth_tokens,is_primary
