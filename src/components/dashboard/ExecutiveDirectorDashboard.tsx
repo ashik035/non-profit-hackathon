@@ -50,6 +50,7 @@ export default function ExecutiveDirectorDashboard() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [dismissedRecs, setDismissedRecs] = useState<string[]>([]);
+  const { data: liveHealth } = useOrgHealthScore();
 
   useEffect(() => {
     document.title = "Dashboard | Brightside Foundation";
