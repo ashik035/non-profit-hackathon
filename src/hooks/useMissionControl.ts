@@ -63,7 +63,7 @@ export function useMissionControl() {
     })();
   }, []);
 
-  // Realtime subscribe per run
+  // Realtime subscribe per run + polling fallback while running
   useEffect(() => {
     if (!runId) return;
     const ch = supabase
@@ -84,32 +84,60 @@ export function useMissionControl() {
         (payload: any) => setRun(payload.new as MCRun),
       )
       .subscribe();
+
+    // Polling fallback (in case realtime is delayed during demo)
+    const interval = setInterval(async () => {
+      if (!running) return;
+      const [{ data: r }, { data: f }] = await Promise.all([
+        (supabase as any).from("mission_control_runs").select("*").eq("id", runId).maybeSingle(),
+        (supabase as any).from("mission_control_findings").select("*").eq("run_id", runId).order("created_at", { ascending: true }),
+      ]);
+      if (r) setRun(r as MCRun);
+      if (f) {
+        setFindings((prev) => {
+          if ((f as any[]).length === prev.length) return prev;
+          return f as MCFinding[];
+        });
+      }
+    }, 1500);
+
     return () => {
       supabase.removeChannel(ch);
+      clearInterval(interval);
     };
-  }, [runId]);
+  }, [runId, running]);
 
   const startScan = useCallback(async (goal = "Full organizational scan") => {
     setError(null);
     setRunning(true);
     setFindings([]);
+    setRun(null);
     try {
       const { data: userData } = await supabase.auth.getUser();
-      const { data, error: invokeError } = await supabase.functions.invoke("mission-control-scan", {
-        body: { user_id: userData.user?.id ?? null, goal },
+      const uid = userData.user?.id ?? null;
+
+      // Pre-create the run row so realtime subscription is live BEFORE the edge function starts inserting findings
+      const { data: newRun, error: insertError } = await (supabase as any)
+        .from("mission_control_runs")
+        .insert({ user_id: uid, goal, status: "running", agents_total: MISSION_CONTROL_AGENTS.length, agents_completed: 0, agents_failed: 0 })
+        .select()
+        .single();
+      if (insertError || !newRun) throw insertError ?? new Error("Failed to create run");
+      setRun(newRun as MCRun);
+      setRunId(newRun.id);
+
+      const { error: invokeError } = await supabase.functions.invoke("mission-control-scan", {
+        body: { user_id: uid, goal, run_id: newRun.id },
       });
       if (invokeError) throw invokeError;
-      const newRunId = (data as any)?.run_id;
-      if (newRunId) {
-        setRunId(newRunId);
-        // Fetch the now-complete run + findings
-        const [{ data: r }, { data: f }] = await Promise.all([
-          (supabase as any).from("mission_control_runs").select("*").eq("id", newRunId).single(),
-          (supabase as any).from("mission_control_findings").select("*").eq("run_id", newRunId).order("created_at", { ascending: true }),
-        ]);
-        if (r) setRun(r as MCRun);
-        if (f) setFindings(f as MCFinding[]);
-      }
+
+      // Final fetch to make sure UI has the synthesis
+      const [{ data: r }, { data: f }] = await Promise.all([
+        (supabase as any).from("mission_control_runs").select("*").eq("id", newRun.id).maybeSingle(),
+        (supabase as any).from("mission_control_findings").select("*").eq("run_id", newRun.id).order("created_at", { ascending: true }),
+      ]);
+      if (r) setRun(r as MCRun);
+      if (f) setFindings(f as MCFinding[]);
     } catch (e: any) {
       setError(e?.message ?? String(e));
     } finally {
