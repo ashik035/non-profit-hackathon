@@ -77,7 +77,21 @@ export default function BoardReportsPage() {
   const runPdfExport = (markApproved: boolean) => {
     setExporting(true);
     try {
-      downloadBoardReportPdf(markApproved || approved);
+      downloadBoardReportPdf(markApproved || approved, live ? {
+        totalRaised: live.totals.totalRaised,
+        donationCount: live.totals.donationCount,
+        memberCount: live.totals.memberCount,
+        activeMembers: live.totals.activeMembers,
+        eventsCount: live.totals.eventsCount,
+        programsCount: live.totals.programsCount,
+        topDonors: live.topDonors,
+        missionControl: live.recentSynthesis ? {
+          summary: live.recentSynthesis,
+          topPriorities: [],
+          healthScore: null,
+          completedAt: null,
+        } : null,
+      } : undefined);
       if (markApproved) setApproved(true);
       toast.success(markApproved ? `✓ ${quarter} Board Report approved and exported` : "✓ Board report re-exported successfully", {
         description: `${boardReportPdfFilename()} downloaded — check your downloads folder.`,

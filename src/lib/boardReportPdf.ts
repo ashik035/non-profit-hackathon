@@ -56,7 +56,23 @@ function writeSectionHeading(layout: PdfLayout, title: string): void {
   writeLines(layout, [title], 13, true);
 }
 
-export function downloadBoardReportPdf(approved = true): void {
+export interface BoardReportLiveData {
+  totalRaised?: number;
+  donationCount?: number;
+  memberCount?: number;
+  activeMembers?: number;
+  eventsCount?: number;
+  programsCount?: number;
+  topDonors?: { name: string; amount: number }[];
+  missionControl?: {
+    summary?: string | null;
+    topPriorities?: string[];
+    healthScore?: number | null;
+    completedAt?: string | null;
+  } | null;
+}
+
+export function downloadBoardReportPdf(approved = true, live?: BoardReportLiveData): void {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -73,6 +89,31 @@ export function downloadBoardReportPdf(approved = true): void {
     `Prepared by Nonprofit Control Tower · ${exportDate}`,
     approved ? `Status: Approved — Exported ${exportDate}` : "Status: Draft — Pending ED Approval",
   ]);
+
+  // Live data block from Mission Control + nonprofit tables (if provided)
+  if (live) {
+    writeSectionHeading(layout, "Live Org Snapshot (from production database)");
+    const liveLines: string[] = [];
+    if (typeof live.totalRaised === "number") liveLines.push(`Total raised (all-time): ${formatCurrency(live.totalRaised)} across ${live.donationCount ?? 0} gifts`);
+    if (typeof live.memberCount === "number") liveLines.push(`Members: ${live.memberCount} total · ${live.activeMembers ?? 0} active`);
+    if (typeof live.eventsCount === "number") liveLines.push(`Events tracked: ${live.eventsCount} · Programs: ${live.programsCount ?? 0}`);
+    if (typeof live.missionControl?.healthScore === "number") liveLines.push(`Org Health Score (Mission Control): ${live.missionControl.healthScore}/100`);
+    if (live.missionControl?.completedAt) liveLines.push(`Last scan: ${new Date(live.missionControl.completedAt).toLocaleString()}`);
+    writeLines(layout, liveLines);
+
+    if (live.missionControl?.summary) {
+      writeSectionHeading(layout, "AI Executive Briefing (Mission Control)");
+      writeLines(layout, [live.missionControl.summary]);
+    }
+    if (live.missionControl?.topPriorities && live.missionControl.topPriorities.length > 0) {
+      writeSectionHeading(layout, "Top Priorities Surfaced by Agents");
+      live.missionControl.topPriorities.forEach((p) => writeLines(layout, [`• ${p}`]));
+    }
+    if (live.topDonors && live.topDonors.length > 0) {
+      writeSectionHeading(layout, "Top Donors (live)");
+      live.topDonors.forEach((d) => writeLines(layout, [`${d.name}: ${formatCurrency(d.amount)}`]));
+    }
+  }
 
   writeSectionHeading(layout, "Executive Summary");
   writeLines(layout, [sections.executiveSummary]);

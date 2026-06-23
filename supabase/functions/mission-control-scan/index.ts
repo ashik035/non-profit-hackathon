@@ -249,47 +249,70 @@ function computeHealth(findings: Finding[]): number {
   return Math.max(0, Math.min(100, score));
 }
 
-async function runScan(userId: string | null, goal: string) {
-  const { data: run, error } = await supabase
-    .from("mission_control_runs")
-    .insert({ user_id: userId, goal, status: "running", agents_total: AGENTS.length })
-    .select()
-    .single();
-  if (error || !run) throw new Error(error?.message ?? "failed to create run");
-  const runId = (run as any).id as string;
+async function runScan(userId: string | null, goal: string, existingRunId: string | null) {
+  let runId = existingRunId;
+  if (!runId) {
+    const { data: run, error } = await supabase
+      .from("mission_control_runs")
+      .insert({ user_id: userId, goal, status: "running", agents_total: AGENTS.length, agents_completed: 0, agents_failed: 0 })
+      .select()
+      .single();
+    if (error || !run) throw new Error(error?.message ?? "failed to create run");
+    runId = (run as any).id as string;
+  } else {
+    await supabase
+      .from("mission_control_runs")
+      .update({ status: "running", agents_total: AGENTS.length, agents_completed: 0, agents_failed: 0 })
+      .eq("id", runId);
+  }
 
-  // Fan out in parallel, write findings as each completes
+  let completed = 0;
+  let failed = 0;
+  const allFindings: Finding[] = [];
+
+  // Fan out in parallel. Each agent inserts its findings + increments counter on completion.
+  // Stagger start so the UI animation reads as live multi-agent activity.
   const results = await Promise.allSettled(
-    AGENTS.map(async (a) => {
-      // small jitter so UI animation looks staggered
-      await new Promise((r) => setTimeout(r, Math.random() * 800));
-      const findings = await a.run();
-      if (findings.length) {
-        await supabase.from("mission_control_findings").insert(
-          findings.map((f) => ({ ...f, run_id: runId })),
-        );
+    AGENTS.map(async (a, i) => {
+      await new Promise((r) => setTimeout(r, 400 + i * 350 + Math.random() * 400));
+      try {
+        const findings = await a.run();
+        if (findings.length) {
+          await supabase.from("mission_control_findings").insert(
+            findings.map((f) => ({ ...f, run_id: runId })),
+          );
+        }
+        completed += 1;
+        allFindings.push(...findings);
+        await supabase
+          .from("mission_control_runs")
+          .update({ agents_completed: completed })
+          .eq("id", runId);
+        return findings;
+      } catch (err) {
+        failed += 1;
+        await supabase.from("mission_control_findings").insert({
+          run_id: runId,
+          source_agent: a.name,
+          severity: "info",
+          title: `${a.name} encountered an error`,
+          detail: String((err as any)?.message ?? err),
+        });
+        await supabase
+          .from("mission_control_runs")
+          .update({ agents_failed: failed })
+          .eq("id", runId);
+        throw err;
       }
-      await supabase.rpc; // no-op
-      await supabase
-        .from("mission_control_runs")
-        .update({ agents_completed: undefined })
-        .eq("id", runId); // touch
-      return findings;
     }),
   );
 
-  const allFindings: Finding[] = [];
-  let completed = 0;
-  let failed = 0;
   for (const r of results) {
-    if (r.status === "fulfilled") {
-      completed += 1;
-      allFindings.push(...r.value);
-    } else failed += 1;
+    if (r.status === "rejected") {/* already counted */}
   }
 
   const summary = await aiSummarize(
-    "You are the chief of staff for a nonprofit. Given agent findings, produce a 3-bullet executive briefing focused on the most urgent priorities. Be direct.",
+    "You are the chief of staff for a nonprofit. Given agent findings, produce a 3-bullet executive briefing focused on the most urgent priorities. Be direct and concrete. No fluff.",
     `Findings JSON:\n${JSON.stringify(allFindings, null, 2)}`,
   );
   const health = computeHealth(allFindings);
@@ -319,7 +342,8 @@ serve(async (req) => {
     const body = req.method === "POST" ? await req.json().catch(() => ({})) : {};
     const userId: string | null = body.user_id ?? null;
     const goal: string = body.goal ?? "Full organizational scan";
-    const result = await runScan(userId, goal);
+    const runId: string | null = body.run_id ?? null;
+    const result = await runScan(userId, goal, runId);
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
