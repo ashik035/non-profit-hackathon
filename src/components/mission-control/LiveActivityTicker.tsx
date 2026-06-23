@@ -6,7 +6,7 @@ interface TickerEvent {
   id: string;
   label: string;
   when: number;
-  kind: "finding" | "action";
+  kind: "finding" as const | "action";
 }
 
 const MAX_ITEMS = 8;
@@ -23,10 +23,10 @@ export default function LiveActivityTicker() {
       ]);
       const seed: TickerEvent[] = [];
       for (const f of (findings ?? [])) {
-        seed.push({ id: `f-${f.id}`, kind: "finding", label: `${f.source_agent} flagged: ${f.title.slice(0, 60)}`, when: new Date(f.created_at).getTime() });
+        seed.push({ id: `f-${f.id}`, kind: "finding" as const, label: `${f.source_agent} flagged: ${f.title.slice(0, 60)}`, when: new Date(f.created_at).getTime() });
       }
       for (const a of (actions ?? [])) {
-        seed.push({ id: `a-${a.id}`, kind: "action", label: `AI drafted: ${a.title.slice(0, 60)}`, when: new Date(a.created_at).getTime() });
+        seed.push({ id: `a-${a.id}`, kind: "action" as const, label: `AI drafted: ${a.title.slice(0, 60)}`, when: new Date(a.created_at).getTime() });
       }
       seed.sort((a, b) => b.when - a.when);
       setEvents(seed.slice(0, MAX_ITEMS));
@@ -42,7 +42,7 @@ export default function LiveActivityTicker() {
         (payload: any) => {
           setEvents((prev) => [{
             id: `f-${payload.new.id}`,
-            kind: "finding",
+            kind: "finding" as const,
             label: `${payload.new.source_agent} flagged: ${(payload.new.title ?? "").slice(0, 60)}`,
             when: Date.now(),
           }, ...prev].slice(0, MAX_ITEMS));
@@ -55,14 +55,14 @@ export default function LiveActivityTicker() {
           if (payload.eventType === "INSERT") {
             setEvents((prev) => [{
               id: `a-${payload.new.id}`,
-              kind: "action",
+              kind: "action" as const,
               label: `AI drafted: ${(payload.new.title ?? "").slice(0, 60)}`,
               when: Date.now(),
             }, ...prev].slice(0, MAX_ITEMS));
           } else if (payload.eventType === "UPDATE" && payload.new.status === "executed") {
             setEvents((prev) => [{
               id: `e-${payload.new.id}-${Date.now()}`,
-              kind: "action",
+              kind: "action" as const,
               label: `✓ Executed: ${(payload.new.title ?? "").slice(0, 60)}`,
               when: Date.now(),
             }, ...prev].slice(0, MAX_ITEMS));
