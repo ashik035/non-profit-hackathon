@@ -207,7 +207,7 @@ export function useCollaborationSessions(teamId?: string) {
       const { data, error } = await query;
 
       if (error) throw error;
-      return (data || []) as CollaborationSession[];
+      return (data || []) as unknown as CollaborationSession[];
     },
     enabled: !!user,
   });
@@ -255,7 +255,7 @@ export function useHandoffs(sessionId: string) {
         .order("handed_off_at");
 
       if (error) throw error;
-      return (data || []) as AgentHandoff[];
+      return (data || []) as unknown as AgentHandoff[];
     },
     enabled: !!sessionId,
   });

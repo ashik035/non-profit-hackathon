@@ -74,7 +74,7 @@ export function useGuardrails() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return (data || []) as Guardrail[];
+      return (data || []) as unknown as Guardrail[];
     },
     enabled: !!user,
   });
@@ -265,7 +265,7 @@ export function useGuardrailViolations(agentId?: string, limit = 50) {
       const { data, error } = await query;
 
       if (error) throw error;
-      return (data || []) as any[];
+      return (data || []) as unknown as any[];
     },
     enabled: !!user,
   });
@@ -287,7 +287,7 @@ export function useAgentCostLimits(agentId: string) {
         .eq("is_active", true);
 
       if (error) throw error;
-      return (data || []) as CostLimit[];
+      return (data || []) as unknown as CostLimit[];
     },
     enabled: !!agentId,
   });
@@ -360,7 +360,7 @@ export function useToolRestrictions() {
         .order("tool_name");
 
       if (error) throw error;
-      return (data || []) as ToolRestriction[];
+      return (data || []) as unknown as ToolRestriction[];
     },
   });
 }
