@@ -9,6 +9,7 @@ import { ShieldCheck, CalendarClock, FileText, TrendingUp, Sparkles, X } from "l
 import AITeamsDashboardCard from "@/components/dashboards/AITeamsDashboardCard";
 import AIActivityWidget from "@/components/dashboard/AIActivityWidget";
 import OrgHealthScore from "@/components/dashboard/OrgHealthScore";
+import { useOrgHealthScore } from "@/hooks/useOrgHealthScore";
 import SinceYouWereAway from "@/components/dashboard/SinceYouWereAway";
 import AgentROIHeroCard from "@/components/dashboard/AgentROIHeroCard";
 import QuickStatsRow from "@/components/dashboard/QuickStatsRow";
