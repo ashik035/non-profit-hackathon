@@ -132,6 +132,50 @@ export default function BoardReportsPage() {
         </div>
       </div>
 
+      {/* Live data card (from Mission Control + live tables) */}
+      {live && (
+        <Card className="border-l-4 border-l-primary">
+          <CardContent className="p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-2">
+                  Live numbers from your database
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <div className="text-2xl font-bold">${live.totals.totalRaised.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                    <div className="text-xs text-muted-foreground">Total raised ({live.totals.donationCount} gifts)</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">{live.totals.activeMembers}/{live.totals.memberCount}</div>
+                    <div className="text-xs text-muted-foreground">Active members</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">{live.totals.eventsCount}</div>
+                    <div className="text-xs text-muted-foreground">Events tracked</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">{live.totals.programsCount}</div>
+                    <div className="text-xs text-muted-foreground">Programs</div>
+                  </div>
+                </div>
+                {live.recentSynthesis && (
+                  <div className="mt-4 p-3 rounded-md bg-muted/40 text-sm whitespace-pre-wrap">
+                    <div className="text-xs font-medium uppercase text-muted-foreground mb-1">
+                      Mission Control briefing
+                    </div>
+                    {live.recentSynthesis}
+                  </div>
+                )}
+              </div>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/mission-control">Open Mission Control</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Action buttons */}
       <div className="flex flex-wrap gap-2">
         {approved ? (
