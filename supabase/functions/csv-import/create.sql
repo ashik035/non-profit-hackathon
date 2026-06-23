@@ -1,7 +1,5 @@
-CREATE SCHEMA IF NOT EXISTS csv_data;
-GRANT USAGE ON SCHEMA csv_data TO anon, authenticated, service_role;
-DROP TABLE IF EXISTS csv_data."activity_logs" CASCADE;
-CREATE TABLE csv_data."activity_logs" (
+DROP TABLE IF EXISTS public."activity_logs" CASCADE;
+CREATE TABLE public."activity_logs" (
   "id" uuid,
   "user_id" uuid,
   "action" text,
@@ -12,10 +10,10 @@ CREATE TABLE csv_data."activity_logs" (
   "user_agent" text,
   "created_at" timestamptz
 );
-GRANT SELECT ON csv_data."activity_logs" TO anon, authenticated;
-GRANT ALL ON csv_data."activity_logs" TO service_role;
-DROP TABLE IF EXISTS csv_data."agent_conversations" CASCADE;
-CREATE TABLE csv_data."agent_conversations" (
+GRANT SELECT ON public."activity_logs" TO anon, authenticated;
+GRANT ALL ON public."activity_logs" TO service_role;
+DROP TABLE IF EXISTS public."agent_conversations" CASCADE;
+CREATE TABLE public."agent_conversations" (
   "id" uuid,
   "agent_id" uuid,
   "user_id" uuid,
@@ -29,10 +27,10 @@ CREATE TABLE csv_data."agent_conversations" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."agent_conversations" TO anon, authenticated;
-GRANT ALL ON csv_data."agent_conversations" TO service_role;
-DROP TABLE IF EXISTS csv_data."agent_learning_events" CASCADE;
-CREATE TABLE csv_data."agent_learning_events" (
+GRANT SELECT ON public."agent_conversations" TO anon, authenticated;
+GRANT ALL ON public."agent_conversations" TO service_role;
+DROP TABLE IF EXISTS public."agent_learning_events" CASCADE;
+CREATE TABLE public."agent_learning_events" (
   "id" text,
   "agent_id" text,
   "user_id" text,
@@ -47,10 +45,10 @@ CREATE TABLE csv_data."agent_learning_events" (
   "behavior_change" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."agent_learning_events" TO anon, authenticated;
-GRANT ALL ON csv_data."agent_learning_events" TO service_role;
-DROP TABLE IF EXISTS csv_data."agent_memories" CASCADE;
-CREATE TABLE csv_data."agent_memories" (
+GRANT SELECT ON public."agent_learning_events" TO anon, authenticated;
+GRANT ALL ON public."agent_learning_events" TO service_role;
+DROP TABLE IF EXISTS public."agent_memories" CASCADE;
+CREATE TABLE public."agent_memories" (
   "id" uuid,
   "agent_id" uuid,
   "user_id" uuid,
@@ -73,10 +71,10 @@ CREATE TABLE csv_data."agent_memories" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."agent_memories" TO anon, authenticated;
-GRANT ALL ON csv_data."agent_memories" TO service_role;
-DROP TABLE IF EXISTS csv_data."agent_messages" CASCADE;
-CREATE TABLE csv_data."agent_messages" (
+GRANT SELECT ON public."agent_memories" TO anon, authenticated;
+GRANT ALL ON public."agent_memories" TO service_role;
+DROP TABLE IF EXISTS public."agent_messages" CASCADE;
+CREATE TABLE public."agent_messages" (
   "id" uuid,
   "conversation_id" uuid,
   "role" text,
@@ -95,10 +93,10 @@ CREATE TABLE csv_data."agent_messages" (
   "stream_completed_at" text,
   "tool_call_status" text
 );
-GRANT SELECT ON csv_data."agent_messages" TO anon, authenticated;
-GRANT ALL ON csv_data."agent_messages" TO service_role;
-DROP TABLE IF EXISTS csv_data."ai_agent_categories" CASCADE;
-CREATE TABLE csv_data."ai_agent_categories" (
+GRANT SELECT ON public."agent_messages" TO anon, authenticated;
+GRANT ALL ON public."agent_messages" TO service_role;
+DROP TABLE IF EXISTS public."ai_agent_categories" CASCADE;
+CREATE TABLE public."ai_agent_categories" (
   "id" text,
   "name" text,
   "slug" text,
@@ -110,10 +108,10 @@ CREATE TABLE csv_data."ai_agent_categories" (
   "display_order" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."ai_agent_categories" TO anon, authenticated;
-GRANT ALL ON csv_data."ai_agent_categories" TO service_role;
-DROP TABLE IF EXISTS csv_data."ai_agent_runs" CASCADE;
-CREATE TABLE csv_data."ai_agent_runs" (
+GRANT SELECT ON public."ai_agent_categories" TO anon, authenticated;
+GRANT ALL ON public."ai_agent_categories" TO service_role;
+DROP TABLE IF EXISTS public."ai_agent_runs" CASCADE;
+CREATE TABLE public."ai_agent_runs" (
   "id" uuid,
   "agent_id" uuid,
   "user_id" uuid,
@@ -138,10 +136,10 @@ CREATE TABLE csv_data."ai_agent_runs" (
   "updated_at" timestamptz,
   "output_text" text
 );
-GRANT SELECT ON csv_data."ai_agent_runs" TO anon, authenticated;
-GRANT ALL ON csv_data."ai_agent_runs" TO service_role;
-DROP TABLE IF EXISTS csv_data."ai_agents" CASCADE;
-CREATE TABLE csv_data."ai_agents" (
+GRANT SELECT ON public."ai_agent_runs" TO anon, authenticated;
+GRANT ALL ON public."ai_agent_runs" TO service_role;
+DROP TABLE IF EXISTS public."ai_agents" CASCADE;
+CREATE TABLE public."ai_agents" (
   "id" uuid,
   "name" text,
   "description" text,
@@ -171,10 +169,10 @@ CREATE TABLE csv_data."ai_agents" (
   "mcp_server_ids" jsonb,
   "tools_config" jsonb
 );
-GRANT SELECT ON csv_data."ai_agents" TO anon, authenticated;
-GRANT ALL ON csv_data."ai_agents" TO service_role;
-DROP TABLE IF EXISTS csv_data."ai_chat_history" CASCADE;
-CREATE TABLE csv_data."ai_chat_history" (
+GRANT SELECT ON public."ai_agents" TO anon, authenticated;
+GRANT ALL ON public."ai_agents" TO service_role;
+DROP TABLE IF EXISTS public."ai_chat_history" CASCADE;
+CREATE TABLE public."ai_chat_history" (
   "id" text,
   "user_id" text,
   "agent_id" text,
@@ -188,10 +186,10 @@ CREATE TABLE csv_data."ai_chat_history" (
   "feedback" text,
   "rating" text
 );
-GRANT SELECT ON csv_data."ai_chat_history" TO anon, authenticated;
-GRANT ALL ON csv_data."ai_chat_history" TO service_role;
-DROP TABLE IF EXISTS csv_data."ai_models" CASCADE;
-CREATE TABLE csv_data."ai_models" (
+GRANT SELECT ON public."ai_chat_history" TO anon, authenticated;
+GRANT ALL ON public."ai_chat_history" TO service_role;
+DROP TABLE IF EXISTS public."ai_models" CASCADE;
+CREATE TABLE public."ai_models" (
   "id" uuid,
   "name" text,
   "model_id" text,
@@ -208,10 +206,10 @@ CREATE TABLE csv_data."ai_models" (
   "context_window" bigint,
   "embedding_cost_per_1k" numeric
 );
-GRANT SELECT ON csv_data."ai_models" TO anon, authenticated;
-GRANT ALL ON csv_data."ai_models" TO service_role;
-DROP TABLE IF EXISTS csv_data."ai_providers" CASCADE;
-CREATE TABLE csv_data."ai_providers" (
+GRANT SELECT ON public."ai_models" TO anon, authenticated;
+GRANT ALL ON public."ai_models" TO service_role;
+DROP TABLE IF EXISTS public."ai_providers" CASCADE;
+CREATE TABLE public."ai_providers" (
   "id" uuid,
   "name" text,
   "slug" text,
@@ -220,10 +218,10 @@ CREATE TABLE csv_data."ai_providers" (
   "created_at" timestamptz,
   "api_key_secret_name" text
 );
-GRANT SELECT ON csv_data."ai_providers" TO anon, authenticated;
-GRANT ALL ON csv_data."ai_providers" TO service_role;
-DROP TABLE IF EXISTS csv_data."ai_usage_logs" CASCADE;
-CREATE TABLE csv_data."ai_usage_logs" (
+GRANT SELECT ON public."ai_providers" TO anon, authenticated;
+GRANT ALL ON public."ai_providers" TO service_role;
+DROP TABLE IF EXISTS public."ai_usage_logs" CASCADE;
+CREATE TABLE public."ai_usage_logs" (
   "id" uuid,
   "user_id" uuid,
   "model_id" uuid,
@@ -234,10 +232,10 @@ CREATE TABLE csv_data."ai_usage_logs" (
   "estimated_cost" numeric,
   "created_at" timestamptz
 );
-GRANT SELECT ON csv_data."ai_usage_logs" TO anon, authenticated;
-GRANT ALL ON csv_data."ai_usage_logs" TO service_role;
-DROP TABLE IF EXISTS csv_data."app_config" CASCADE;
-CREATE TABLE csv_data."app_config" (
+GRANT SELECT ON public."ai_usage_logs" TO anon, authenticated;
+GRANT ALL ON public."ai_usage_logs" TO service_role;
+DROP TABLE IF EXISTS public."app_config" CASCADE;
+CREATE TABLE public."app_config" (
   "id" uuid,
   "key" text,
   "value" text,
@@ -247,10 +245,10 @@ CREATE TABLE csv_data."app_config" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."app_config" TO anon, authenticated;
-GRANT ALL ON csv_data."app_config" TO service_role;
-DROP TABLE IF EXISTS csv_data."app_modules" CASCADE;
-CREATE TABLE csv_data."app_modules" (
+GRANT SELECT ON public."app_config" TO anon, authenticated;
+GRANT ALL ON public."app_config" TO service_role;
+DROP TABLE IF EXISTS public."app_modules" CASCADE;
+CREATE TABLE public."app_modules" (
   "id" uuid,
   "name" text,
   "slug" text,
@@ -265,10 +263,10 @@ CREATE TABLE csv_data."app_modules" (
   "updated_at" timestamptz,
   "category" text
 );
-GRANT SELECT ON csv_data."app_modules" TO anon, authenticated;
-GRANT ALL ON csv_data."app_modules" TO service_role;
-DROP TABLE IF EXISTS csv_data."clients" CASCADE;
-CREATE TABLE csv_data."clients" (
+GRANT SELECT ON public."app_modules" TO anon, authenticated;
+GRANT ALL ON public."app_modules" TO service_role;
+DROP TABLE IF EXISTS public."clients" CASCADE;
+CREATE TABLE public."clients" (
   "id" text,
   "name" text,
   "email" text,
@@ -284,10 +282,10 @@ CREATE TABLE csv_data."clients" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."clients" TO anon, authenticated;
-GRANT ALL ON csv_data."clients" TO service_role;
-DROP TABLE IF EXISTS csv_data."contacts" CASCADE;
-CREATE TABLE csv_data."contacts" (
+GRANT SELECT ON public."clients" TO anon, authenticated;
+GRANT ALL ON public."clients" TO service_role;
+DROP TABLE IF EXISTS public."contacts" CASCADE;
+CREATE TABLE public."contacts" (
   "id" text,
   "first_name" text,
   "last_name" text,
@@ -298,10 +296,10 @@ CREATE TABLE csv_data."contacts" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."contacts" TO anon, authenticated;
-GRANT ALL ON csv_data."contacts" TO service_role;
-DROP TABLE IF EXISTS csv_data."crm_sync_logs" CASCADE;
-CREATE TABLE csv_data."crm_sync_logs" (
+GRANT SELECT ON public."contacts" TO anon, authenticated;
+GRANT ALL ON public."contacts" TO service_role;
+DROP TABLE IF EXISTS public."crm_sync_logs" CASCADE;
+CREATE TABLE public."crm_sync_logs" (
   "id" text,
   "organization_integration_id" text,
   "direction" text,
@@ -311,10 +309,10 @@ CREATE TABLE csv_data."crm_sync_logs" (
   "records_processed" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."crm_sync_logs" TO anon, authenticated;
-GRANT ALL ON csv_data."crm_sync_logs" TO service_role;
-DROP TABLE IF EXISTS csv_data."deals" CASCADE;
-CREATE TABLE csv_data."deals" (
+GRANT SELECT ON public."crm_sync_logs" TO anon, authenticated;
+GRANT ALL ON public."crm_sync_logs" TO service_role;
+DROP TABLE IF EXISTS public."deals" CASCADE;
+CREATE TABLE public."deals" (
   "id" text,
   "title" text,
   "value" text,
@@ -333,10 +331,10 @@ CREATE TABLE csv_data."deals" (
   "follow_up_status" text,
   "source" text
 );
-GRANT SELECT ON csv_data."deals" TO anon, authenticated;
-GRANT ALL ON csv_data."deals" TO service_role;
-DROP TABLE IF EXISTS csv_data."departments" CASCADE;
-CREATE TABLE csv_data."departments" (
+GRANT SELECT ON public."deals" TO anon, authenticated;
+GRANT ALL ON public."deals" TO service_role;
+DROP TABLE IF EXISTS public."departments" CASCADE;
+CREATE TABLE public."departments" (
   "id" text,
   "name" text,
   "description" text,
@@ -344,10 +342,10 @@ CREATE TABLE csv_data."departments" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."departments" TO anon, authenticated;
-GRANT ALL ON csv_data."departments" TO service_role;
-DROP TABLE IF EXISTS csv_data."embeddings" CASCADE;
-CREATE TABLE csv_data."embeddings" (
+GRANT SELECT ON public."departments" TO anon, authenticated;
+GRANT ALL ON public."departments" TO service_role;
+DROP TABLE IF EXISTS public."embeddings" CASCADE;
+CREATE TABLE public."embeddings" (
   "id" text,
   "content" text,
   "embedding" text,
@@ -356,20 +354,20 @@ CREATE TABLE csv_data."embeddings" (
   "metadata" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."embeddings" TO anon, authenticated;
-GRANT ALL ON csv_data."embeddings" TO service_role;
-DROP TABLE IF EXISTS csv_data."employee_pods" CASCADE;
-CREATE TABLE csv_data."employee_pods" (
+GRANT SELECT ON public."embeddings" TO anon, authenticated;
+GRANT ALL ON public."embeddings" TO service_role;
+DROP TABLE IF EXISTS public."employee_pods" CASCADE;
+CREATE TABLE public."employee_pods" (
   "id" text,
   "pod_id" text,
   "employee_id" text,
   "synced_from_hr" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."employee_pods" TO anon, authenticated;
-GRANT ALL ON csv_data."employee_pods" TO service_role;
-DROP TABLE IF EXISTS csv_data."employee_profiles" CASCADE;
-CREATE TABLE csv_data."employee_profiles" (
+GRANT SELECT ON public."employee_pods" TO anon, authenticated;
+GRANT ALL ON public."employee_pods" TO service_role;
+DROP TABLE IF EXISTS public."employee_profiles" CASCADE;
+CREATE TABLE public."employee_profiles" (
   "id" text,
   "user_id" text,
   "email" text,
@@ -383,10 +381,10 @@ CREATE TABLE csv_data."employee_profiles" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."employee_profiles" TO anon, authenticated;
-GRANT ALL ON csv_data."employee_profiles" TO service_role;
-DROP TABLE IF EXISTS csv_data."feedback" CASCADE;
-CREATE TABLE csv_data."feedback" (
+GRANT SELECT ON public."employee_profiles" TO anon, authenticated;
+GRANT ALL ON public."employee_profiles" TO service_role;
+DROP TABLE IF EXISTS public."feedback" CASCADE;
+CREATE TABLE public."feedback" (
   "id" text,
   "user_id" text,
   "type" text,
@@ -396,10 +394,10 @@ CREATE TABLE csv_data."feedback" (
   "metadata" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."feedback" TO anon, authenticated;
-GRANT ALL ON csv_data."feedback" TO service_role;
-DROP TABLE IF EXISTS csv_data."follow_up_leads" CASCADE;
-CREATE TABLE csv_data."follow_up_leads" (
+GRANT SELECT ON public."feedback" TO anon, authenticated;
+GRANT ALL ON public."feedback" TO service_role;
+DROP TABLE IF EXISTS public."follow_up_leads" CASCADE;
+CREATE TABLE public."follow_up_leads" (
   "id" text,
   "deal_id" text,
   "contact_id" text,
@@ -414,10 +412,10 @@ CREATE TABLE csv_data."follow_up_leads" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."follow_up_leads" TO anon, authenticated;
-GRANT ALL ON csv_data."follow_up_leads" TO service_role;
-DROP TABLE IF EXISTS csv_data."integration_categories" CASCADE;
-CREATE TABLE csv_data."integration_categories" (
+GRANT SELECT ON public."follow_up_leads" TO anon, authenticated;
+GRANT ALL ON public."follow_up_leads" TO service_role;
+DROP TABLE IF EXISTS public."integration_categories" CASCADE;
+CREATE TABLE public."integration_categories" (
   "id" text,
   "name" text,
   "slug" text,
@@ -429,10 +427,10 @@ CREATE TABLE csv_data."integration_categories" (
   "icon" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."integration_categories" TO anon, authenticated;
-GRANT ALL ON csv_data."integration_categories" TO service_role;
-DROP TABLE IF EXISTS csv_data."integration_fields" CASCADE;
-CREATE TABLE csv_data."integration_fields" (
+GRANT SELECT ON public."integration_categories" TO anon, authenticated;
+GRANT ALL ON public."integration_categories" TO service_role;
+DROP TABLE IF EXISTS public."integration_fields" CASCADE;
+CREATE TABLE public."integration_fields" (
   "id" text,
   "provider_id" text,
   "field_key" text,
@@ -448,10 +446,10 @@ CREATE TABLE csv_data."integration_fields" (
   "display_order" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."integration_fields" TO anon, authenticated;
-GRANT ALL ON csv_data."integration_fields" TO service_role;
-DROP TABLE IF EXISTS csv_data."integration_providers" CASCADE;
-CREATE TABLE csv_data."integration_providers" (
+GRANT SELECT ON public."integration_fields" TO anon, authenticated;
+GRANT ALL ON public."integration_fields" TO service_role;
+DROP TABLE IF EXISTS public."integration_providers" CASCADE;
+CREATE TABLE public."integration_providers" (
   "id" uuid,
   "name" text,
   "slug" text,
@@ -470,10 +468,10 @@ CREATE TABLE csv_data."integration_providers" (
   "is_coming_soon" boolean,
   "is_beta" boolean
 );
-GRANT SELECT ON csv_data."integration_providers" TO anon, authenticated;
-GRANT ALL ON csv_data."integration_providers" TO service_role;
-DROP TABLE IF EXISTS csv_data."integration_services" CASCADE;
-CREATE TABLE csv_data."integration_services" (
+GRANT SELECT ON public."integration_providers" TO anon, authenticated;
+GRANT ALL ON public."integration_providers" TO service_role;
+DROP TABLE IF EXISTS public."integration_services" CASCADE;
+CREATE TABLE public."integration_services" (
   "id" text,
   "provider_id" text,
   "name" text,
@@ -489,10 +487,10 @@ CREATE TABLE csv_data."integration_services" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."integration_services" TO anon, authenticated;
-GRANT ALL ON csv_data."integration_services" TO service_role;
-DROP TABLE IF EXISTS csv_data."integration_usage_logs" CASCADE;
-CREATE TABLE csv_data."integration_usage_logs" (
+GRANT SELECT ON public."integration_services" TO anon, authenticated;
+GRANT ALL ON public."integration_services" TO service_role;
+DROP TABLE IF EXISTS public."integration_usage_logs" CASCADE;
+CREATE TABLE public."integration_usage_logs" (
   "id" text,
   "organization_id" text,
   "provider_id" text,
@@ -506,10 +504,10 @@ CREATE TABLE csv_data."integration_usage_logs" (
   "estimated_cost" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."integration_usage_logs" TO anon, authenticated;
-GRANT ALL ON csv_data."integration_usage_logs" TO service_role;
-DROP TABLE IF EXISTS csv_data."knowledge_categories" CASCADE;
-CREATE TABLE csv_data."knowledge_categories" (
+GRANT SELECT ON public."integration_usage_logs" TO anon, authenticated;
+GRANT ALL ON public."integration_usage_logs" TO service_role;
+DROP TABLE IF EXISTS public."knowledge_categories" CASCADE;
+CREATE TABLE public."knowledge_categories" (
   "id" text,
   "name" text,
   "slug" text,
@@ -518,10 +516,10 @@ CREATE TABLE csv_data."knowledge_categories" (
   "sort_order" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."knowledge_categories" TO anon, authenticated;
-GRANT ALL ON csv_data."knowledge_categories" TO service_role;
-DROP TABLE IF EXISTS csv_data."knowledge_entries" CASCADE;
-CREATE TABLE csv_data."knowledge_entries" (
+GRANT SELECT ON public."knowledge_categories" TO anon, authenticated;
+GRANT ALL ON public."knowledge_categories" TO service_role;
+DROP TABLE IF EXISTS public."knowledge_entries" CASCADE;
+CREATE TABLE public."knowledge_entries" (
   "id" text,
   "title" text,
   "content" text,
@@ -533,10 +531,10 @@ CREATE TABLE csv_data."knowledge_entries" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."knowledge_entries" TO anon, authenticated;
-GRANT ALL ON csv_data."knowledge_entries" TO service_role;
-DROP TABLE IF EXISTS csv_data."knowledge_files" CASCADE;
-CREATE TABLE csv_data."knowledge_files" (
+GRANT SELECT ON public."knowledge_entries" TO anon, authenticated;
+GRANT ALL ON public."knowledge_entries" TO service_role;
+DROP TABLE IF EXISTS public."knowledge_files" CASCADE;
+CREATE TABLE public."knowledge_files" (
   "id" text,
   "entry_id" text,
   "file_name" text,
@@ -552,10 +550,10 @@ CREATE TABLE csv_data."knowledge_files" (
   "processed_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."knowledge_files" TO anon, authenticated;
-GRANT ALL ON csv_data."knowledge_files" TO service_role;
-DROP TABLE IF EXISTS csv_data."knowledge_sources" CASCADE;
-CREATE TABLE csv_data."knowledge_sources" (
+GRANT SELECT ON public."knowledge_files" TO anon, authenticated;
+GRANT ALL ON public."knowledge_files" TO service_role;
+DROP TABLE IF EXISTS public."knowledge_sources" CASCADE;
+CREATE TABLE public."knowledge_sources" (
   "id" text,
   "name" text,
   "source_type" text,
@@ -565,10 +563,10 @@ CREATE TABLE csv_data."knowledge_sources" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."knowledge_sources" TO anon, authenticated;
-GRANT ALL ON csv_data."knowledge_sources" TO service_role;
-DROP TABLE IF EXISTS csv_data."mcp_servers" CASCADE;
-CREATE TABLE csv_data."mcp_servers" (
+GRANT SELECT ON public."knowledge_sources" TO anon, authenticated;
+GRANT ALL ON public."knowledge_sources" TO service_role;
+DROP TABLE IF EXISTS public."mcp_servers" CASCADE;
+CREATE TABLE public."mcp_servers" (
   "id" text,
   "name" text,
   "url" text,
@@ -580,10 +578,10 @@ CREATE TABLE csv_data."mcp_servers" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."mcp_servers" TO anon, authenticated;
-GRANT ALL ON csv_data."mcp_servers" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_action_items" CASCADE;
-CREATE TABLE csv_data."meeting_action_items" (
+GRANT SELECT ON public."mcp_servers" TO anon, authenticated;
+GRANT ALL ON public."mcp_servers" TO service_role;
+DROP TABLE IF EXISTS public."meeting_action_items" CASCADE;
+CREATE TABLE public."meeting_action_items" (
   "id" text,
   "meeting_id" text,
   "title" text,
@@ -600,10 +598,10 @@ CREATE TABLE csv_data."meeting_action_items" (
   "extraction_confidence" text,
   "extracted_from_transcript" text
 );
-GRANT SELECT ON csv_data."meeting_action_items" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_action_items" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_agenda_items" CASCADE;
-CREATE TABLE csv_data."meeting_agenda_items" (
+GRANT SELECT ON public."meeting_action_items" TO anon, authenticated;
+GRANT ALL ON public."meeting_action_items" TO service_role;
+DROP TABLE IF EXISTS public."meeting_agenda_items" CASCADE;
+CREATE TABLE public."meeting_agenda_items" (
   "id" text,
   "meeting_id" text,
   "title" text,
@@ -615,10 +613,10 @@ CREATE TABLE csv_data."meeting_agenda_items" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."meeting_agenda_items" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_agenda_items" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_attendees" CASCADE;
-CREATE TABLE csv_data."meeting_attendees" (
+GRANT SELECT ON public."meeting_agenda_items" TO anon, authenticated;
+GRANT ALL ON public."meeting_agenda_items" TO service_role;
+DROP TABLE IF EXISTS public."meeting_attendees" CASCADE;
+CREATE TABLE public."meeting_attendees" (
   "id" text,
   "meeting_id" text,
   "user_id" text,
@@ -627,10 +625,10 @@ CREATE TABLE csv_data."meeting_attendees" (
   "attended" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."meeting_attendees" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_attendees" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_files" CASCADE;
-CREATE TABLE csv_data."meeting_files" (
+GRANT SELECT ON public."meeting_attendees" TO anon, authenticated;
+GRANT ALL ON public."meeting_attendees" TO service_role;
+DROP TABLE IF EXISTS public."meeting_files" CASCADE;
+CREATE TABLE public."meeting_files" (
   "id" text,
   "meeting_id" text,
   "file_name" text,
@@ -640,10 +638,10 @@ CREATE TABLE csv_data."meeting_files" (
   "source" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."meeting_files" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_files" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_issues" CASCADE;
-CREATE TABLE csv_data."meeting_issues" (
+GRANT SELECT ON public."meeting_files" TO anon, authenticated;
+GRANT ALL ON public."meeting_files" TO service_role;
+DROP TABLE IF EXISTS public."meeting_issues" CASCADE;
+CREATE TABLE public."meeting_issues" (
   "id" text,
   "meeting_id" text,
   "title" text,
@@ -654,10 +652,10 @@ CREATE TABLE csv_data."meeting_issues" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."meeting_issues" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_issues" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_participants" CASCADE;
-CREATE TABLE csv_data."meeting_participants" (
+GRANT SELECT ON public."meeting_issues" TO anon, authenticated;
+GRANT ALL ON public."meeting_issues" TO service_role;
+DROP TABLE IF EXISTS public."meeting_participants" CASCADE;
+CREATE TABLE public."meeting_participants" (
   "id" text,
   "meeting_id" text,
   "user_id" text,
@@ -668,10 +666,10 @@ CREATE TABLE csv_data."meeting_participants" (
   "created_at" text,
   "attendance_status" text
 );
-GRANT SELECT ON csv_data."meeting_participants" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_participants" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_rules" CASCADE;
-CREATE TABLE csv_data."meeting_rules" (
+GRANT SELECT ON public."meeting_participants" TO anon, authenticated;
+GRANT ALL ON public."meeting_participants" TO service_role;
+DROP TABLE IF EXISTS public."meeting_rules" CASCADE;
+CREATE TABLE public."meeting_rules" (
   "id" text,
   "name" text,
   "description" text,
@@ -683,10 +681,10 @@ CREATE TABLE csv_data."meeting_rules" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."meeting_rules" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_rules" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_series" CASCADE;
-CREATE TABLE csv_data."meeting_series" (
+GRANT SELECT ON public."meeting_rules" TO anon, authenticated;
+GRANT ALL ON public."meeting_rules" TO service_role;
+DROP TABLE IF EXISTS public."meeting_series" CASCADE;
+CREATE TABLE public."meeting_series" (
   "id" text,
   "title" text,
   "description" text,
@@ -696,10 +694,10 @@ CREATE TABLE csv_data."meeting_series" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."meeting_series" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_series" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_summary_notes" CASCADE;
-CREATE TABLE csv_data."meeting_summary_notes" (
+GRANT SELECT ON public."meeting_series" TO anon, authenticated;
+GRANT ALL ON public."meeting_series" TO service_role;
+DROP TABLE IF EXISTS public."meeting_summary_notes" CASCADE;
+CREATE TABLE public."meeting_summary_notes" (
   "id" text,
   "meeting_id" text,
   "content" text,
@@ -708,10 +706,10 @@ CREATE TABLE csv_data."meeting_summary_notes" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."meeting_summary_notes" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_summary_notes" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_takeaways" CASCADE;
-CREATE TABLE csv_data."meeting_takeaways" (
+GRANT SELECT ON public."meeting_summary_notes" TO anon, authenticated;
+GRANT ALL ON public."meeting_summary_notes" TO service_role;
+DROP TABLE IF EXISTS public."meeting_takeaways" CASCADE;
+CREATE TABLE public."meeting_takeaways" (
   "id" text,
   "meeting_id" text,
   "content" text,
@@ -720,10 +718,10 @@ CREATE TABLE csv_data."meeting_takeaways" (
   "status" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."meeting_takeaways" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_takeaways" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_templates" CASCADE;
-CREATE TABLE csv_data."meeting_templates" (
+GRANT SELECT ON public."meeting_takeaways" TO anon, authenticated;
+GRANT ALL ON public."meeting_takeaways" TO service_role;
+DROP TABLE IF EXISTS public."meeting_templates" CASCADE;
+CREATE TABLE public."meeting_templates" (
   "id" text,
   "name" text,
   "description" text,
@@ -734,10 +732,10 @@ CREATE TABLE csv_data."meeting_templates" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."meeting_templates" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_templates" TO service_role;
-DROP TABLE IF EXISTS csv_data."meeting_transcripts" CASCADE;
-CREATE TABLE csv_data."meeting_transcripts" (
+GRANT SELECT ON public."meeting_templates" TO anon, authenticated;
+GRANT ALL ON public."meeting_templates" TO service_role;
+DROP TABLE IF EXISTS public."meeting_transcripts" CASCADE;
+CREATE TABLE public."meeting_transcripts" (
   "id" text,
   "meeting_id" text,
   "content" text,
@@ -746,10 +744,10 @@ CREATE TABLE csv_data."meeting_transcripts" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."meeting_transcripts" TO anon, authenticated;
-GRANT ALL ON csv_data."meeting_transcripts" TO service_role;
-DROP TABLE IF EXISTS csv_data."meetings" CASCADE;
-CREATE TABLE csv_data."meetings" (
+GRANT SELECT ON public."meeting_transcripts" TO anon, authenticated;
+GRANT ALL ON public."meeting_transcripts" TO service_role;
+DROP TABLE IF EXISTS public."meetings" CASCADE;
+CREATE TABLE public."meetings" (
   "id" text,
   "title" text,
   "description" text,
@@ -786,10 +784,10 @@ CREATE TABLE csv_data."meetings" (
   "transcript_status" text,
   "transcript_error" text
 );
-GRANT SELECT ON csv_data."meetings" TO anon, authenticated;
-GRANT ALL ON csv_data."meetings" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_campaigns" CASCADE;
-CREATE TABLE csv_data."nonprofit_campaigns" (
+GRANT SELECT ON public."meetings" TO anon, authenticated;
+GRANT ALL ON public."meetings" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_campaigns" CASCADE;
+CREATE TABLE public."nonprofit_campaigns" (
   "id" uuid,
   "created_by" uuid,
   "name" text,
@@ -804,10 +802,10 @@ CREATE TABLE csv_data."nonprofit_campaigns" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_campaigns" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_campaigns" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_donations" CASCADE;
-CREATE TABLE csv_data."nonprofit_donations" (
+GRANT SELECT ON public."nonprofit_campaigns" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_campaigns" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_donations" CASCADE;
+CREATE TABLE public."nonprofit_donations" (
   "id" uuid,
   "campaign_id" uuid,
   "donor_name" text,
@@ -821,10 +819,10 @@ CREATE TABLE csv_data."nonprofit_donations" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_donations" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_donations" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_event_agenda_items" CASCADE;
-CREATE TABLE csv_data."nonprofit_event_agenda_items" (
+GRANT SELECT ON public."nonprofit_donations" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_donations" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_event_agenda_items" CASCADE;
+CREATE TABLE public."nonprofit_event_agenda_items" (
   "id" uuid,
   "event_id" uuid,
   "time" text,
@@ -833,10 +831,10 @@ CREATE TABLE csv_data."nonprofit_event_agenda_items" (
   "display_order" bigint,
   "created_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_event_agenda_items" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_event_agenda_items" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_event_registrants" CASCADE;
-CREATE TABLE csv_data."nonprofit_event_registrants" (
+GRANT SELECT ON public."nonprofit_event_agenda_items" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_event_agenda_items" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_event_registrants" CASCADE;
+CREATE TABLE public."nonprofit_event_registrants" (
   "id" uuid,
   "event_id" uuid,
   "name" text,
@@ -846,10 +844,10 @@ CREATE TABLE csv_data."nonprofit_event_registrants" (
   "registered_at" timestamptz,
   "created_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_event_registrants" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_event_registrants" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_event_speakers" CASCADE;
-CREATE TABLE csv_data."nonprofit_event_speakers" (
+GRANT SELECT ON public."nonprofit_event_registrants" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_event_registrants" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_event_speakers" CASCADE;
+CREATE TABLE public."nonprofit_event_speakers" (
   "id" uuid,
   "event_id" uuid,
   "name" text,
@@ -858,10 +856,10 @@ CREATE TABLE csv_data."nonprofit_event_speakers" (
   "display_order" bigint,
   "created_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_event_speakers" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_event_speakers" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_event_ticket_types" CASCADE;
-CREATE TABLE csv_data."nonprofit_event_ticket_types" (
+GRANT SELECT ON public."nonprofit_event_speakers" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_event_speakers" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_event_ticket_types" CASCADE;
+CREATE TABLE public."nonprofit_event_ticket_types" (
   "id" uuid,
   "event_id" uuid,
   "tier" text,
@@ -870,10 +868,10 @@ CREATE TABLE csv_data."nonprofit_event_ticket_types" (
   "sold" bigint,
   "created_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_event_ticket_types" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_event_ticket_types" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_events" CASCADE;
-CREATE TABLE csv_data."nonprofit_events" (
+GRANT SELECT ON public."nonprofit_event_ticket_types" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_event_ticket_types" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_events" CASCADE;
+CREATE TABLE public."nonprofit_events" (
   "id" uuid,
   "created_by" uuid,
   "title" text,
@@ -886,10 +884,10 @@ CREATE TABLE csv_data."nonprofit_events" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_events" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_events" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_members" CASCADE;
-CREATE TABLE csv_data."nonprofit_members" (
+GRANT SELECT ON public."nonprofit_events" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_events" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_members" CASCADE;
+CREATE TABLE public."nonprofit_members" (
   "id" uuid,
   "created_by" uuid,
   "name" text,
@@ -904,10 +902,10 @@ CREATE TABLE csv_data."nonprofit_members" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_members" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_members" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_programs" CASCADE;
-CREATE TABLE csv_data."nonprofit_programs" (
+GRANT SELECT ON public."nonprofit_members" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_members" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_programs" CASCADE;
+CREATE TABLE public."nonprofit_programs" (
   "id" uuid,
   "created_by" uuid,
   "name" text,
@@ -924,10 +922,10 @@ CREATE TABLE csv_data."nonprofit_programs" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_programs" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_programs" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_role_permissions" CASCADE;
-CREATE TABLE csv_data."nonprofit_role_permissions" (
+GRANT SELECT ON public."nonprofit_programs" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_programs" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_role_permissions" CASCADE;
+CREATE TABLE public."nonprofit_role_permissions" (
   "id" uuid,
   "role" text,
   "resource_type" text,
@@ -935,10 +933,10 @@ CREATE TABLE csv_data."nonprofit_role_permissions" (
   "granted" boolean,
   "created_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_role_permissions" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_role_permissions" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_volunteer_shifts" CASCADE;
-CREATE TABLE csv_data."nonprofit_volunteer_shifts" (
+GRANT SELECT ON public."nonprofit_role_permissions" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_role_permissions" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_volunteer_shifts" CASCADE;
+CREATE TABLE public."nonprofit_volunteer_shifts" (
   "id" uuid,
   "volunteer_id" uuid,
   "event_name" text,
@@ -948,10 +946,10 @@ CREATE TABLE csv_data."nonprofit_volunteer_shifts" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_volunteer_shifts" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_volunteer_shifts" TO service_role;
-DROP TABLE IF EXISTS csv_data."nonprofit_volunteers" CASCADE;
-CREATE TABLE csv_data."nonprofit_volunteers" (
+GRANT SELECT ON public."nonprofit_volunteer_shifts" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_volunteer_shifts" TO service_role;
+DROP TABLE IF EXISTS public."nonprofit_volunteers" CASCADE;
+CREATE TABLE public."nonprofit_volunteers" (
   "id" uuid,
   "created_by" uuid,
   "name" text,
@@ -966,10 +964,10 @@ CREATE TABLE csv_data."nonprofit_volunteers" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."nonprofit_volunteers" TO anon, authenticated;
-GRANT ALL ON csv_data."nonprofit_volunteers" TO service_role;
-DROP TABLE IF EXISTS csv_data."notifications" CASCADE;
-CREATE TABLE csv_data."notifications" (
+GRANT SELECT ON public."nonprofit_volunteers" TO anon, authenticated;
+GRANT ALL ON public."nonprofit_volunteers" TO service_role;
+DROP TABLE IF EXISTS public."notifications" CASCADE;
+CREATE TABLE public."notifications" (
   "id" text,
   "user_id" text,
   "title" text,
@@ -981,10 +979,10 @@ CREATE TABLE csv_data."notifications" (
   "metadata" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."notifications" TO anon, authenticated;
-GRANT ALL ON csv_data."notifications" TO service_role;
-DROP TABLE IF EXISTS csv_data."organization_integrations" CASCADE;
-CREATE TABLE csv_data."organization_integrations" (
+GRANT SELECT ON public."notifications" TO anon, authenticated;
+GRANT ALL ON public."notifications" TO service_role;
+DROP TABLE IF EXISTS public."organization_integrations" CASCADE;
+CREATE TABLE public."organization_integrations" (
   "id" text,
   "user_id" text,
   "provider_id" text,
@@ -1000,10 +998,10 @@ CREATE TABLE csv_data."organization_integrations" (
   "oauth_tokens" text,
   "is_primary" text
 );
-GRANT SELECT ON csv_data."organization_integrations" TO anon, authenticated;
-GRANT ALL ON csv_data."organization_integrations" TO service_role;
-DROP TABLE IF EXISTS csv_data."pod_employees" CASCADE;
-CREATE TABLE csv_data."pod_employees" (
+GRANT SELECT ON public."organization_integrations" TO anon, authenticated;
+GRANT ALL ON public."organization_integrations" TO service_role;
+DROP TABLE IF EXISTS public."pod_employees" CASCADE;
+CREATE TABLE public."pod_employees" (
   "id" text,
   "pod_id" text,
   "employee_id" text,
@@ -1013,30 +1011,30 @@ CREATE TABLE csv_data."pod_employees" (
   "synced_from_hr" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."pod_employees" TO anon, authenticated;
-GRANT ALL ON csv_data."pod_employees" TO service_role;
-DROP TABLE IF EXISTS csv_data."pod_members" CASCADE;
-CREATE TABLE csv_data."pod_members" (
+GRANT SELECT ON public."pod_employees" TO anon, authenticated;
+GRANT ALL ON public."pod_employees" TO service_role;
+DROP TABLE IF EXISTS public."pod_members" CASCADE;
+CREATE TABLE public."pod_members" (
   "id" text,
   "pod_id" text,
   "user_id" text,
   "role" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."pod_members" TO anon, authenticated;
-GRANT ALL ON csv_data."pod_members" TO service_role;
-DROP TABLE IF EXISTS csv_data."pod_permissions" CASCADE;
-CREATE TABLE csv_data."pod_permissions" (
+GRANT SELECT ON public."pod_members" TO anon, authenticated;
+GRANT ALL ON public."pod_members" TO service_role;
+DROP TABLE IF EXISTS public."pod_permissions" CASCADE;
+CREATE TABLE public."pod_permissions" (
   "id" text,
   "pod_id" text,
   "module_id" text,
   "has_access" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."pod_permissions" TO anon, authenticated;
-GRANT ALL ON csv_data."pod_permissions" TO service_role;
-DROP TABLE IF EXISTS csv_data."pods" CASCADE;
-CREATE TABLE csv_data."pods" (
+GRANT SELECT ON public."pod_permissions" TO anon, authenticated;
+GRANT ALL ON public."pod_permissions" TO service_role;
+DROP TABLE IF EXISTS public."pods" CASCADE;
+CREATE TABLE public."pods" (
   "id" text,
   "name" text,
   "description" text,
@@ -1048,10 +1046,10 @@ CREATE TABLE csv_data."pods" (
   "show_in_resource_projection" text,
   "created_by" text
 );
-GRANT SELECT ON csv_data."pods" TO anon, authenticated;
-GRANT ALL ON csv_data."pods" TO service_role;
-DROP TABLE IF EXISTS csv_data."processing_queue_history" CASCADE;
-CREATE TABLE csv_data."processing_queue_history" (
+GRANT SELECT ON public."pods" TO anon, authenticated;
+GRANT ALL ON public."pods" TO service_role;
+DROP TABLE IF EXISTS public."processing_queue_history" CASCADE;
+CREATE TABLE public."processing_queue_history" (
   "id" text,
   "queue_type" text,
   "status" text,
@@ -1062,10 +1060,10 @@ CREATE TABLE csv_data."processing_queue_history" (
   "completed_at" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."processing_queue_history" TO anon, authenticated;
-GRANT ALL ON csv_data."processing_queue_history" TO service_role;
-DROP TABLE IF EXISTS csv_data."profiles" CASCADE;
-CREATE TABLE csv_data."profiles" (
+GRANT SELECT ON public."processing_queue_history" TO anon, authenticated;
+GRANT ALL ON public."processing_queue_history" TO service_role;
+DROP TABLE IF EXISTS public."profiles" CASCADE;
+CREATE TABLE public."profiles" (
   "id" uuid,
   "full_name" text,
   "email" text,
@@ -1075,20 +1073,20 @@ CREATE TABLE csv_data."profiles" (
   "updated_at" timestamptz,
   "metadata" jsonb
 );
-GRANT SELECT ON csv_data."profiles" TO anon, authenticated;
-GRANT ALL ON csv_data."profiles" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_backups" CASCADE;
-CREATE TABLE csv_data."project_backups" (
+GRANT SELECT ON public."profiles" TO anon, authenticated;
+GRANT ALL ON public."profiles" TO service_role;
+DROP TABLE IF EXISTS public."project_backups" CASCADE;
+CREATE TABLE public."project_backups" (
   "id" text,
   "project_id" text,
   "backup_data" text,
   "created_by" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."project_backups" TO anon, authenticated;
-GRANT ALL ON csv_data."project_backups" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_billing" CASCADE;
-CREATE TABLE csv_data."project_billing" (
+GRANT SELECT ON public."project_backups" TO anon, authenticated;
+GRANT ALL ON public."project_backups" TO service_role;
+DROP TABLE IF EXISTS public."project_billing" CASCADE;
+CREATE TABLE public."project_billing" (
   "id" text,
   "project_id" text,
   "billing_type" text,
@@ -1100,10 +1098,10 @@ CREATE TABLE csv_data."project_billing" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."project_billing" TO anon, authenticated;
-GRANT ALL ON csv_data."project_billing" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_checklists" CASCADE;
-CREATE TABLE csv_data."project_checklists" (
+GRANT SELECT ON public."project_billing" TO anon, authenticated;
+GRANT ALL ON public."project_billing" TO service_role;
+DROP TABLE IF EXISTS public."project_checklists" CASCADE;
+CREATE TABLE public."project_checklists" (
   "id" text,
   "project_id" text,
   "title" text,
@@ -1112,10 +1110,10 @@ CREATE TABLE csv_data."project_checklists" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."project_checklists" TO anon, authenticated;
-GRANT ALL ON csv_data."project_checklists" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_client_access" CASCADE;
-CREATE TABLE csv_data."project_client_access" (
+GRANT SELECT ON public."project_checklists" TO anon, authenticated;
+GRANT ALL ON public."project_checklists" TO service_role;
+DROP TABLE IF EXISTS public."project_client_access" CASCADE;
+CREATE TABLE public."project_client_access" (
   "id" text,
   "project_id" text,
   "client_id" text,
@@ -1134,10 +1132,10 @@ CREATE TABLE csv_data."project_client_access" (
   "can_upload" text,
   "can_approve" text
 );
-GRANT SELECT ON csv_data."project_client_access" TO anon, authenticated;
-GRANT ALL ON csv_data."project_client_access" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_comments" CASCADE;
-CREATE TABLE csv_data."project_comments" (
+GRANT SELECT ON public."project_client_access" TO anon, authenticated;
+GRANT ALL ON public."project_client_access" TO service_role;
+DROP TABLE IF EXISTS public."project_comments" CASCADE;
+CREATE TABLE public."project_comments" (
   "id" text,
   "project_id" text,
   "user_id" text,
@@ -1146,10 +1144,10 @@ CREATE TABLE csv_data."project_comments" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."project_comments" TO anon, authenticated;
-GRANT ALL ON csv_data."project_comments" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_concerns" CASCADE;
-CREATE TABLE csv_data."project_concerns" (
+GRANT SELECT ON public."project_comments" TO anon, authenticated;
+GRANT ALL ON public."project_comments" TO service_role;
+DROP TABLE IF EXISTS public."project_concerns" CASCADE;
+CREATE TABLE public."project_concerns" (
   "id" text,
   "project_id" text,
   "title" text,
@@ -1160,10 +1158,10 @@ CREATE TABLE csv_data."project_concerns" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."project_concerns" TO anon, authenticated;
-GRANT ALL ON csv_data."project_concerns" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_files" CASCADE;
-CREATE TABLE csv_data."project_files" (
+GRANT SELECT ON public."project_concerns" TO anon, authenticated;
+GRANT ALL ON public."project_concerns" TO service_role;
+DROP TABLE IF EXISTS public."project_files" CASCADE;
+CREATE TABLE public."project_files" (
   "id" text,
   "project_id" text,
   "file_name" text,
@@ -1174,10 +1172,10 @@ CREATE TABLE csv_data."project_files" (
   "uploaded_by" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."project_files" TO anon, authenticated;
-GRANT ALL ON csv_data."project_files" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_invoices" CASCADE;
-CREATE TABLE csv_data."project_invoices" (
+GRANT SELECT ON public."project_files" TO anon, authenticated;
+GRANT ALL ON public."project_files" TO service_role;
+DROP TABLE IF EXISTS public."project_invoices" CASCADE;
+CREATE TABLE public."project_invoices" (
   "id" text,
   "project_id" text,
   "invoice_number" text,
@@ -1190,20 +1188,20 @@ CREATE TABLE csv_data."project_invoices" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."project_invoices" TO anon, authenticated;
-GRANT ALL ON csv_data."project_invoices" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_members" CASCADE;
-CREATE TABLE csv_data."project_members" (
+GRANT SELECT ON public."project_invoices" TO anon, authenticated;
+GRANT ALL ON public."project_invoices" TO service_role;
+DROP TABLE IF EXISTS public."project_members" CASCADE;
+CREATE TABLE public."project_members" (
   "id" text,
   "project_id" text,
   "user_id" text,
   "role" text,
   "joined_at" text
 );
-GRANT SELECT ON csv_data."project_members" TO anon, authenticated;
-GRANT ALL ON csv_data."project_members" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_milestones" CASCADE;
-CREATE TABLE csv_data."project_milestones" (
+GRANT SELECT ON public."project_members" TO anon, authenticated;
+GRANT ALL ON public."project_members" TO service_role;
+DROP TABLE IF EXISTS public."project_milestones" CASCADE;
+CREATE TABLE public."project_milestones" (
   "id" text,
   "project_id" text,
   "title" text,
@@ -1216,10 +1214,10 @@ CREATE TABLE csv_data."project_milestones" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."project_milestones" TO anon, authenticated;
-GRANT ALL ON csv_data."project_milestones" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_risks" CASCADE;
-CREATE TABLE csv_data."project_risks" (
+GRANT SELECT ON public."project_milestones" TO anon, authenticated;
+GRANT ALL ON public."project_milestones" TO service_role;
+DROP TABLE IF EXISTS public."project_risks" CASCADE;
+CREATE TABLE public."project_risks" (
   "id" text,
   "project_id" text,
   "title" text,
@@ -1231,10 +1229,10 @@ CREATE TABLE csv_data."project_risks" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."project_risks" TO anon, authenticated;
-GRANT ALL ON csv_data."project_risks" TO service_role;
-DROP TABLE IF EXISTS csv_data."project_statuses" CASCADE;
-CREATE TABLE csv_data."project_statuses" (
+GRANT SELECT ON public."project_risks" TO anon, authenticated;
+GRANT ALL ON public."project_risks" TO service_role;
+DROP TABLE IF EXISTS public."project_statuses" CASCADE;
+CREATE TABLE public."project_statuses" (
   "id" uuid,
   "name" text,
   "slug" text,
@@ -1244,10 +1242,10 @@ CREATE TABLE csv_data."project_statuses" (
   "is_default" boolean,
   "created_at" timestamptz
 );
-GRANT SELECT ON csv_data."project_statuses" TO anon, authenticated;
-GRANT ALL ON csv_data."project_statuses" TO service_role;
-DROP TABLE IF EXISTS csv_data."projects" CASCADE;
-CREATE TABLE csv_data."projects" (
+GRANT SELECT ON public."project_statuses" TO anon, authenticated;
+GRANT ALL ON public."project_statuses" TO service_role;
+DROP TABLE IF EXISTS public."projects" CASCADE;
+CREATE TABLE public."projects" (
   "id" text,
   "name" text,
   "slug" text,
@@ -1268,10 +1266,10 @@ CREATE TABLE csv_data."projects" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."projects" TO anon, authenticated;
-GRANT ALL ON csv_data."projects" TO service_role;
-DROP TABLE IF EXISTS csv_data."support_tickets" CASCADE;
-CREATE TABLE csv_data."support_tickets" (
+GRANT SELECT ON public."projects" TO anon, authenticated;
+GRANT ALL ON public."projects" TO service_role;
+DROP TABLE IF EXISTS public."support_tickets" CASCADE;
+CREATE TABLE public."support_tickets" (
   "id" text,
   "created_at" text,
   "updated_at" text,
@@ -1283,10 +1281,10 @@ CREATE TABLE csv_data."support_tickets" (
   "status" text,
   "admin_notes" text
 );
-GRANT SELECT ON csv_data."support_tickets" TO anon, authenticated;
-GRANT ALL ON csv_data."support_tickets" TO service_role;
-DROP TABLE IF EXISTS csv_data."system_settings" CASCADE;
-CREATE TABLE csv_data."system_settings" (
+GRANT SELECT ON public."support_tickets" TO anon, authenticated;
+GRANT ALL ON public."support_tickets" TO service_role;
+DROP TABLE IF EXISTS public."system_settings" CASCADE;
+CREATE TABLE public."system_settings" (
   "id" uuid,
   "key" text,
   "value" text,
@@ -1294,10 +1292,10 @@ CREATE TABLE csv_data."system_settings" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."system_settings" TO anon, authenticated;
-GRANT ALL ON csv_data."system_settings" TO service_role;
-DROP TABLE IF EXISTS csv_data."task_attachments" CASCADE;
-CREATE TABLE csv_data."task_attachments" (
+GRANT SELECT ON public."system_settings" TO anon, authenticated;
+GRANT ALL ON public."system_settings" TO service_role;
+DROP TABLE IF EXISTS public."task_attachments" CASCADE;
+CREATE TABLE public."task_attachments" (
   "id" text,
   "task_id" text,
   "file_name" text,
@@ -1307,10 +1305,10 @@ CREATE TABLE csv_data."task_attachments" (
   "uploaded_by" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."task_attachments" TO anon, authenticated;
-GRANT ALL ON csv_data."task_attachments" TO service_role;
-DROP TABLE IF EXISTS csv_data."tasks" CASCADE;
-CREATE TABLE csv_data."tasks" (
+GRANT SELECT ON public."task_attachments" TO anon, authenticated;
+GRANT ALL ON public."task_attachments" TO service_role;
+DROP TABLE IF EXISTS public."tasks" CASCADE;
+CREATE TABLE public."tasks" (
   "id" uuid,
   "title" text,
   "description" text,
@@ -1326,10 +1324,10 @@ CREATE TABLE csv_data."tasks" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."tasks" TO anon, authenticated;
-GRANT ALL ON csv_data."tasks" TO service_role;
-DROP TABLE IF EXISTS csv_data."unified_documents" CASCADE;
-CREATE TABLE csv_data."unified_documents" (
+GRANT SELECT ON public."tasks" TO anon, authenticated;
+GRANT ALL ON public."tasks" TO service_role;
+DROP TABLE IF EXISTS public."unified_documents" CASCADE;
+CREATE TABLE public."unified_documents" (
   "id" text,
   "title" text,
   "content" text,
@@ -1346,10 +1344,10 @@ CREATE TABLE csv_data."unified_documents" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."unified_documents" TO anon, authenticated;
-GRANT ALL ON csv_data."unified_documents" TO service_role;
-DROP TABLE IF EXISTS csv_data."user_agent_personalizations" CASCADE;
-CREATE TABLE csv_data."user_agent_personalizations" (
+GRANT SELECT ON public."unified_documents" TO anon, authenticated;
+GRANT ALL ON public."unified_documents" TO service_role;
+DROP TABLE IF EXISTS public."user_agent_personalizations" CASCADE;
+CREATE TABLE public."user_agent_personalizations" (
   "id" text,
   "user_id" text,
   "agent_id" text,
@@ -1362,10 +1360,10 @@ CREATE TABLE csv_data."user_agent_personalizations" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."user_agent_personalizations" TO anon, authenticated;
-GRANT ALL ON csv_data."user_agent_personalizations" TO service_role;
-DROP TABLE IF EXISTS csv_data."user_invites" CASCADE;
-CREATE TABLE csv_data."user_invites" (
+GRANT SELECT ON public."user_agent_personalizations" TO anon, authenticated;
+GRANT ALL ON public."user_agent_personalizations" TO service_role;
+DROP TABLE IF EXISTS public."user_invites" CASCADE;
+CREATE TABLE public."user_invites" (
   "id" text,
   "email" text,
   "role" text,
@@ -1378,10 +1376,10 @@ CREATE TABLE csv_data."user_invites" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."user_invites" TO anon, authenticated;
-GRANT ALL ON csv_data."user_invites" TO service_role;
-DROP TABLE IF EXISTS csv_data."user_knowledge_files" CASCADE;
-CREATE TABLE csv_data."user_knowledge_files" (
+GRANT SELECT ON public."user_invites" TO anon, authenticated;
+GRANT ALL ON public."user_invites" TO service_role;
+DROP TABLE IF EXISTS public."user_knowledge_files" CASCADE;
+CREATE TABLE public."user_knowledge_files" (
   "id" text,
   "user_id" text,
   "file_name" text,
@@ -1392,10 +1390,10 @@ CREATE TABLE csv_data."user_knowledge_files" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."user_knowledge_files" TO anon, authenticated;
-GRANT ALL ON csv_data."user_knowledge_files" TO service_role;
-DROP TABLE IF EXISTS csv_data."user_knowledge_sources" CASCADE;
-CREATE TABLE csv_data."user_knowledge_sources" (
+GRANT SELECT ON public."user_knowledge_files" TO anon, authenticated;
+GRANT ALL ON public."user_knowledge_files" TO service_role;
+DROP TABLE IF EXISTS public."user_knowledge_sources" CASCADE;
+CREATE TABLE public."user_knowledge_sources" (
   "id" text,
   "user_id" text,
   "name" text,
@@ -1406,10 +1404,10 @@ CREATE TABLE csv_data."user_knowledge_sources" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."user_knowledge_sources" TO anon, authenticated;
-GRANT ALL ON csv_data."user_knowledge_sources" TO service_role;
-DROP TABLE IF EXISTS csv_data."user_microsoft_teams" CASCADE;
-CREATE TABLE csv_data."user_microsoft_teams" (
+GRANT SELECT ON public."user_knowledge_sources" TO anon, authenticated;
+GRANT ALL ON public."user_knowledge_sources" TO service_role;
+DROP TABLE IF EXISTS public."user_microsoft_teams" CASCADE;
+CREATE TABLE public."user_microsoft_teams" (
   "id" text,
   "user_id" text,
   "team_id" text,
@@ -1417,10 +1415,10 @@ CREATE TABLE csv_data."user_microsoft_teams" (
   "is_active" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."user_microsoft_teams" TO anon, authenticated;
-GRANT ALL ON csv_data."user_microsoft_teams" TO service_role;
-DROP TABLE IF EXISTS csv_data."user_microsoft_teams_channels" CASCADE;
-CREATE TABLE csv_data."user_microsoft_teams_channels" (
+GRANT SELECT ON public."user_microsoft_teams" TO anon, authenticated;
+GRANT ALL ON public."user_microsoft_teams" TO service_role;
+DROP TABLE IF EXISTS public."user_microsoft_teams_channels" CASCADE;
+CREATE TABLE public."user_microsoft_teams_channels" (
   "id" text,
   "user_id" text,
   "team_id" text,
@@ -1429,20 +1427,20 @@ CREATE TABLE csv_data."user_microsoft_teams_channels" (
   "is_active" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."user_microsoft_teams_channels" TO anon, authenticated;
-GRANT ALL ON csv_data."user_microsoft_teams_channels" TO service_role;
-DROP TABLE IF EXISTS csv_data."user_module_permissions" CASCADE;
-CREATE TABLE csv_data."user_module_permissions" (
+GRANT SELECT ON public."user_microsoft_teams_channels" TO anon, authenticated;
+GRANT ALL ON public."user_microsoft_teams_channels" TO service_role;
+DROP TABLE IF EXISTS public."user_module_permissions" CASCADE;
+CREATE TABLE public."user_module_permissions" (
   "id" text,
   "user_id" text,
   "module_id" text,
   "has_access" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."user_module_permissions" TO anon, authenticated;
-GRANT ALL ON csv_data."user_module_permissions" TO service_role;
-DROP TABLE IF EXISTS csv_data."user_preferences" CASCADE;
-CREATE TABLE csv_data."user_preferences" (
+GRANT SELECT ON public."user_module_permissions" TO anon, authenticated;
+GRANT ALL ON public."user_module_permissions" TO service_role;
+DROP TABLE IF EXISTS public."user_preferences" CASCADE;
+CREATE TABLE public."user_preferences" (
   "id" text,
   "user_id" text,
   "agent_id" text,
@@ -1457,10 +1455,10 @@ CREATE TABLE csv_data."user_preferences" (
   "created_at" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."user_preferences" TO anon, authenticated;
-GRANT ALL ON csv_data."user_preferences" TO service_role;
-DROP TABLE IF EXISTS csv_data."user_role_preferences" CASCADE;
-CREATE TABLE csv_data."user_role_preferences" (
+GRANT SELECT ON public."user_preferences" TO anon, authenticated;
+GRANT ALL ON public."user_preferences" TO service_role;
+DROP TABLE IF EXISTS public."user_role_preferences" CASCADE;
+CREATE TABLE public."user_role_preferences" (
   "id" uuid,
   "user_id" uuid,
   "role" text,
@@ -1469,19 +1467,19 @@ CREATE TABLE csv_data."user_role_preferences" (
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
-GRANT SELECT ON csv_data."user_role_preferences" TO anon, authenticated;
-GRANT ALL ON csv_data."user_role_preferences" TO service_role;
-DROP TABLE IF EXISTS csv_data."user_roles" CASCADE;
-CREATE TABLE csv_data."user_roles" (
+GRANT SELECT ON public."user_role_preferences" TO anon, authenticated;
+GRANT ALL ON public."user_role_preferences" TO service_role;
+DROP TABLE IF EXISTS public."user_roles" CASCADE;
+CREATE TABLE public."user_roles" (
   "id" uuid,
   "user_id" uuid,
   "role" text,
   "created_at" timestamptz
 );
-GRANT SELECT ON csv_data."user_roles" TO anon, authenticated;
-GRANT ALL ON csv_data."user_roles" TO service_role;
-DROP TABLE IF EXISTS csv_data."vector_search_logs" CASCADE;
-CREATE TABLE csv_data."vector_search_logs" (
+GRANT SELECT ON public."user_roles" TO anon, authenticated;
+GRANT ALL ON public."user_roles" TO service_role;
+DROP TABLE IF EXISTS public."vector_search_logs" CASCADE;
+CREATE TABLE public."vector_search_logs" (
   "id" text,
   "user_id" text,
   "query" text,
@@ -1490,10 +1488,10 @@ CREATE TABLE csv_data."vector_search_logs" (
   "metadata" text,
   "created_at" text
 );
-GRANT SELECT ON csv_data."vector_search_logs" TO anon, authenticated;
-GRANT ALL ON csv_data."vector_search_logs" TO service_role;
-DROP TABLE IF EXISTS csv_data."zoom_files" CASCADE;
-CREATE TABLE csv_data."zoom_files" (
+GRANT SELECT ON public."vector_search_logs" TO anon, authenticated;
+GRANT ALL ON public."vector_search_logs" TO service_role;
+DROP TABLE IF EXISTS public."zoom_files" CASCADE;
+CREATE TABLE public."zoom_files" (
   "id" text,
   "meeting_id" text,
   "file_url" text,
@@ -1508,5 +1506,5 @@ CREATE TABLE csv_data."zoom_files" (
   "file_name" text,
   "updated_at" text
 );
-GRANT SELECT ON csv_data."zoom_files" TO anon, authenticated;
-GRANT ALL ON csv_data."zoom_files" TO service_role;
+GRANT SELECT ON public."zoom_files" TO anon, authenticated;
+GRANT ALL ON public."zoom_files" TO service_role;
