@@ -62,7 +62,7 @@ export function useActionItemTracker() {
       const { data, error } = await supabase.functions.invoke(FN_NAME, {
         body: {
           log_run: true,
-          use_sample: options?.useSample ?? false,
+          use_sample: (options && 'useSample' in options ? options.useSample : false) ?? false,
         },
       });
 
