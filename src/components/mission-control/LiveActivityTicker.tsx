@@ -6,7 +6,7 @@ interface TickerEvent {
   id: string;
   label: string;
   when: number;
-  kind: "finding" as const | "action";
+  kind: "finding" | "action";
 }
 
 const MAX_ITEMS = 8;
