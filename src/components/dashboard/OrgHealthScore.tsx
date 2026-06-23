@@ -89,10 +89,15 @@ export default function OrgHealthScore({ score, scoreColor, breakdown, insight }
           </div>
         </div>
 
-        {/* Insight line */}
-        <p className="text-sm text-muted-foreground mt-4 border-t border-border pt-3">
-          {insight}
-        </p>
+        {/* Insight line + Mission Control CTA */}
+        <div className="mt-4 border-t border-border pt-3 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+          <p className="text-sm text-muted-foreground flex-1">{insight}</p>
+          <Button asChild size="sm" className="shrink-0">
+            <Link to="/mission-control?autorun=1">
+              <Radio className="w-4 h-4 mr-2" /> Run Mission Control Scan
+            </Link>
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
