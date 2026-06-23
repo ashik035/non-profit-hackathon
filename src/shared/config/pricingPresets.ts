@@ -11,6 +11,8 @@ import {
   MODULE_REGISTRY,
 } from "./modules";
 
+export type { PricingTierId };
+
 export interface PricingPreset {
   id: PricingTierId;
   name: string;

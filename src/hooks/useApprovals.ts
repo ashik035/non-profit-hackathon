@@ -195,7 +195,7 @@ export function useApprovalRequests(filters?: {
       const { data, error } = await query;
 
       if (error) throw error;
-      return (data || []) as ApprovalRequest[];
+      return (data || []) as unknown as ApprovalRequest[];
     },
     enabled: !!user,
   });
@@ -215,7 +215,7 @@ export function useApprovalWorkflows() {
         .order("name");
 
       if (error) throw error;
-      return (data || []) as ApprovalWorkflow[];
+      return (data || []) as unknown as ApprovalWorkflow[];
     },
   });
 }

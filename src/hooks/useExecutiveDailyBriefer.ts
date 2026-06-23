@@ -57,9 +57,9 @@ export function useExecutiveDailyBriefer() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (options?: { useSample?: boolean }): Promise<ExecutiveDailyBrieferRunResult> => {
+    mutationFn: async (options: { useSample?: boolean } | void = {} as any): Promise<ExecutiveDailyBrieferRunResult> => {
       const { data, error } = await supabase.functions.invoke(FN_NAME, {
-        body: { log_run: true, use_sample: options?.useSample ?? false },
+        body: { log_run: true, use_sample: (options && 'useSample' in options ? options.useSample : false) ?? false },
       });
 
       if (error) {
