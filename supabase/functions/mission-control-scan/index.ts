@@ -321,6 +321,33 @@ async function runScan(userId: string | null, goal: string, existingRunId: strin
     .slice(0, 3)
     .map((f) => f.title);
 
+  // Compute diff vs the prior completed run (for "What changed since yesterday")
+  let diff: { new: string[]; resolved: string[]; persisted: string[]; prev_health: number | null } = {
+    new: [], resolved: [], persisted: [], prev_health: null,
+  };
+  try {
+    const { data: prevRuns } = await supabase
+      .from("mission_control_runs")
+      .select("id, health_score")
+      .eq("status", "completed")
+      .neq("id", runId)
+      .order("completed_at", { ascending: false })
+      .limit(1);
+    const prev = prevRuns?.[0];
+    if (prev) {
+      const { data: prevFindings } = await supabase
+        .from("mission_control_findings")
+        .select("title, severity")
+        .eq("run_id", (prev as any).id);
+      const prevTitles = new Set((prevFindings ?? []).filter((f: any) => f.severity === "red" || f.severity === "amber").map((f: any) => f.title));
+      const currTitles = new Set(allFindings.filter((f) => f.severity === "red" || f.severity === "amber").map((f) => f.title));
+      diff.new = [...currTitles].filter((t) => !prevTitles.has(t));
+      diff.resolved = [...prevTitles].filter((t) => !currTitles.has(t));
+      diff.persisted = [...currTitles].filter((t) => prevTitles.has(t));
+      diff.prev_health = (prev as any).health_score ?? null;
+    }
+  } catch { /* non-fatal */ }
+
   await supabase
     .from("mission_control_runs")
     .update({
@@ -328,12 +355,12 @@ async function runScan(userId: string | null, goal: string, existingRunId: strin
       completed_at: new Date().toISOString(),
       agents_completed: completed,
       agents_failed: failed,
-      synthesis: { summary, top_priorities: top, finding_count: allFindings.length },
+      synthesis: { summary, top_priorities: top, finding_count: allFindings.length, diff },
       health_score: health,
     })
     .eq("id", runId);
 
-  return { run_id: runId, health, findings: allFindings.length, summary };
+  return { run_id: runId, health, findings: allFindings.length, summary, diff };
 }
 
 serve(async (req) => {
