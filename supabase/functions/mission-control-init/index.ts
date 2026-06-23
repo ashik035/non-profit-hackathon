@@ -96,7 +96,61 @@ BEGIN
   END IF;
 END $$;
 
--- Helper RPC to run arbitrary DDL via service role (used by this function only)
+-- ============================================================
+-- Mission Control Actions (autonomous action layer)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.mission_control_actions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  finding_id uuid REFERENCES public.mission_control_findings(id) ON DELETE CASCADE,
+  run_id uuid REFERENCES public.mission_control_runs(id) ON DELETE CASCADE,
+  user_id uuid,
+  action_type text NOT NULL,
+  status text NOT NULL DEFAULT 'draft',
+  title text NOT NULL,
+  draft_content text NOT NULL,
+  edited_content text,
+  destination jsonb,
+  dismissed_reason text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  approved_at timestamptz,
+  executed_at timestamptz
+);
+
+CREATE INDEX IF NOT EXISTS idx_mc_actions_finding ON public.mission_control_actions(finding_id);
+CREATE INDEX IF NOT EXISTS idx_mc_actions_run ON public.mission_control_actions(run_id);
+CREATE INDEX IF NOT EXISTS idx_mc_actions_status ON public.mission_control_actions(status, created_at DESC);
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.mission_control_actions TO authenticated;
+GRANT SELECT ON public.mission_control_actions TO anon;
+GRANT ALL ON public.mission_control_actions TO service_role;
+
+ALTER TABLE public.mission_control_actions ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "mc_actions_select_auth" ON public.mission_control_actions;
+CREATE POLICY "mc_actions_select_auth" ON public.mission_control_actions
+  FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "mc_actions_select_anon" ON public.mission_control_actions;
+CREATE POLICY "mc_actions_select_anon" ON public.mission_control_actions
+  FOR SELECT TO anon USING (true);
+DROP POLICY IF EXISTS "mc_actions_insert_auth" ON public.mission_control_actions;
+CREATE POLICY "mc_actions_insert_auth" ON public.mission_control_actions
+  FOR INSERT TO authenticated WITH CHECK (true);
+DROP POLICY IF EXISTS "mc_actions_update_auth" ON public.mission_control_actions;
+CREATE POLICY "mc_actions_update_auth" ON public.mission_control_actions
+  FOR UPDATE TO authenticated USING (true);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime'
+      AND schemaname = 'public'
+      AND tablename = 'mission_control_actions'
+  ) THEN
+    EXECUTE 'ALTER PUBLICATION supabase_realtime ADD TABLE public.mission_control_actions';
+  END IF;
+END $$;
 `;
 
 async function execSql(sql: string) {
