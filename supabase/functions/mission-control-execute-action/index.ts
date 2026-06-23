@@ -43,6 +43,8 @@ serve(async (req) => {
     const priority = actionType === "grant_reminder" ? "high" : actionType === "donor_email" ? "high" : "medium";
 
     // Materialize into tasks table (every action becomes an actionable task)
+    // Note: public.tasks is a view in this project, so RETURNING may not surface the row.
+    // We treat absence of error as success.
     const { data: task, error: tErr } = await supabase
       .from("tasks")
       .insert({
@@ -54,11 +56,12 @@ serve(async (req) => {
         created_by: (action as any).user_id ?? null,
       })
       .select()
-      .single();
+      .maybeSingle();
     if (tErr) throw new Error(`task insert failed: ${tErr.message}`);
+    const taskId = (task as any)?.id ?? `mc-${actionId.slice(0, 8)}`;
 
     // Also create a notification so it surfaces in the activity feed
-    const destination: Record<string, unknown> = { task_id: (task as any)?.id };
+    const destination: Record<string, unknown> = { task_id: taskId, task_created: true };
     try {
       await supabase.from("notifications").insert({
         title: `Mission Control: ${title.slice(0, 80)}`,
