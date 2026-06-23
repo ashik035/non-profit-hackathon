@@ -88,7 +88,7 @@ serve(async (req) => {
       .eq("id", actionId);
     if (uErr) throw new Error(`action update failed: ${uErr.message}`);
 
-    return new Response(JSON.stringify({ ok: true, destination, task_id: (task as any)?.id }), {
+    return new Response(JSON.stringify({ ok: true, destination, task_id: taskId }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
