@@ -76,10 +76,10 @@ export default function ExecutiveDirectorDashboard() {
 
       {/* Org Health Score */}
       <OrgHealthScore
-        score={DEMO_ORG_HEALTH.score}
-        scoreColor={DEMO_ORG_HEALTH.scoreColor}
-        breakdown={DEMO_ORG_HEALTH.breakdown}
-        insight={DEMO_ORG_HEALTH.insight}
+        score={liveHealth?.score ?? DEMO_ORG_HEALTH.score}
+        scoreColor={liveHealth?.scoreColor ?? DEMO_ORG_HEALTH.scoreColor}
+        breakdown={liveHealth?.breakdown ?? DEMO_ORG_HEALTH.breakdown}
+        insight={liveHealth?.insight ?? DEMO_ORG_HEALTH.insight}
       />
 
       <SinceYouWereAway
