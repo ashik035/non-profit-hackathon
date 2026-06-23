@@ -18,7 +18,7 @@ export function getSupabaseErrorMessage(error: unknown): string {
  * Typed query helper - returns a typed Supabase query builder
  */
 export function typedQuery<T extends keyof Database["public"]["Tables"]>(table: T) {
-  return supabase.from(table);
+  return supabase.from(table as string);
 }
 
 /**
