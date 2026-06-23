@@ -1,133 +1,37 @@
-# Replicate `/membership` Page into Another Lovable Project
+## Goal
+Verify Supabase connectivity to project `pvpopofbqoysxkthznox`, then (re)create tables matching every CSV in `table-data/` and import all rows.
 
-Copy-paste-ready brief for rebuilding the Membership Management page 1:1 in another Lovable project.
+## Step 1 — Verify connectivity
+- Confirm `.env` has `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` pointing at `pvpopofbqoysxkthznox`.
+- Confirm `src/integrations/supabase/client.ts` uses those vars.
+- Run a quick `psql` ping (`SELECT 1`) using the project's `SUPABASE_DB_URL` to confirm DB-level reach from the sandbox.
+- Confirm the `csv-import` edge function is deployed against the right project ref.
 
----
+## Step 2 — Scan `table-data/`
+- List all 97 CSVs in `table-data/`.
+- For each CSV: read header row + sample rows, infer column types (uuid, timestamptz, jsonb, numeric, boolean, text fallback).
+- Table name = CSV filename (snake_case, no extension), placed in a dedicated `csv_data` schema to avoid colliding with the existing `public` app schema (members, donations, etc. already exist there).
 
-## What `/membership` actually is
+## Step 3 — Generate schema SQL
+- One `CREATE SCHEMA IF NOT EXISTS csv_data;`
+- For each CSV: `DROP TABLE IF EXISTS csv_data.<name>; CREATE TABLE csv_data.<name> (...);` with inferred columns, all nullable, no FKs (raw import).
+- `GRANT USAGE ON SCHEMA csv_data` + `GRANT SELECT` to `anon`, `authenticated`; `GRANT ALL` to `service_role`. RLS left off (raw import schema, no policies needed for service-role edge function reads; can be enabled later if exposed to client).
 
-A member directory backed by the `nonprofit_members` Supabase table.
+## Step 4 — Generate insert SQL
+- For each CSV emit batched `INSERT INTO csv_data.<name> (...) VALUES (...), ...;` in chunks of ~200 rows, with proper escaping and `NULL` for empty cells.
+- Bundle as `.ts` string modules under `supabase/functions/csv-import/` (same pattern as the prior import).
 
-- **KPI strip** — Total Members, Active, Expiring Soon, Lapsed
-- **Directory tab** — searchable table (name / email / employer), tier filter chips (All / General / Professional / Board / Honorary), status badge per row, click row → side sheet with full profile
-- **Add Member tab** — react-hook-form + zod (name, email, tier); creates row with status `Active`
-- **Renewals callouts** — lists of expiring + lapsed members
-- Tier and status colored badges; dates formatted `MMM d, yyyy`
+## Step 5 — Execute via edge function
+- Reuse / redeploy `supabase/functions/csv-import` (connects with `SUPABASE_DB_URL`, runs `create.sql` then `insert.sql`, returns counts).
+- Invoke it once and report per-table row counts + any failures.
 
-## Database (1 table)
+## Step 6 — Verify
+- Query `information_schema.tables WHERE table_schema='csv_data'` → expect 97 tables.
+- `SELECT count(*)` on a handful of representative tables (clients, meetings, tasks, nonprofit_donations) and compare to CSV line counts.
+- Report results back with SQL editor link.
 
-```text
-nonprofit_members
-  id uuid pk
-  created_by uuid references auth.users
-  name text not null
-  email text not null
-  phone text
-  tier text check in ('General','Professional','Board','Honorary') default 'General'
-  status text check in ('Active','Expiring','Lapsed','Pending') default 'Active'
-  join_date date default current_date
-  renewal_date date
-  employer text
-  interests text[]
-  created_at, updated_at timestamptz
-```
-
-RLS on, `FOR ALL TO authenticated USING (true) WITH CHECK (true)`, GRANT to `authenticated` + `service_role`, `updated_at` trigger.
-
-## File layout to create
-
-```text
-src/
-  pages/MembershipPage.tsx
-  hooks/useMembers.ts            # React Query CRUD hooks
-supabase/migrations/<ts>_nonprofit_members.sql
-```
-
-Add route:
-```tsx
-<Route path="/membership" element={<MembershipPage />} />
-```
-
-## The prompt to paste into the other Lovable project
-
-> Assumes the target project already has Lovable Cloud + shadcn/ui + React Query + React Router + React Hook Form + Zod. If not, prepend: "First enable Lovable Cloud."
-
-```text
-Build a Membership Management page at /membership that exactly matches this spec.
-
-DATABASE (one migration, RLS on, GRANT to authenticated + service_role, updated_at trigger)
-- nonprofit_members(
-    id uuid pk default gen_random_uuid(),
-    created_by uuid references auth.users,
-    name text not null,
-    email text not null,
-    phone text,
-    tier text not null default 'General' check (tier in ('General','Professional','Board','Honorary')),
-    status text not null default 'Active' check (status in ('Active','Expiring','Lapsed','Pending')),
-    join_date date default current_date,
-    renewal_date date,
-    employer text,
-    interests text[] default '{}',
-    created_at timestamptz default now(),
-    updated_at timestamptz default now()
-  )
-Policy: FOR ALL TO authenticated USING (true) WITH CHECK (true).
-
-HOOKS  src/hooks/useMembers.ts  (React Query, typed off Database)
-- type Member, MemberInsert, MemberUpdate
-- type MemberTier = 'General'|'Professional'|'Board'|'Honorary'
-- type MemberStatus = 'Active'|'Expiring'|'Lapsed'|'Pending'
-- useMembers({ search?, tier?, status? })   // ilike on name/email/employer; eq on tier/status when not 'All'
-- useMemberById(id)
-- useCreateMember, useUpdateMember, useDeleteMember
-All mutations invalidate the list and show a shadcn/sonner toast on success/error.
-
-PAGE  src/pages/MembershipPage.tsx
-- Header: Users icon + "Membership" + subtitle
-- KPI cards row (4): Total Members, Active, Expiring Soon, Lapsed (icons: Users, UserCheck, Clock, UserX)
-- Tabs: "Directory" | "Add Member" | "Renewals"
-- Directory tab:
-  * Search input (name / email / employer) + tier filter chips (All, General, Professional, Board, Honorary)
-  * Table columns: Name, Email, Tier (badge), Status (badge), Renewal date, Employer
-  * Row click → Sheet (right) with full member profile: name, email, phone, tier, status, join_date, renewal_date, employer, interests chips
-- Add Member tab:
-  * react-hook-form + zod schema { name: min(2), email: email(), tier: enum }
-  * On submit: createMember.mutateAsync({ ..., status: 'Active', created_by: user.id }), reset form, switch back to Directory
-- Renewals tab:
-  * Two cards: "Expiring Soon" (status='Expiring') and "Lapsed" (status='Lapsed') with member rows + "Send renewal" button (toast only, no email yet)
-
-BADGE COLORS
-- Tier: General gray, Professional blue, Board purple, Honorary amber
-- Status: Active green, Expiring amber, Lapsed red, Pending blue
-
-CONVENTIONS
-- shadcn components only (Card, Tabs, Table, Sheet, Badge, Button, Input, Label, Select, Form)
-- Dates: toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
-- All colors via semantic tokens from index.css — no raw text-white/bg-black in components other than the badge maps above
-- Toasts via sonner (or @/hooks/use-toast)
-- No edge functions, no auth changes
-```
-
-## Steps to run it
-
-1. Open the other Lovable project's chat.
-2. Paste the prompt block above. Approve the migration when prompted.
-3. After `src/integrations/supabase/types.ts` regenerates, Lovable builds the page + hook.
-4. Smoke test:
-   - Add a member → appears in directory with `Active` badge
-   - Search by name / employer → filters correctly
-   - Click row → side sheet opens with full profile
-   - Switch to Renewals tab → empty until you flip a row's `status` to `Expiring` / `Lapsed` in the DB
-
-## Optional follow-ups (second prompt)
-
-- Edit / delete from the side sheet
-- Bulk CSV import
-- "Send renewal" actually emails (Resend edge function)
-- Engagement score column (linked to events / donations)
-
-## Out of scope
-
-- Payments / dues collection
-- Email sending
-- Public member directory (no auth)
+## Notes / decisions
+- Using `csv_data` schema (not `public`) — `public` already holds the live app tables with RLS; dumping raw CSV copies there would clash with `nonprofit_members`, `tasks`, `projects`, etc.
+- All columns typed loosely (text where ambiguous) to guarantee import succeeds; can tighten later.
+- No RLS on `csv_data` — schema is server/admin-only, not exposed via PostgREST grants to anon by default.
+- No frontend changes.

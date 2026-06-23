@@ -1,681 +1,1512 @@
 CREATE SCHEMA IF NOT EXISTS csv_data;
 GRANT USAGE ON SCHEMA csv_data TO anon, authenticated, service_role;
 DROP TABLE IF EXISTS csv_data."activity_logs" CASCADE;
-CREATE TABLE csv_data."activity_logs" ("id" TEXT, "user_id" TEXT, "action" TEXT, "resource_type" TEXT, "resource_id" TEXT, "details" TEXT, "ip_address" TEXT, "user_agent" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."activity_logs" TO authenticated;
-GRANT SELECT ON csv_data."activity_logs" TO anon;
+CREATE TABLE csv_data."activity_logs" (
+  "id" uuid,
+  "user_id" uuid,
+  "action" text,
+  "resource_type" text,
+  "resource_id" text,
+  "details" jsonb,
+  "ip_address" text,
+  "user_agent" text,
+  "created_at" timestamptz
+);
+GRANT SELECT ON csv_data."activity_logs" TO anon, authenticated;
 GRANT ALL ON csv_data."activity_logs" TO service_role;
-ALTER TABLE csv_data."activity_logs" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_activity_logs" ON csv_data."activity_logs" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."agent_conversations" CASCADE;
-CREATE TABLE csv_data."agent_conversations" ("id" TEXT, "agent_id" TEXT, "user_id" TEXT, "title" TEXT, "summary" TEXT, "is_archived" TEXT, "is_pinned" TEXT, "message_count" TEXT, "last_message_at" TEXT, "metadata" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."agent_conversations" TO authenticated;
-GRANT SELECT ON csv_data."agent_conversations" TO anon;
+CREATE TABLE csv_data."agent_conversations" (
+  "id" uuid,
+  "agent_id" uuid,
+  "user_id" uuid,
+  "title" text,
+  "summary" text,
+  "is_archived" boolean,
+  "is_pinned" boolean,
+  "message_count" bigint,
+  "last_message_at" timestamptz,
+  "metadata" jsonb,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."agent_conversations" TO anon, authenticated;
 GRANT ALL ON csv_data."agent_conversations" TO service_role;
-ALTER TABLE csv_data."agent_conversations" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_agent_conversations" ON csv_data."agent_conversations" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."agent_learning_events" CASCADE;
-CREATE TABLE csv_data."agent_learning_events" ("id" TEXT, "agent_id" TEXT, "user_id" TEXT, "event_type" TEXT, "event_description" TEXT, "related_memory_id" TEXT, "related_conversation_id" TEXT, "related_message_id" TEXT, "feedback_type" TEXT, "feedback_text" TEXT, "agent_action_taken" TEXT, "behavior_change" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."agent_learning_events" TO authenticated;
-GRANT SELECT ON csv_data."agent_learning_events" TO anon;
+CREATE TABLE csv_data."agent_learning_events" (
+  "id" text,
+  "agent_id" text,
+  "user_id" text,
+  "event_type" text,
+  "event_description" text,
+  "related_memory_id" text,
+  "related_conversation_id" text,
+  "related_message_id" text,
+  "feedback_type" text,
+  "feedback_text" text,
+  "agent_action_taken" text,
+  "behavior_change" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."agent_learning_events" TO anon, authenticated;
 GRANT ALL ON csv_data."agent_learning_events" TO service_role;
-ALTER TABLE csv_data."agent_learning_events" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_agent_learning_events" ON csv_data."agent_learning_events" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."agent_memories" CASCADE;
-CREATE TABLE csv_data."agent_memories" ("id" TEXT, "agent_id" TEXT, "user_id" TEXT, "memory_type" TEXT, "memory_category" TEXT, "content" TEXT, "summary" TEXT, "embedding" TEXT, "source_type" TEXT, "source_id" TEXT, "importance_score" TEXT, "access_count" TEXT, "last_accessed_at" TEXT, "valid_from" TEXT, "valid_until" TEXT, "is_active" TEXT, "consolidated" TEXT, "superseded_by" TEXT, "metadata" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."agent_memories" TO authenticated;
-GRANT SELECT ON csv_data."agent_memories" TO anon;
+CREATE TABLE csv_data."agent_memories" (
+  "id" uuid,
+  "agent_id" uuid,
+  "user_id" uuid,
+  "memory_type" text,
+  "memory_category" text,
+  "content" text,
+  "summary" text,
+  "embedding" text,
+  "source_type" text,
+  "source_id" uuid,
+  "importance_score" numeric,
+  "access_count" bigint,
+  "last_accessed_at" timestamptz,
+  "valid_from" timestamptz,
+  "valid_until" text,
+  "is_active" boolean,
+  "consolidated" boolean,
+  "superseded_by" text,
+  "metadata" jsonb,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."agent_memories" TO anon, authenticated;
 GRANT ALL ON csv_data."agent_memories" TO service_role;
-ALTER TABLE csv_data."agent_memories" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_agent_memories" ON csv_data."agent_memories" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."agent_messages" CASCADE;
-CREATE TABLE csv_data."agent_messages" ("id" TEXT, "conversation_id" TEXT, "role" TEXT, "content" TEXT, "model_used" TEXT, "provider_used" TEXT, "tokens_input" TEXT, "tokens_output" TEXT, "latency_ms" TEXT, "tool_calls" TEXT, "tool_results" TEXT, "citations" TEXT, "metadata" TEXT, "created_at" TEXT, "is_streaming" TEXT, "stream_completed_at" TEXT, "tool_call_status" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."agent_messages" TO authenticated;
-GRANT SELECT ON csv_data."agent_messages" TO anon;
+CREATE TABLE csv_data."agent_messages" (
+  "id" uuid,
+  "conversation_id" uuid,
+  "role" text,
+  "content" text,
+  "model_used" text,
+  "provider_used" text,
+  "tokens_input" bigint,
+  "tokens_output" bigint,
+  "latency_ms" bigint,
+  "tool_calls" text,
+  "tool_results" text,
+  "citations" jsonb,
+  "metadata" jsonb,
+  "created_at" timestamptz,
+  "is_streaming" boolean,
+  "stream_completed_at" text,
+  "tool_call_status" text
+);
+GRANT SELECT ON csv_data."agent_messages" TO anon, authenticated;
 GRANT ALL ON csv_data."agent_messages" TO service_role;
-ALTER TABLE csv_data."agent_messages" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_agent_messages" ON csv_data."agent_messages" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."ai_agent_categories" CASCADE;
-CREATE TABLE csv_data."ai_agent_categories" ("id" TEXT, "name" TEXT, "slug" TEXT, "description" TEXT, "icon" TEXT, "sort_order" TEXT, "is_active" TEXT, "created_at" TEXT, "display_order" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."ai_agent_categories" TO authenticated;
-GRANT SELECT ON csv_data."ai_agent_categories" TO anon;
+CREATE TABLE csv_data."ai_agent_categories" (
+  "id" text,
+  "name" text,
+  "slug" text,
+  "description" text,
+  "icon" text,
+  "sort_order" text,
+  "is_active" text,
+  "created_at" text,
+  "display_order" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."ai_agent_categories" TO anon, authenticated;
 GRANT ALL ON csv_data."ai_agent_categories" TO service_role;
-ALTER TABLE csv_data."ai_agent_categories" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_ai_agent_categories" ON csv_data."ai_agent_categories" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."ai_agent_runs" CASCADE;
-CREATE TABLE csv_data."ai_agent_runs" ("id" TEXT, "agent_id" TEXT, "user_id" TEXT, "status" TEXT, "input" TEXT, "output" TEXT, "error" TEXT, "tokens_used" TEXT, "started_at" TEXT, "completed_at" TEXT, "created_at" TEXT, "error_message" TEXT, "latency_ms" TEXT, "context" TEXT, "token_metrics" TEXT, "model" TEXT, "trigger_type" TEXT, "run_type" TEXT, "metadata" TEXT, "provider_used" TEXT, "model_used" TEXT, "updated_at" TEXT, "output_text" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."ai_agent_runs" TO authenticated;
-GRANT SELECT ON csv_data."ai_agent_runs" TO anon;
+CREATE TABLE csv_data."ai_agent_runs" (
+  "id" uuid,
+  "agent_id" uuid,
+  "user_id" uuid,
+  "status" text,
+  "input" text,
+  "output" text,
+  "error" text,
+  "tokens_used" bigint,
+  "started_at" timestamptz,
+  "completed_at" text,
+  "created_at" timestamptz,
+  "error_message" text,
+  "latency_ms" bigint,
+  "context" text,
+  "token_metrics" jsonb,
+  "model" text,
+  "trigger_type" text,
+  "run_type" text,
+  "metadata" jsonb,
+  "provider_used" text,
+  "model_used" text,
+  "updated_at" timestamptz,
+  "output_text" text
+);
+GRANT SELECT ON csv_data."ai_agent_runs" TO anon, authenticated;
 GRANT ALL ON csv_data."ai_agent_runs" TO service_role;
-ALTER TABLE csv_data."ai_agent_runs" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_ai_agent_runs" ON csv_data."ai_agent_runs" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."ai_agents" CASCADE;
-CREATE TABLE csv_data."ai_agents" ("id" TEXT, "name" TEXT, "description" TEXT, "system_prompt" TEXT, "model" TEXT, "tools" TEXT, "is_active" TEXT, "created_by" TEXT, "metadata" TEXT, "created_at" TEXT, "updated_at" TEXT, "category" TEXT, "category_id" TEXT, "is_enabled" TEXT, "slug" TEXT, "avatar" TEXT, "memory_enabled" TEXT, "welcome_message" TEXT, "conversation_starters" TEXT, "is_default" TEXT, "usage_count" TEXT, "tool_code_interpreter" TEXT, "tool_file_search" TEXT, "tool_web_search" TEXT, "tool_image_generation" TEXT, "tool_mcp" TEXT, "mcp_server_ids" TEXT, "tools_config" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."ai_agents" TO authenticated;
-GRANT SELECT ON csv_data."ai_agents" TO anon;
+CREATE TABLE csv_data."ai_agents" (
+  "id" uuid,
+  "name" text,
+  "description" text,
+  "system_prompt" text,
+  "model" text,
+  "tools" jsonb,
+  "is_active" boolean,
+  "created_by" text,
+  "metadata" jsonb,
+  "created_at" timestamptz,
+  "updated_at" timestamptz,
+  "category" text,
+  "category_id" text,
+  "is_enabled" boolean,
+  "slug" text,
+  "avatar" text,
+  "memory_enabled" boolean,
+  "welcome_message" text,
+  "conversation_starters" jsonb,
+  "is_default" boolean,
+  "usage_count" bigint,
+  "tool_code_interpreter" boolean,
+  "tool_file_search" boolean,
+  "tool_web_search" boolean,
+  "tool_image_generation" boolean,
+  "tool_mcp" boolean,
+  "mcp_server_ids" jsonb,
+  "tools_config" jsonb
+);
+GRANT SELECT ON csv_data."ai_agents" TO anon, authenticated;
 GRANT ALL ON csv_data."ai_agents" TO service_role;
-ALTER TABLE csv_data."ai_agents" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_ai_agents" ON csv_data."ai_agents" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."ai_chat_history" CASCADE;
-CREATE TABLE csv_data."ai_chat_history" ("id" TEXT, "user_id" TEXT, "agent_id" TEXT, "session_id" TEXT, "role" TEXT, "content" TEXT, "model" TEXT, "tokens_used" TEXT, "metadata" TEXT, "created_at" TEXT, "feedback" TEXT, "rating" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."ai_chat_history" TO authenticated;
-GRANT SELECT ON csv_data."ai_chat_history" TO anon;
+CREATE TABLE csv_data."ai_chat_history" (
+  "id" text,
+  "user_id" text,
+  "agent_id" text,
+  "session_id" text,
+  "role" text,
+  "content" text,
+  "model" text,
+  "tokens_used" text,
+  "metadata" text,
+  "created_at" text,
+  "feedback" text,
+  "rating" text
+);
+GRANT SELECT ON csv_data."ai_chat_history" TO anon, authenticated;
 GRANT ALL ON csv_data."ai_chat_history" TO service_role;
-ALTER TABLE csv_data."ai_chat_history" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_ai_chat_history" ON csv_data."ai_chat_history" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."ai_models" CASCADE;
-CREATE TABLE csv_data."ai_models" ("id" TEXT, "name" TEXT, "model_id" TEXT, "provider_id" TEXT, "category" TEXT, "enabled" TEXT, "is_default" TEXT, "input_cost_per_1k" TEXT, "output_cost_per_1k" TEXT, "features" TEXT, "max_tokens" TEXT, "created_at" TEXT, "updated_at" TEXT, "context_window" TEXT, "embedding_cost_per_1k" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."ai_models" TO authenticated;
-GRANT SELECT ON csv_data."ai_models" TO anon;
+CREATE TABLE csv_data."ai_models" (
+  "id" uuid,
+  "name" text,
+  "model_id" text,
+  "provider_id" uuid,
+  "category" text,
+  "enabled" boolean,
+  "is_default" boolean,
+  "input_cost_per_1k" numeric,
+  "output_cost_per_1k" numeric,
+  "features" jsonb,
+  "max_tokens" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz,
+  "context_window" bigint,
+  "embedding_cost_per_1k" numeric
+);
+GRANT SELECT ON csv_data."ai_models" TO anon, authenticated;
 GRANT ALL ON csv_data."ai_models" TO service_role;
-ALTER TABLE csv_data."ai_models" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_ai_models" ON csv_data."ai_models" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."ai_providers" CASCADE;
-CREATE TABLE csv_data."ai_providers" ("id" TEXT, "name" TEXT, "slug" TEXT, "api_base_url" TEXT, "is_active" TEXT, "created_at" TEXT, "api_key_secret_name" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."ai_providers" TO authenticated;
-GRANT SELECT ON csv_data."ai_providers" TO anon;
+CREATE TABLE csv_data."ai_providers" (
+  "id" uuid,
+  "name" text,
+  "slug" text,
+  "api_base_url" text,
+  "is_active" boolean,
+  "created_at" timestamptz,
+  "api_key_secret_name" text
+);
+GRANT SELECT ON csv_data."ai_providers" TO anon, authenticated;
 GRANT ALL ON csv_data."ai_providers" TO service_role;
-ALTER TABLE csv_data."ai_providers" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_ai_providers" ON csv_data."ai_providers" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."ai_usage_logs" CASCADE;
-CREATE TABLE csv_data."ai_usage_logs" ("id" TEXT, "user_id" TEXT, "model_id" TEXT, "function_name" TEXT, "input_tokens" TEXT, "output_tokens" TEXT, "embedding_tokens" TEXT, "estimated_cost" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."ai_usage_logs" TO authenticated;
-GRANT SELECT ON csv_data."ai_usage_logs" TO anon;
+CREATE TABLE csv_data."ai_usage_logs" (
+  "id" uuid,
+  "user_id" uuid,
+  "model_id" uuid,
+  "function_name" text,
+  "input_tokens" bigint,
+  "output_tokens" bigint,
+  "embedding_tokens" bigint,
+  "estimated_cost" numeric,
+  "created_at" timestamptz
+);
+GRANT SELECT ON csv_data."ai_usage_logs" TO anon, authenticated;
 GRANT ALL ON csv_data."ai_usage_logs" TO service_role;
-ALTER TABLE csv_data."ai_usage_logs" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_ai_usage_logs" ON csv_data."ai_usage_logs" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."app_config" CASCADE;
-CREATE TABLE csv_data."app_config" ("id" TEXT, "key" TEXT, "value" TEXT, "category" TEXT, "description" TEXT, "is_sensitive" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."app_config" TO authenticated;
-GRANT SELECT ON csv_data."app_config" TO anon;
+CREATE TABLE csv_data."app_config" (
+  "id" uuid,
+  "key" text,
+  "value" text,
+  "category" text,
+  "description" text,
+  "is_sensitive" boolean,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."app_config" TO anon, authenticated;
 GRANT ALL ON csv_data."app_config" TO service_role;
-ALTER TABLE csv_data."app_config" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_app_config" ON csv_data."app_config" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."app_modules" CASCADE;
-CREATE TABLE csv_data."app_modules" ("id" TEXT, "name" TEXT, "slug" TEXT, "description" TEXT, "page_route" TEXT, "icon" TEXT, "sort_order" TEXT, "is_active" TEXT, "is_core" TEXT, "requires_feature_flag" TEXT, "created_at" TEXT, "updated_at" TEXT, "category" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."app_modules" TO authenticated;
-GRANT SELECT ON csv_data."app_modules" TO anon;
+CREATE TABLE csv_data."app_modules" (
+  "id" uuid,
+  "name" text,
+  "slug" text,
+  "description" text,
+  "page_route" text,
+  "icon" text,
+  "sort_order" bigint,
+  "is_active" boolean,
+  "is_core" boolean,
+  "requires_feature_flag" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz,
+  "category" text
+);
+GRANT SELECT ON csv_data."app_modules" TO anon, authenticated;
 GRANT ALL ON csv_data."app_modules" TO service_role;
-ALTER TABLE csv_data."app_modules" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_app_modules" ON csv_data."app_modules" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."clients" CASCADE;
-CREATE TABLE csv_data."clients" ("id" TEXT, "name" TEXT, "email" TEXT, "company" TEXT, "phone" TEXT, "status" TEXT, "metadata" TEXT, "created_by" TEXT, "data_source" TEXT, "external_id" TEXT, "external_url" TEXT, "last_synced_at" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."clients" TO authenticated;
-GRANT SELECT ON csv_data."clients" TO anon;
+CREATE TABLE csv_data."clients" (
+  "id" text,
+  "name" text,
+  "email" text,
+  "company" text,
+  "phone" text,
+  "status" text,
+  "metadata" text,
+  "created_by" text,
+  "data_source" text,
+  "external_id" text,
+  "external_url" text,
+  "last_synced_at" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."clients" TO anon, authenticated;
 GRANT ALL ON csv_data."clients" TO service_role;
-ALTER TABLE csv_data."clients" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_clients" ON csv_data."clients" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."contacts" CASCADE;
-CREATE TABLE csv_data."contacts" ("id" TEXT, "first_name" TEXT, "last_name" TEXT, "email" TEXT, "phone" TEXT, "title" TEXT, "client_id" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."contacts" TO authenticated;
-GRANT SELECT ON csv_data."contacts" TO anon;
+CREATE TABLE csv_data."contacts" (
+  "id" text,
+  "first_name" text,
+  "last_name" text,
+  "email" text,
+  "phone" text,
+  "title" text,
+  "client_id" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."contacts" TO anon, authenticated;
 GRANT ALL ON csv_data."contacts" TO service_role;
-ALTER TABLE csv_data."contacts" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_contacts" ON csv_data."contacts" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."crm_sync_logs" CASCADE;
-CREATE TABLE csv_data."crm_sync_logs" ("id" TEXT, "organization_integration_id" TEXT, "direction" TEXT, "entity_type" TEXT, "status" TEXT, "message" TEXT, "records_processed" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."crm_sync_logs" TO authenticated;
-GRANT SELECT ON csv_data."crm_sync_logs" TO anon;
+CREATE TABLE csv_data."crm_sync_logs" (
+  "id" text,
+  "organization_integration_id" text,
+  "direction" text,
+  "entity_type" text,
+  "status" text,
+  "message" text,
+  "records_processed" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."crm_sync_logs" TO anon, authenticated;
 GRANT ALL ON csv_data."crm_sync_logs" TO service_role;
-ALTER TABLE csv_data."crm_sync_logs" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_crm_sync_logs" ON csv_data."crm_sync_logs" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."deals" CASCADE;
-CREATE TABLE csv_data."deals" ("id" TEXT, "title" TEXT, "value" TEXT, "stage" TEXT, "probability" TEXT, "client_id" TEXT, "contact_id" TEXT, "owner_id" TEXT, "notes" TEXT, "expected_close_date" TEXT, "metadata" TEXT, "created_at" TEXT, "updated_at" TEXT, "closed_at" TEXT, "last_contacted_at" TEXT, "follow_up_status" TEXT, "source" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."deals" TO authenticated;
-GRANT SELECT ON csv_data."deals" TO anon;
+CREATE TABLE csv_data."deals" (
+  "id" text,
+  "title" text,
+  "value" text,
+  "stage" text,
+  "probability" text,
+  "client_id" text,
+  "contact_id" text,
+  "owner_id" text,
+  "notes" text,
+  "expected_close_date" text,
+  "metadata" text,
+  "created_at" text,
+  "updated_at" text,
+  "closed_at" text,
+  "last_contacted_at" text,
+  "follow_up_status" text,
+  "source" text
+);
+GRANT SELECT ON csv_data."deals" TO anon, authenticated;
 GRANT ALL ON csv_data."deals" TO service_role;
-ALTER TABLE csv_data."deals" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_deals" ON csv_data."deals" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."departments" CASCADE;
-CREATE TABLE csv_data."departments" ("id" TEXT, "name" TEXT, "description" TEXT, "is_active" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."departments" TO authenticated;
-GRANT SELECT ON csv_data."departments" TO anon;
+CREATE TABLE csv_data."departments" (
+  "id" text,
+  "name" text,
+  "description" text,
+  "is_active" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."departments" TO anon, authenticated;
 GRANT ALL ON csv_data."departments" TO service_role;
-ALTER TABLE csv_data."departments" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_departments" ON csv_data."departments" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."embeddings" CASCADE;
-CREATE TABLE csv_data."embeddings" ("id" TEXT, "content" TEXT, "embedding" TEXT, "source_type" TEXT, "source_id" TEXT, "metadata" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."embeddings" TO authenticated;
-GRANT SELECT ON csv_data."embeddings" TO anon;
+CREATE TABLE csv_data."embeddings" (
+  "id" text,
+  "content" text,
+  "embedding" text,
+  "source_type" text,
+  "source_id" text,
+  "metadata" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."embeddings" TO anon, authenticated;
 GRANT ALL ON csv_data."embeddings" TO service_role;
-ALTER TABLE csv_data."embeddings" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_embeddings" ON csv_data."embeddings" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."employee_pods" CASCADE;
-CREATE TABLE csv_data."employee_pods" ("id" TEXT, "pod_id" TEXT, "employee_id" TEXT, "synced_from_hr" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."employee_pods" TO authenticated;
-GRANT SELECT ON csv_data."employee_pods" TO anon;
+CREATE TABLE csv_data."employee_pods" (
+  "id" text,
+  "pod_id" text,
+  "employee_id" text,
+  "synced_from_hr" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."employee_pods" TO anon, authenticated;
 GRANT ALL ON csv_data."employee_pods" TO service_role;
-ALTER TABLE csv_data."employee_pods" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_employee_pods" ON csv_data."employee_pods" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."employee_profiles" CASCADE;
-CREATE TABLE csv_data."employee_profiles" ("id" TEXT, "user_id" TEXT, "email" TEXT, "full_name" TEXT, "department_id" TEXT, "title" TEXT, "employment_type" TEXT, "is_active" TEXT, "hire_date" TEXT, "location" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."employee_profiles" TO authenticated;
-GRANT SELECT ON csv_data."employee_profiles" TO anon;
+CREATE TABLE csv_data."employee_profiles" (
+  "id" text,
+  "user_id" text,
+  "email" text,
+  "full_name" text,
+  "department_id" text,
+  "title" text,
+  "employment_type" text,
+  "is_active" text,
+  "hire_date" text,
+  "location" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."employee_profiles" TO anon, authenticated;
 GRANT ALL ON csv_data."employee_profiles" TO service_role;
-ALTER TABLE csv_data."employee_profiles" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_employee_profiles" ON csv_data."employee_profiles" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."feedback" CASCADE;
-CREATE TABLE csv_data."feedback" ("id" TEXT, "user_id" TEXT, "type" TEXT, "subject" TEXT, "message" TEXT, "status" TEXT, "metadata" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."feedback" TO authenticated;
-GRANT SELECT ON csv_data."feedback" TO anon;
+CREATE TABLE csv_data."feedback" (
+  "id" text,
+  "user_id" text,
+  "type" text,
+  "subject" text,
+  "message" text,
+  "status" text,
+  "metadata" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."feedback" TO anon, authenticated;
 GRANT ALL ON csv_data."feedback" TO service_role;
-ALTER TABLE csv_data."feedback" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_feedback" ON csv_data."feedback" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."follow_up_leads" CASCADE;
-CREATE TABLE csv_data."follow_up_leads" ("id" TEXT, "deal_id" TEXT, "contact_id" TEXT, "status" TEXT, "priority" TEXT, "next_action" TEXT, "next_action_date" TEXT, "notes" TEXT, "assigned_to" TEXT, "created_by" TEXT, "metadata" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."follow_up_leads" TO authenticated;
-GRANT SELECT ON csv_data."follow_up_leads" TO anon;
+CREATE TABLE csv_data."follow_up_leads" (
+  "id" text,
+  "deal_id" text,
+  "contact_id" text,
+  "status" text,
+  "priority" text,
+  "next_action" text,
+  "next_action_date" text,
+  "notes" text,
+  "assigned_to" text,
+  "created_by" text,
+  "metadata" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."follow_up_leads" TO anon, authenticated;
 GRANT ALL ON csv_data."follow_up_leads" TO service_role;
-ALTER TABLE csv_data."follow_up_leads" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_follow_up_leads" ON csv_data."follow_up_leads" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."integration_categories" CASCADE;
-CREATE TABLE csv_data."integration_categories" ("id" TEXT, "name" TEXT, "slug" TEXT, "description" TEXT, "sort_order" TEXT, "created_at" TEXT, "enabled" TEXT, "display_order" TEXT, "icon" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."integration_categories" TO authenticated;
-GRANT SELECT ON csv_data."integration_categories" TO anon;
+CREATE TABLE csv_data."integration_categories" (
+  "id" text,
+  "name" text,
+  "slug" text,
+  "description" text,
+  "sort_order" text,
+  "created_at" text,
+  "enabled" text,
+  "display_order" text,
+  "icon" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."integration_categories" TO anon, authenticated;
 GRANT ALL ON csv_data."integration_categories" TO service_role;
-ALTER TABLE csv_data."integration_categories" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_integration_categories" ON csv_data."integration_categories" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."integration_fields" CASCADE;
-CREATE TABLE csv_data."integration_fields" ("id" TEXT, "provider_id" TEXT, "field_key" TEXT, "label" TEXT, "field_type" TEXT, "placeholder" TEXT, "default_value" TEXT, "is_required" TEXT, "is_sensitive" TEXT, "help_text" TEXT, "validation_regex" TEXT, "select_options" TEXT, "display_order" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."integration_fields" TO authenticated;
-GRANT SELECT ON csv_data."integration_fields" TO anon;
+CREATE TABLE csv_data."integration_fields" (
+  "id" text,
+  "provider_id" text,
+  "field_key" text,
+  "label" text,
+  "field_type" text,
+  "placeholder" text,
+  "default_value" text,
+  "is_required" text,
+  "is_sensitive" text,
+  "help_text" text,
+  "validation_regex" text,
+  "select_options" text,
+  "display_order" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."integration_fields" TO anon, authenticated;
 GRANT ALL ON csv_data."integration_fields" TO service_role;
-ALTER TABLE csv_data."integration_fields" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_integration_fields" ON csv_data."integration_fields" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."integration_providers" CASCADE;
-CREATE TABLE csv_data."integration_providers" ("id" TEXT, "name" TEXT, "slug" TEXT, "description" TEXT, "logo_url" TEXT, "category_id" TEXT, "auth_type" TEXT, "config" TEXT, "is_active" TEXT, "display_order" TEXT, "created_at" TEXT, "updated_at" TEXT, "oauth_config" TEXT, "docs_url" TEXT, "is_available" TEXT, "is_coming_soon" TEXT, "is_beta" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."integration_providers" TO authenticated;
-GRANT SELECT ON csv_data."integration_providers" TO anon;
+CREATE TABLE csv_data."integration_providers" (
+  "id" uuid,
+  "name" text,
+  "slug" text,
+  "description" text,
+  "logo_url" text,
+  "category_id" text,
+  "auth_type" text,
+  "config" jsonb,
+  "is_active" boolean,
+  "display_order" bigint,
+  "created_at" timestamptz,
+  "updated_at" timestamptz,
+  "oauth_config" jsonb,
+  "docs_url" text,
+  "is_available" boolean,
+  "is_coming_soon" boolean,
+  "is_beta" boolean
+);
+GRANT SELECT ON csv_data."integration_providers" TO anon, authenticated;
 GRANT ALL ON csv_data."integration_providers" TO service_role;
-ALTER TABLE csv_data."integration_providers" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_integration_providers" ON csv_data."integration_providers" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."integration_services" CASCADE;
-CREATE TABLE csv_data."integration_services" ("id" TEXT, "provider_id" TEXT, "name" TEXT, "service_key" TEXT, "description" TEXT, "features" TEXT, "has_cost" TEXT, "cost_model" TEXT, "enabled" TEXT, "is_default" TEXT, "requires_config" TEXT, "display_order" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."integration_services" TO authenticated;
-GRANT SELECT ON csv_data."integration_services" TO anon;
+CREATE TABLE csv_data."integration_services" (
+  "id" text,
+  "provider_id" text,
+  "name" text,
+  "service_key" text,
+  "description" text,
+  "features" text,
+  "has_cost" text,
+  "cost_model" text,
+  "enabled" text,
+  "is_default" text,
+  "requires_config" text,
+  "display_order" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."integration_services" TO anon, authenticated;
 GRANT ALL ON csv_data."integration_services" TO service_role;
-ALTER TABLE csv_data."integration_services" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_integration_services" ON csv_data."integration_services" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."integration_usage_logs" CASCADE;
-CREATE TABLE csv_data."integration_usage_logs" ("id" TEXT, "organization_id" TEXT, "provider_id" TEXT, "service_id" TEXT, "user_id" TEXT, "action" TEXT, "status" TEXT, "request_metadata" TEXT, "response_metadata" TEXT, "error_message" TEXT, "estimated_cost" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."integration_usage_logs" TO authenticated;
-GRANT SELECT ON csv_data."integration_usage_logs" TO anon;
+CREATE TABLE csv_data."integration_usage_logs" (
+  "id" text,
+  "organization_id" text,
+  "provider_id" text,
+  "service_id" text,
+  "user_id" text,
+  "action" text,
+  "status" text,
+  "request_metadata" text,
+  "response_metadata" text,
+  "error_message" text,
+  "estimated_cost" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."integration_usage_logs" TO anon, authenticated;
 GRANT ALL ON csv_data."integration_usage_logs" TO service_role;
-ALTER TABLE csv_data."integration_usage_logs" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_integration_usage_logs" ON csv_data."integration_usage_logs" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."knowledge_categories" CASCADE;
-CREATE TABLE csv_data."knowledge_categories" ("id" TEXT, "name" TEXT, "slug" TEXT, "description" TEXT, "parent_id" TEXT, "sort_order" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."knowledge_categories" TO authenticated;
-GRANT SELECT ON csv_data."knowledge_categories" TO anon;
+CREATE TABLE csv_data."knowledge_categories" (
+  "id" text,
+  "name" text,
+  "slug" text,
+  "description" text,
+  "parent_id" text,
+  "sort_order" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."knowledge_categories" TO anon, authenticated;
 GRANT ALL ON csv_data."knowledge_categories" TO service_role;
-ALTER TABLE csv_data."knowledge_categories" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_knowledge_categories" ON csv_data."knowledge_categories" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."knowledge_entries" CASCADE;
-CREATE TABLE csv_data."knowledge_entries" ("id" TEXT, "title" TEXT, "content" TEXT, "category_id" TEXT, "user_id" TEXT, "status" TEXT, "tags" TEXT, "metadata" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."knowledge_entries" TO authenticated;
-GRANT SELECT ON csv_data."knowledge_entries" TO anon;
+CREATE TABLE csv_data."knowledge_entries" (
+  "id" text,
+  "title" text,
+  "content" text,
+  "category_id" text,
+  "user_id" text,
+  "status" text,
+  "tags" text,
+  "metadata" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."knowledge_entries" TO anon, authenticated;
 GRANT ALL ON csv_data."knowledge_entries" TO service_role;
-ALTER TABLE csv_data."knowledge_entries" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_knowledge_entries" ON csv_data."knowledge_entries" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."knowledge_files" CASCADE;
-CREATE TABLE csv_data."knowledge_files" ("id" TEXT, "entry_id" TEXT, "file_name" TEXT, "file_type" TEXT, "file_size" TEXT, "storage_path" TEXT, "processing_status" TEXT, "created_at" TEXT, "title" TEXT, "category_id" TEXT, "processing_error" TEXT, "chunk_count" TEXT, "processed_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."knowledge_files" TO authenticated;
-GRANT SELECT ON csv_data."knowledge_files" TO anon;
+CREATE TABLE csv_data."knowledge_files" (
+  "id" text,
+  "entry_id" text,
+  "file_name" text,
+  "file_type" text,
+  "file_size" text,
+  "storage_path" text,
+  "processing_status" text,
+  "created_at" text,
+  "title" text,
+  "category_id" text,
+  "processing_error" text,
+  "chunk_count" text,
+  "processed_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."knowledge_files" TO anon, authenticated;
 GRANT ALL ON csv_data."knowledge_files" TO service_role;
-ALTER TABLE csv_data."knowledge_files" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_knowledge_files" ON csv_data."knowledge_files" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."knowledge_sources" CASCADE;
-CREATE TABLE csv_data."knowledge_sources" ("id" TEXT, "name" TEXT, "source_type" TEXT, "config" TEXT, "is_active" TEXT, "last_sync_at" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."knowledge_sources" TO authenticated;
-GRANT SELECT ON csv_data."knowledge_sources" TO anon;
+CREATE TABLE csv_data."knowledge_sources" (
+  "id" text,
+  "name" text,
+  "source_type" text,
+  "config" text,
+  "is_active" text,
+  "last_sync_at" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."knowledge_sources" TO anon, authenticated;
 GRANT ALL ON csv_data."knowledge_sources" TO service_role;
-ALTER TABLE csv_data."knowledge_sources" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_knowledge_sources" ON csv_data."knowledge_sources" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."mcp_servers" CASCADE;
-CREATE TABLE csv_data."mcp_servers" ("id" TEXT, "name" TEXT, "url" TEXT, "api_key" TEXT, "description" TEXT, "is_active" TEXT, "config" TEXT, "created_by" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."mcp_servers" TO authenticated;
-GRANT SELECT ON csv_data."mcp_servers" TO anon;
+CREATE TABLE csv_data."mcp_servers" (
+  "id" text,
+  "name" text,
+  "url" text,
+  "api_key" text,
+  "description" text,
+  "is_active" text,
+  "config" text,
+  "created_by" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."mcp_servers" TO anon, authenticated;
 GRANT ALL ON csv_data."mcp_servers" TO service_role;
-ALTER TABLE csv_data."mcp_servers" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_mcp_servers" ON csv_data."mcp_servers" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_action_items" CASCADE;
-CREATE TABLE csv_data."meeting_action_items" ("id" TEXT, "meeting_id" TEXT, "title" TEXT, "description" TEXT, "assignee_id" TEXT, "status" TEXT, "due_date" TEXT, "priority" TEXT, "created_at" TEXT, "updated_at" TEXT, "text" TEXT, "assignee_email" TEXT, "task_id" TEXT, "extraction_confidence" TEXT, "extracted_from_transcript" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_action_items" TO authenticated;
-GRANT SELECT ON csv_data."meeting_action_items" TO anon;
+CREATE TABLE csv_data."meeting_action_items" (
+  "id" text,
+  "meeting_id" text,
+  "title" text,
+  "description" text,
+  "assignee_id" text,
+  "status" text,
+  "due_date" text,
+  "priority" text,
+  "created_at" text,
+  "updated_at" text,
+  "text" text,
+  "assignee_email" text,
+  "task_id" text,
+  "extraction_confidence" text,
+  "extracted_from_transcript" text
+);
+GRANT SELECT ON csv_data."meeting_action_items" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_action_items" TO service_role;
-ALTER TABLE csv_data."meeting_action_items" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_action_items" ON csv_data."meeting_action_items" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_agenda_items" CASCADE;
-CREATE TABLE csv_data."meeting_agenda_items" ("id" TEXT, "meeting_id" TEXT, "title" TEXT, "description" TEXT, "duration_minutes" TEXT, "sort_order" TEXT, "presenter_id" TEXT, "status" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_agenda_items" TO authenticated;
-GRANT SELECT ON csv_data."meeting_agenda_items" TO anon;
+CREATE TABLE csv_data."meeting_agenda_items" (
+  "id" text,
+  "meeting_id" text,
+  "title" text,
+  "description" text,
+  "duration_minutes" text,
+  "sort_order" text,
+  "presenter_id" text,
+  "status" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."meeting_agenda_items" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_agenda_items" TO service_role;
-ALTER TABLE csv_data."meeting_agenda_items" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_agenda_items" ON csv_data."meeting_agenda_items" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_attendees" CASCADE;
-CREATE TABLE csv_data."meeting_attendees" ("id" TEXT, "meeting_id" TEXT, "user_id" TEXT, "email" TEXT, "name" TEXT, "attended" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_attendees" TO authenticated;
-GRANT SELECT ON csv_data."meeting_attendees" TO anon;
+CREATE TABLE csv_data."meeting_attendees" (
+  "id" text,
+  "meeting_id" text,
+  "user_id" text,
+  "email" text,
+  "name" text,
+  "attended" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."meeting_attendees" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_attendees" TO service_role;
-ALTER TABLE csv_data."meeting_attendees" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_attendees" ON csv_data."meeting_attendees" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_files" CASCADE;
-CREATE TABLE csv_data."meeting_files" ("id" TEXT, "meeting_id" TEXT, "file_name" TEXT, "file_type" TEXT, "file_size" TEXT, "storage_path" TEXT, "source" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_files" TO authenticated;
-GRANT SELECT ON csv_data."meeting_files" TO anon;
+CREATE TABLE csv_data."meeting_files" (
+  "id" text,
+  "meeting_id" text,
+  "file_name" text,
+  "file_type" text,
+  "file_size" text,
+  "storage_path" text,
+  "source" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."meeting_files" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_files" TO service_role;
-ALTER TABLE csv_data."meeting_files" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_files" ON csv_data."meeting_files" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_issues" CASCADE;
-CREATE TABLE csv_data."meeting_issues" ("id" TEXT, "meeting_id" TEXT, "title" TEXT, "description" TEXT, "severity" TEXT, "status" TEXT, "assigned_to" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_issues" TO authenticated;
-GRANT SELECT ON csv_data."meeting_issues" TO anon;
+CREATE TABLE csv_data."meeting_issues" (
+  "id" text,
+  "meeting_id" text,
+  "title" text,
+  "description" text,
+  "severity" text,
+  "status" text,
+  "assigned_to" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."meeting_issues" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_issues" TO service_role;
-ALTER TABLE csv_data."meeting_issues" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_issues" ON csv_data."meeting_issues" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_participants" CASCADE;
-CREATE TABLE csv_data."meeting_participants" ("id" TEXT, "meeting_id" TEXT, "user_id" TEXT, "email" TEXT, "name" TEXT, "role" TEXT, "rsvp_status" TEXT, "created_at" TEXT, "attendance_status" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_participants" TO authenticated;
-GRANT SELECT ON csv_data."meeting_participants" TO anon;
+CREATE TABLE csv_data."meeting_participants" (
+  "id" text,
+  "meeting_id" text,
+  "user_id" text,
+  "email" text,
+  "name" text,
+  "role" text,
+  "rsvp_status" text,
+  "created_at" text,
+  "attendance_status" text
+);
+GRANT SELECT ON csv_data."meeting_participants" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_participants" TO service_role;
-ALTER TABLE csv_data."meeting_participants" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_participants" ON csv_data."meeting_participants" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_rules" CASCADE;
-CREATE TABLE csv_data."meeting_rules" ("id" TEXT, "name" TEXT, "description" TEXT, "rule_type" TEXT, "conditions" TEXT, "actions" TEXT, "is_active" TEXT, "created_by" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_rules" TO authenticated;
-GRANT SELECT ON csv_data."meeting_rules" TO anon;
+CREATE TABLE csv_data."meeting_rules" (
+  "id" text,
+  "name" text,
+  "description" text,
+  "rule_type" text,
+  "conditions" text,
+  "actions" text,
+  "is_active" text,
+  "created_by" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."meeting_rules" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_rules" TO service_role;
-ALTER TABLE csv_data."meeting_rules" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_rules" ON csv_data."meeting_rules" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_series" CASCADE;
-CREATE TABLE csv_data."meeting_series" ("id" TEXT, "title" TEXT, "description" TEXT, "recurrence_rule" TEXT, "organizer_id" TEXT, "is_active" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_series" TO authenticated;
-GRANT SELECT ON csv_data."meeting_series" TO anon;
+CREATE TABLE csv_data."meeting_series" (
+  "id" text,
+  "title" text,
+  "description" text,
+  "recurrence_rule" text,
+  "organizer_id" text,
+  "is_active" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."meeting_series" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_series" TO service_role;
-ALTER TABLE csv_data."meeting_series" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_series" ON csv_data."meeting_series" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_summary_notes" CASCADE;
-CREATE TABLE csv_data."meeting_summary_notes" ("id" TEXT, "meeting_id" TEXT, "content" TEXT, "note_type" TEXT, "created_by" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_summary_notes" TO authenticated;
-GRANT SELECT ON csv_data."meeting_summary_notes" TO anon;
+CREATE TABLE csv_data."meeting_summary_notes" (
+  "id" text,
+  "meeting_id" text,
+  "content" text,
+  "note_type" text,
+  "created_by" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."meeting_summary_notes" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_summary_notes" TO service_role;
-ALTER TABLE csv_data."meeting_summary_notes" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_summary_notes" ON csv_data."meeting_summary_notes" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_takeaways" CASCADE;
-CREATE TABLE csv_data."meeting_takeaways" ("id" TEXT, "meeting_id" TEXT, "content" TEXT, "type" TEXT, "assignee_id" TEXT, "status" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_takeaways" TO authenticated;
-GRANT SELECT ON csv_data."meeting_takeaways" TO anon;
+CREATE TABLE csv_data."meeting_takeaways" (
+  "id" text,
+  "meeting_id" text,
+  "content" text,
+  "type" text,
+  "assignee_id" text,
+  "status" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."meeting_takeaways" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_takeaways" TO service_role;
-ALTER TABLE csv_data."meeting_takeaways" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_takeaways" ON csv_data."meeting_takeaways" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_templates" CASCADE;
-CREATE TABLE csv_data."meeting_templates" ("id" TEXT, "name" TEXT, "description" TEXT, "default_duration" TEXT, "agenda_template" TEXT, "created_by" TEXT, "is_active" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_templates" TO authenticated;
-GRANT SELECT ON csv_data."meeting_templates" TO anon;
+CREATE TABLE csv_data."meeting_templates" (
+  "id" text,
+  "name" text,
+  "description" text,
+  "default_duration" text,
+  "agenda_template" text,
+  "created_by" text,
+  "is_active" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."meeting_templates" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_templates" TO service_role;
-ALTER TABLE csv_data."meeting_templates" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_templates" ON csv_data."meeting_templates" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meeting_transcripts" CASCADE;
-CREATE TABLE csv_data."meeting_transcripts" ("id" TEXT, "meeting_id" TEXT, "content" TEXT, "summary" TEXT, "source" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meeting_transcripts" TO authenticated;
-GRANT SELECT ON csv_data."meeting_transcripts" TO anon;
+CREATE TABLE csv_data."meeting_transcripts" (
+  "id" text,
+  "meeting_id" text,
+  "content" text,
+  "summary" text,
+  "source" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."meeting_transcripts" TO anon, authenticated;
 GRANT ALL ON csv_data."meeting_transcripts" TO service_role;
-ALTER TABLE csv_data."meeting_transcripts" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meeting_transcripts" ON csv_data."meeting_transcripts" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."meetings" CASCADE;
-CREATE TABLE csv_data."meetings" ("id" TEXT, "title" TEXT, "description" TEXT, "slug" TEXT, "scheduled_at" TEXT, "duration_minutes" TEXT, "status" TEXT, "meeting_type" TEXT, "provider" TEXT, "location" TEXT, "join_url" TEXT, "host_url" TEXT, "external_id" TEXT, "external_meeting_id" TEXT, "external_uuid" TEXT, "zoom_meeting_id" TEXT, "zoom_join_url" TEXT, "zoom_start_url" TEXT, "zoom_uuid" TEXT, "zoom_id" TEXT, "client_id" TEXT, "organizer_id" TEXT, "project_id" TEXT, "series_id" TEXT, "is_recurring" TEXT, "metadata" TEXT, "created_at" TEXT, "updated_at" TEXT, "category" TEXT, "tags" TEXT, "sentiment_score" TEXT, "energy_level" TEXT, "project_name" TEXT, "transcript_status" TEXT, "transcript_error" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."meetings" TO authenticated;
-GRANT SELECT ON csv_data."meetings" TO anon;
+CREATE TABLE csv_data."meetings" (
+  "id" text,
+  "title" text,
+  "description" text,
+  "slug" text,
+  "scheduled_at" text,
+  "duration_minutes" text,
+  "status" text,
+  "meeting_type" text,
+  "provider" text,
+  "location" text,
+  "join_url" text,
+  "host_url" text,
+  "external_id" text,
+  "external_meeting_id" text,
+  "external_uuid" text,
+  "zoom_meeting_id" text,
+  "zoom_join_url" text,
+  "zoom_start_url" text,
+  "zoom_uuid" text,
+  "zoom_id" text,
+  "client_id" text,
+  "organizer_id" text,
+  "project_id" text,
+  "series_id" text,
+  "is_recurring" text,
+  "metadata" text,
+  "created_at" text,
+  "updated_at" text,
+  "category" text,
+  "tags" text,
+  "sentiment_score" text,
+  "energy_level" text,
+  "project_name" text,
+  "transcript_status" text,
+  "transcript_error" text
+);
+GRANT SELECT ON csv_data."meetings" TO anon, authenticated;
 GRANT ALL ON csv_data."meetings" TO service_role;
-ALTER TABLE csv_data."meetings" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_meetings" ON csv_data."meetings" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_campaigns" CASCADE;
-CREATE TABLE csv_data."nonprofit_campaigns" ("id" TEXT, "created_by" TEXT, "name" TEXT, "description" TEXT, "goal" TEXT, "raised" TEXT, "donor_count" TEXT, "start_date" TEXT, "end_date" TEXT, "is_active" TEXT, "fund_designation" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_campaigns" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_campaigns" TO anon;
+CREATE TABLE csv_data."nonprofit_campaigns" (
+  "id" uuid,
+  "created_by" uuid,
+  "name" text,
+  "description" text,
+  "goal" numeric,
+  "raised" numeric,
+  "donor_count" bigint,
+  "start_date" date,
+  "end_date" date,
+  "is_active" boolean,
+  "fund_designation" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_campaigns" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_campaigns" TO service_role;
-ALTER TABLE csv_data."nonprofit_campaigns" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_campaigns" ON csv_data."nonprofit_campaigns" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_donations" CASCADE;
-CREATE TABLE csv_data."nonprofit_donations" ("id" TEXT, "campaign_id" TEXT, "donor_name" TEXT, "donor_email" TEXT, "amount" TEXT, "frequency" TEXT, "fund_designation" TEXT, "is_anonymous" TEXT, "payment_method" TEXT, "notes" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_donations" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_donations" TO anon;
+CREATE TABLE csv_data."nonprofit_donations" (
+  "id" uuid,
+  "campaign_id" uuid,
+  "donor_name" text,
+  "donor_email" text,
+  "amount" bigint,
+  "frequency" text,
+  "fund_designation" text,
+  "is_anonymous" boolean,
+  "payment_method" text,
+  "notes" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_donations" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_donations" TO service_role;
-ALTER TABLE csv_data."nonprofit_donations" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_donations" ON csv_data."nonprofit_donations" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_event_agenda_items" CASCADE;
-CREATE TABLE csv_data."nonprofit_event_agenda_items" ("id" TEXT, "event_id" TEXT, "time" TEXT, "title" TEXT, "speaker_name" TEXT, "display_order" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_event_agenda_items" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_event_agenda_items" TO anon;
+CREATE TABLE csv_data."nonprofit_event_agenda_items" (
+  "id" uuid,
+  "event_id" uuid,
+  "time" text,
+  "title" text,
+  "speaker_name" text,
+  "display_order" bigint,
+  "created_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_event_agenda_items" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_event_agenda_items" TO service_role;
-ALTER TABLE csv_data."nonprofit_event_agenda_items" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_event_agenda_items" ON csv_data."nonprofit_event_agenda_items" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_event_registrants" CASCADE;
-CREATE TABLE csv_data."nonprofit_event_registrants" ("id" TEXT, "event_id" TEXT, "name" TEXT, "email" TEXT, "ticket_tier" TEXT, "checked_in" TEXT, "registered_at" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_event_registrants" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_event_registrants" TO anon;
+CREATE TABLE csv_data."nonprofit_event_registrants" (
+  "id" uuid,
+  "event_id" uuid,
+  "name" text,
+  "email" text,
+  "ticket_tier" text,
+  "checked_in" boolean,
+  "registered_at" timestamptz,
+  "created_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_event_registrants" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_event_registrants" TO service_role;
-ALTER TABLE csv_data."nonprofit_event_registrants" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_event_registrants" ON csv_data."nonprofit_event_registrants" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_event_speakers" CASCADE;
-CREATE TABLE csv_data."nonprofit_event_speakers" ("id" TEXT, "event_id" TEXT, "name" TEXT, "title" TEXT, "bio" TEXT, "display_order" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_event_speakers" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_event_speakers" TO anon;
+CREATE TABLE csv_data."nonprofit_event_speakers" (
+  "id" uuid,
+  "event_id" uuid,
+  "name" text,
+  "title" text,
+  "bio" text,
+  "display_order" bigint,
+  "created_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_event_speakers" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_event_speakers" TO service_role;
-ALTER TABLE csv_data."nonprofit_event_speakers" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_event_speakers" ON csv_data."nonprofit_event_speakers" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_event_ticket_types" CASCADE;
-CREATE TABLE csv_data."nonprofit_event_ticket_types" ("id" TEXT, "event_id" TEXT, "tier" TEXT, "price" TEXT, "capacity" TEXT, "sold" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_event_ticket_types" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_event_ticket_types" TO anon;
+CREATE TABLE csv_data."nonprofit_event_ticket_types" (
+  "id" uuid,
+  "event_id" uuid,
+  "tier" text,
+  "price" bigint,
+  "capacity" bigint,
+  "sold" bigint,
+  "created_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_event_ticket_types" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_event_ticket_types" TO service_role;
-ALTER TABLE csv_data."nonprofit_event_ticket_types" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_event_ticket_types" ON csv_data."nonprofit_event_ticket_types" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_events" CASCADE;
-CREATE TABLE csv_data."nonprofit_events" ("id" TEXT, "created_by" TEXT, "title" TEXT, "status" TEXT, "date" TEXT, "location" TEXT, "description" TEXT, "capacity" TEXT, "fund_raised" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_events" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_events" TO anon;
+CREATE TABLE csv_data."nonprofit_events" (
+  "id" uuid,
+  "created_by" uuid,
+  "title" text,
+  "status" text,
+  "date" date,
+  "location" text,
+  "description" text,
+  "capacity" bigint,
+  "fund_raised" numeric,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_events" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_events" TO service_role;
-ALTER TABLE csv_data."nonprofit_events" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_events" ON csv_data."nonprofit_events" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_members" CASCADE;
-CREATE TABLE csv_data."nonprofit_members" ("id" TEXT, "created_by" TEXT, "name" TEXT, "email" TEXT, "phone" TEXT, "tier" TEXT, "status" TEXT, "join_date" TEXT, "renewal_date" TEXT, "employer" TEXT, "interests" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_members" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_members" TO anon;
+CREATE TABLE csv_data."nonprofit_members" (
+  "id" uuid,
+  "created_by" uuid,
+  "name" text,
+  "email" text,
+  "phone" text,
+  "tier" text,
+  "status" text,
+  "join_date" date,
+  "renewal_date" date,
+  "employer" text,
+  "interests" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_members" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_members" TO service_role;
-ALTER TABLE csv_data."nonprofit_members" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_members" ON csv_data."nonprofit_members" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_programs" CASCADE;
-CREATE TABLE csv_data."nonprofit_programs" ("id" TEXT, "created_by" TEXT, "name" TEXT, "description" TEXT, "start_date" TEXT, "status" TEXT, "lead_staff" TEXT, "beneficiary_count" TEXT, "volunteer_hours" TEXT, "budget_used" TEXT, "budget_total" TEXT, "outcomes_achieved" TEXT, "outcomes_target" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_programs" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_programs" TO anon;
+CREATE TABLE csv_data."nonprofit_programs" (
+  "id" uuid,
+  "created_by" uuid,
+  "name" text,
+  "description" text,
+  "start_date" date,
+  "status" text,
+  "lead_staff" text,
+  "beneficiary_count" bigint,
+  "volunteer_hours" bigint,
+  "budget_used" bigint,
+  "budget_total" bigint,
+  "outcomes_achieved" bigint,
+  "outcomes_target" bigint,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_programs" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_programs" TO service_role;
-ALTER TABLE csv_data."nonprofit_programs" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_programs" ON csv_data."nonprofit_programs" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_role_permissions" CASCADE;
-CREATE TABLE csv_data."nonprofit_role_permissions" ("id" TEXT, "role" TEXT, "resource_type" TEXT, "resource_key" TEXT, "granted" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_role_permissions" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_role_permissions" TO anon;
+CREATE TABLE csv_data."nonprofit_role_permissions" (
+  "id" uuid,
+  "role" text,
+  "resource_type" text,
+  "resource_key" text,
+  "granted" boolean,
+  "created_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_role_permissions" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_role_permissions" TO service_role;
-ALTER TABLE csv_data."nonprofit_role_permissions" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_role_permissions" ON csv_data."nonprofit_role_permissions" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_volunteer_shifts" CASCADE;
-CREATE TABLE csv_data."nonprofit_volunteer_shifts" ("id" TEXT, "volunteer_id" TEXT, "event_name" TEXT, "date" TEXT, "hours" TEXT, "status" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_volunteer_shifts" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_volunteer_shifts" TO anon;
+CREATE TABLE csv_data."nonprofit_volunteer_shifts" (
+  "id" uuid,
+  "volunteer_id" uuid,
+  "event_name" text,
+  "date" date,
+  "hours" numeric,
+  "status" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_volunteer_shifts" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_volunteer_shifts" TO service_role;
-ALTER TABLE csv_data."nonprofit_volunteer_shifts" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_volunteer_shifts" ON csv_data."nonprofit_volunteer_shifts" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."nonprofit_volunteers" CASCADE;
-CREATE TABLE csv_data."nonprofit_volunteers" ("id" TEXT, "created_by" TEXT, "name" TEXT, "email" TEXT, "phone" TEXT, "skills" TEXT, "availability" TEXT, "total_hours" TEXT, "joined_date" TEXT, "is_also_donor" TEXT, "donor_total_giving" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."nonprofit_volunteers" TO authenticated;
-GRANT SELECT ON csv_data."nonprofit_volunteers" TO anon;
+CREATE TABLE csv_data."nonprofit_volunteers" (
+  "id" uuid,
+  "created_by" uuid,
+  "name" text,
+  "email" text,
+  "phone" text,
+  "skills" text,
+  "availability" text,
+  "total_hours" numeric,
+  "joined_date" date,
+  "is_also_donor" boolean,
+  "donor_total_giving" numeric,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."nonprofit_volunteers" TO anon, authenticated;
 GRANT ALL ON csv_data."nonprofit_volunteers" TO service_role;
-ALTER TABLE csv_data."nonprofit_volunteers" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_nonprofit_volunteers" ON csv_data."nonprofit_volunteers" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."notifications" CASCADE;
-CREATE TABLE csv_data."notifications" ("id" TEXT, "user_id" TEXT, "title" TEXT, "message" TEXT, "type" TEXT, "is_read" TEXT, "read_at" TEXT, "link" TEXT, "metadata" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."notifications" TO authenticated;
-GRANT SELECT ON csv_data."notifications" TO anon;
+CREATE TABLE csv_data."notifications" (
+  "id" text,
+  "user_id" text,
+  "title" text,
+  "message" text,
+  "type" text,
+  "is_read" text,
+  "read_at" text,
+  "link" text,
+  "metadata" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."notifications" TO anon, authenticated;
 GRANT ALL ON csv_data."notifications" TO service_role;
-ALTER TABLE csv_data."notifications" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_notifications" ON csv_data."notifications" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."organization_integrations" CASCADE;
-CREATE TABLE csv_data."organization_integrations" ("id" TEXT, "user_id" TEXT, "provider_id" TEXT, "connection_status" TEXT, "config" TEXT, "credentials" TEXT, "last_sync_at" TEXT, "created_at" TEXT, "updated_at" TEXT, "enabled" TEXT, "connection_message" TEXT, "last_tested_at" TEXT, "oauth_tokens" TEXT, "is_primary" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."organization_integrations" TO authenticated;
-GRANT SELECT ON csv_data."organization_integrations" TO anon;
+CREATE TABLE csv_data."organization_integrations" (
+  "id" text,
+  "user_id" text,
+  "provider_id" text,
+  "connection_status" text,
+  "config" text,
+  "credentials" text,
+  "last_sync_at" text,
+  "created_at" text,
+  "updated_at" text,
+  "enabled" text,
+  "connection_message" text,
+  "last_tested_at" text,
+  "oauth_tokens" text,
+  "is_primary" text
+);
+GRANT SELECT ON csv_data."organization_integrations" TO anon, authenticated;
 GRANT ALL ON csv_data."organization_integrations" TO service_role;
-ALTER TABLE csv_data."organization_integrations" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_organization_integrations" ON csv_data."organization_integrations" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."pod_employees" CASCADE;
-CREATE TABLE csv_data."pod_employees" ("id" TEXT, "pod_id" TEXT, "employee_id" TEXT, "user_id" TEXT, "has_login" TEXT, "is_active" TEXT, "synced_from_hr" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."pod_employees" TO authenticated;
-GRANT SELECT ON csv_data."pod_employees" TO anon;
+CREATE TABLE csv_data."pod_employees" (
+  "id" text,
+  "pod_id" text,
+  "employee_id" text,
+  "user_id" text,
+  "has_login" text,
+  "is_active" text,
+  "synced_from_hr" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."pod_employees" TO anon, authenticated;
 GRANT ALL ON csv_data."pod_employees" TO service_role;
-ALTER TABLE csv_data."pod_employees" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_pod_employees" ON csv_data."pod_employees" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."pod_members" CASCADE;
-CREATE TABLE csv_data."pod_members" ("id" TEXT, "pod_id" TEXT, "user_id" TEXT, "role" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."pod_members" TO authenticated;
-GRANT SELECT ON csv_data."pod_members" TO anon;
+CREATE TABLE csv_data."pod_members" (
+  "id" text,
+  "pod_id" text,
+  "user_id" text,
+  "role" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."pod_members" TO anon, authenticated;
 GRANT ALL ON csv_data."pod_members" TO service_role;
-ALTER TABLE csv_data."pod_members" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_pod_members" ON csv_data."pod_members" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."pod_permissions" CASCADE;
-CREATE TABLE csv_data."pod_permissions" ("id" TEXT, "pod_id" TEXT, "module_id" TEXT, "has_access" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."pod_permissions" TO authenticated;
-GRANT SELECT ON csv_data."pod_permissions" TO anon;
+CREATE TABLE csv_data."pod_permissions" (
+  "id" text,
+  "pod_id" text,
+  "module_id" text,
+  "has_access" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."pod_permissions" TO anon, authenticated;
 GRANT ALL ON csv_data."pod_permissions" TO service_role;
-ALTER TABLE csv_data."pod_permissions" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_pod_permissions" ON csv_data."pod_permissions" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."pods" CASCADE;
-CREATE TABLE csv_data."pods" ("id" TEXT, "name" TEXT, "description" TEXT, "color" TEXT, "department_id" TEXT, "is_active" TEXT, "created_at" TEXT, "updated_at" TEXT, "show_in_resource_projection" TEXT, "created_by" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."pods" TO authenticated;
-GRANT SELECT ON csv_data."pods" TO anon;
+CREATE TABLE csv_data."pods" (
+  "id" text,
+  "name" text,
+  "description" text,
+  "color" text,
+  "department_id" text,
+  "is_active" text,
+  "created_at" text,
+  "updated_at" text,
+  "show_in_resource_projection" text,
+  "created_by" text
+);
+GRANT SELECT ON csv_data."pods" TO anon, authenticated;
 GRANT ALL ON csv_data."pods" TO service_role;
-ALTER TABLE csv_data."pods" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_pods" ON csv_data."pods" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."processing_queue_history" CASCADE;
-CREATE TABLE csv_data."processing_queue_history" ("id" TEXT, "queue_type" TEXT, "status" TEXT, "input" TEXT, "output" TEXT, "error" TEXT, "started_at" TEXT, "completed_at" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."processing_queue_history" TO authenticated;
-GRANT SELECT ON csv_data."processing_queue_history" TO anon;
+CREATE TABLE csv_data."processing_queue_history" (
+  "id" text,
+  "queue_type" text,
+  "status" text,
+  "input" text,
+  "output" text,
+  "error" text,
+  "started_at" text,
+  "completed_at" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."processing_queue_history" TO anon, authenticated;
 GRANT ALL ON csv_data."processing_queue_history" TO service_role;
-ALTER TABLE csv_data."processing_queue_history" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_processing_queue_history" ON csv_data."processing_queue_history" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."profiles" CASCADE;
-CREATE TABLE csv_data."profiles" ("id" TEXT, "full_name" TEXT, "email" TEXT, "avatar_url" TEXT, "role" TEXT, "created_at" TEXT, "updated_at" TEXT, "metadata" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."profiles" TO authenticated;
-GRANT SELECT ON csv_data."profiles" TO anon;
+CREATE TABLE csv_data."profiles" (
+  "id" uuid,
+  "full_name" text,
+  "email" text,
+  "avatar_url" text,
+  "role" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz,
+  "metadata" jsonb
+);
+GRANT SELECT ON csv_data."profiles" TO anon, authenticated;
 GRANT ALL ON csv_data."profiles" TO service_role;
-ALTER TABLE csv_data."profiles" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_profiles" ON csv_data."profiles" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_backups" CASCADE;
-CREATE TABLE csv_data."project_backups" ("id" TEXT, "project_id" TEXT, "backup_data" TEXT, "created_by" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_backups" TO authenticated;
-GRANT SELECT ON csv_data."project_backups" TO anon;
+CREATE TABLE csv_data."project_backups" (
+  "id" text,
+  "project_id" text,
+  "backup_data" text,
+  "created_by" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."project_backups" TO anon, authenticated;
 GRANT ALL ON csv_data."project_backups" TO service_role;
-ALTER TABLE csv_data."project_backups" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_backups" ON csv_data."project_backups" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_billing" CASCADE;
-CREATE TABLE csv_data."project_billing" ("id" TEXT, "project_id" TEXT, "billing_type" TEXT, "rate" TEXT, "total_budget" TEXT, "invoiced_amount" TEXT, "currency" TEXT, "payment_terms" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_billing" TO authenticated;
-GRANT SELECT ON csv_data."project_billing" TO anon;
+CREATE TABLE csv_data."project_billing" (
+  "id" text,
+  "project_id" text,
+  "billing_type" text,
+  "rate" text,
+  "total_budget" text,
+  "invoiced_amount" text,
+  "currency" text,
+  "payment_terms" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."project_billing" TO anon, authenticated;
 GRANT ALL ON csv_data."project_billing" TO service_role;
-ALTER TABLE csv_data."project_billing" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_billing" ON csv_data."project_billing" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_checklists" CASCADE;
-CREATE TABLE csv_data."project_checklists" ("id" TEXT, "project_id" TEXT, "title" TEXT, "is_completed" TEXT, "sort_order" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_checklists" TO authenticated;
-GRANT SELECT ON csv_data."project_checklists" TO anon;
+CREATE TABLE csv_data."project_checklists" (
+  "id" text,
+  "project_id" text,
+  "title" text,
+  "is_completed" text,
+  "sort_order" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."project_checklists" TO anon, authenticated;
 GRANT ALL ON csv_data."project_checklists" TO service_role;
-ALTER TABLE csv_data."project_checklists" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_checklists" ON csv_data."project_checklists" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_client_access" CASCADE;
-CREATE TABLE csv_data."project_client_access" ("id" TEXT, "project_id" TEXT, "client_id" TEXT, "access_level" TEXT, "granted_by" TEXT, "created_at" TEXT, "client_email" TEXT, "client_name" TEXT, "access_token" TEXT, "is_active" TEXT, "expires_at" TEXT, "last_accessed_at" TEXT, "updated_at" TEXT, "portal_sections" TEXT, "can_comment" TEXT, "can_upload" TEXT, "can_approve" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_client_access" TO authenticated;
-GRANT SELECT ON csv_data."project_client_access" TO anon;
+CREATE TABLE csv_data."project_client_access" (
+  "id" text,
+  "project_id" text,
+  "client_id" text,
+  "access_level" text,
+  "granted_by" text,
+  "created_at" text,
+  "client_email" text,
+  "client_name" text,
+  "access_token" text,
+  "is_active" text,
+  "expires_at" text,
+  "last_accessed_at" text,
+  "updated_at" text,
+  "portal_sections" text,
+  "can_comment" text,
+  "can_upload" text,
+  "can_approve" text
+);
+GRANT SELECT ON csv_data."project_client_access" TO anon, authenticated;
 GRANT ALL ON csv_data."project_client_access" TO service_role;
-ALTER TABLE csv_data."project_client_access" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_client_access" ON csv_data."project_client_access" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_comments" CASCADE;
-CREATE TABLE csv_data."project_comments" ("id" TEXT, "project_id" TEXT, "user_id" TEXT, "content" TEXT, "parent_id" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_comments" TO authenticated;
-GRANT SELECT ON csv_data."project_comments" TO anon;
+CREATE TABLE csv_data."project_comments" (
+  "id" text,
+  "project_id" text,
+  "user_id" text,
+  "content" text,
+  "parent_id" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."project_comments" TO anon, authenticated;
 GRANT ALL ON csv_data."project_comments" TO service_role;
-ALTER TABLE csv_data."project_comments" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_comments" ON csv_data."project_comments" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_concerns" CASCADE;
-CREATE TABLE csv_data."project_concerns" ("id" TEXT, "project_id" TEXT, "title" TEXT, "description" TEXT, "severity" TEXT, "status" TEXT, "raised_by" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_concerns" TO authenticated;
-GRANT SELECT ON csv_data."project_concerns" TO anon;
+CREATE TABLE csv_data."project_concerns" (
+  "id" text,
+  "project_id" text,
+  "title" text,
+  "description" text,
+  "severity" text,
+  "status" text,
+  "raised_by" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."project_concerns" TO anon, authenticated;
 GRANT ALL ON csv_data."project_concerns" TO service_role;
-ALTER TABLE csv_data."project_concerns" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_concerns" ON csv_data."project_concerns" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_files" CASCADE;
-CREATE TABLE csv_data."project_files" ("id" TEXT, "project_id" TEXT, "file_name" TEXT, "file_type" TEXT, "file_size" TEXT, "storage_path" TEXT, "source" TEXT, "uploaded_by" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_files" TO authenticated;
-GRANT SELECT ON csv_data."project_files" TO anon;
+CREATE TABLE csv_data."project_files" (
+  "id" text,
+  "project_id" text,
+  "file_name" text,
+  "file_type" text,
+  "file_size" text,
+  "storage_path" text,
+  "source" text,
+  "uploaded_by" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."project_files" TO anon, authenticated;
 GRANT ALL ON csv_data."project_files" TO service_role;
-ALTER TABLE csv_data."project_files" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_files" ON csv_data."project_files" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_invoices" CASCADE;
-CREATE TABLE csv_data."project_invoices" ("id" TEXT, "project_id" TEXT, "invoice_number" TEXT, "amount" TEXT, "status" TEXT, "due_date" TEXT, "paid_at" TEXT, "notes" TEXT, "created_by" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_invoices" TO authenticated;
-GRANT SELECT ON csv_data."project_invoices" TO anon;
+CREATE TABLE csv_data."project_invoices" (
+  "id" text,
+  "project_id" text,
+  "invoice_number" text,
+  "amount" text,
+  "status" text,
+  "due_date" text,
+  "paid_at" text,
+  "notes" text,
+  "created_by" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."project_invoices" TO anon, authenticated;
 GRANT ALL ON csv_data."project_invoices" TO service_role;
-ALTER TABLE csv_data."project_invoices" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_invoices" ON csv_data."project_invoices" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_members" CASCADE;
-CREATE TABLE csv_data."project_members" ("id" TEXT, "project_id" TEXT, "user_id" TEXT, "role" TEXT, "joined_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_members" TO authenticated;
-GRANT SELECT ON csv_data."project_members" TO anon;
+CREATE TABLE csv_data."project_members" (
+  "id" text,
+  "project_id" text,
+  "user_id" text,
+  "role" text,
+  "joined_at" text
+);
+GRANT SELECT ON csv_data."project_members" TO anon, authenticated;
 GRANT ALL ON csv_data."project_members" TO service_role;
-ALTER TABLE csv_data."project_members" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_members" ON csv_data."project_members" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_milestones" CASCADE;
-CREATE TABLE csv_data."project_milestones" ("id" TEXT, "project_id" TEXT, "title" TEXT, "description" TEXT, "due_date" TEXT, "status" TEXT, "completed_at" TEXT, "sort_order" TEXT, "created_by" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_milestones" TO authenticated;
-GRANT SELECT ON csv_data."project_milestones" TO anon;
+CREATE TABLE csv_data."project_milestones" (
+  "id" text,
+  "project_id" text,
+  "title" text,
+  "description" text,
+  "due_date" text,
+  "status" text,
+  "completed_at" text,
+  "sort_order" text,
+  "created_by" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."project_milestones" TO anon, authenticated;
 GRANT ALL ON csv_data."project_milestones" TO service_role;
-ALTER TABLE csv_data."project_milestones" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_milestones" ON csv_data."project_milestones" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_risks" CASCADE;
-CREATE TABLE csv_data."project_risks" ("id" TEXT, "project_id" TEXT, "title" TEXT, "description" TEXT, "severity" TEXT, "status" TEXT, "mitigation" TEXT, "reported_by" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_risks" TO authenticated;
-GRANT SELECT ON csv_data."project_risks" TO anon;
+CREATE TABLE csv_data."project_risks" (
+  "id" text,
+  "project_id" text,
+  "title" text,
+  "description" text,
+  "severity" text,
+  "status" text,
+  "mitigation" text,
+  "reported_by" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."project_risks" TO anon, authenticated;
 GRANT ALL ON csv_data."project_risks" TO service_role;
-ALTER TABLE csv_data."project_risks" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_risks" ON csv_data."project_risks" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."project_statuses" CASCADE;
-CREATE TABLE csv_data."project_statuses" ("id" TEXT, "name" TEXT, "slug" TEXT, "color" TEXT, "sort_order" TEXT, "is_active" TEXT, "is_default" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."project_statuses" TO authenticated;
-GRANT SELECT ON csv_data."project_statuses" TO anon;
+CREATE TABLE csv_data."project_statuses" (
+  "id" uuid,
+  "name" text,
+  "slug" text,
+  "color" text,
+  "sort_order" bigint,
+  "is_active" boolean,
+  "is_default" boolean,
+  "created_at" timestamptz
+);
+GRANT SELECT ON csv_data."project_statuses" TO anon, authenticated;
 GRANT ALL ON csv_data."project_statuses" TO service_role;
-ALTER TABLE csv_data."project_statuses" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_project_statuses" ON csv_data."project_statuses" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."projects" CASCADE;
-CREATE TABLE csv_data."projects" ("id" TEXT, "name" TEXT, "slug" TEXT, "description" TEXT, "status_id" TEXT, "client_id" TEXT, "source_deal_id" TEXT, "owner_id" TEXT, "start_date" TEXT, "end_date" TEXT, "budget" TEXT, "currency" TEXT, "is_archived" TEXT, "external_id" TEXT, "external_provider" TEXT, "metadata" TEXT, "created_by" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."projects" TO authenticated;
-GRANT SELECT ON csv_data."projects" TO anon;
+CREATE TABLE csv_data."projects" (
+  "id" text,
+  "name" text,
+  "slug" text,
+  "description" text,
+  "status_id" text,
+  "client_id" text,
+  "source_deal_id" text,
+  "owner_id" text,
+  "start_date" text,
+  "end_date" text,
+  "budget" text,
+  "currency" text,
+  "is_archived" text,
+  "external_id" text,
+  "external_provider" text,
+  "metadata" text,
+  "created_by" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."projects" TO anon, authenticated;
 GRANT ALL ON csv_data."projects" TO service_role;
-ALTER TABLE csv_data."projects" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_projects" ON csv_data."projects" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."support_tickets" CASCADE;
-CREATE TABLE csv_data."support_tickets" ("id" TEXT, "created_at" TEXT, "updated_at" TEXT, "user_id" TEXT, "user_email" TEXT, "subject" TEXT, "category" TEXT, "description" TEXT, "status" TEXT, "admin_notes" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."support_tickets" TO authenticated;
-GRANT SELECT ON csv_data."support_tickets" TO anon;
+CREATE TABLE csv_data."support_tickets" (
+  "id" text,
+  "created_at" text,
+  "updated_at" text,
+  "user_id" text,
+  "user_email" text,
+  "subject" text,
+  "category" text,
+  "description" text,
+  "status" text,
+  "admin_notes" text
+);
+GRANT SELECT ON csv_data."support_tickets" TO anon, authenticated;
 GRANT ALL ON csv_data."support_tickets" TO service_role;
-ALTER TABLE csv_data."support_tickets" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_support_tickets" ON csv_data."support_tickets" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."system_settings" CASCADE;
-CREATE TABLE csv_data."system_settings" ("id" TEXT, "key" TEXT, "value" TEXT, "description" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."system_settings" TO authenticated;
-GRANT SELECT ON csv_data."system_settings" TO anon;
+CREATE TABLE csv_data."system_settings" (
+  "id" uuid,
+  "key" text,
+  "value" text,
+  "description" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."system_settings" TO anon, authenticated;
 GRANT ALL ON csv_data."system_settings" TO service_role;
-ALTER TABLE csv_data."system_settings" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_system_settings" ON csv_data."system_settings" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."task_attachments" CASCADE;
-CREATE TABLE csv_data."task_attachments" ("id" TEXT, "task_id" TEXT, "file_name" TEXT, "file_path" TEXT, "file_size" TEXT, "file_type" TEXT, "uploaded_by" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."task_attachments" TO authenticated;
-GRANT SELECT ON csv_data."task_attachments" TO anon;
+CREATE TABLE csv_data."task_attachments" (
+  "id" text,
+  "task_id" text,
+  "file_name" text,
+  "file_path" text,
+  "file_size" text,
+  "file_type" text,
+  "uploaded_by" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."task_attachments" TO anon, authenticated;
 GRANT ALL ON csv_data."task_attachments" TO service_role;
-ALTER TABLE csv_data."task_attachments" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_task_attachments" ON csv_data."task_attachments" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."tasks" CASCADE;
-CREATE TABLE csv_data."tasks" ("id" TEXT, "title" TEXT, "description" TEXT, "status" TEXT, "priority" TEXT, "due_date" TEXT, "assigned_to" TEXT, "created_by" TEXT, "client_id" TEXT, "meeting_id" TEXT, "project_id" TEXT, "metadata" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."tasks" TO authenticated;
-GRANT SELECT ON csv_data."tasks" TO anon;
+CREATE TABLE csv_data."tasks" (
+  "id" uuid,
+  "title" text,
+  "description" text,
+  "status" text,
+  "priority" text,
+  "due_date" text,
+  "assigned_to" text,
+  "created_by" uuid,
+  "client_id" text,
+  "meeting_id" text,
+  "project_id" text,
+  "metadata" jsonb,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."tasks" TO anon, authenticated;
 GRANT ALL ON csv_data."tasks" TO service_role;
-ALTER TABLE csv_data."tasks" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_tasks" ON csv_data."tasks" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."unified_documents" CASCADE;
-CREATE TABLE csv_data."unified_documents" ("id" TEXT, "title" TEXT, "content" TEXT, "owner_type" TEXT, "owner_id" TEXT, "source_type" TEXT, "source_id" TEXT, "file_name" TEXT, "file_type" TEXT, "file_size" TEXT, "storage_path" TEXT, "processing_status" TEXT, "metadata" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."unified_documents" TO authenticated;
-GRANT SELECT ON csv_data."unified_documents" TO anon;
+CREATE TABLE csv_data."unified_documents" (
+  "id" text,
+  "title" text,
+  "content" text,
+  "owner_type" text,
+  "owner_id" text,
+  "source_type" text,
+  "source_id" text,
+  "file_name" text,
+  "file_type" text,
+  "file_size" text,
+  "storage_path" text,
+  "processing_status" text,
+  "metadata" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."unified_documents" TO anon, authenticated;
 GRANT ALL ON csv_data."unified_documents" TO service_role;
-ALTER TABLE csv_data."unified_documents" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_unified_documents" ON csv_data."unified_documents" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."user_agent_personalizations" CASCADE;
-CREATE TABLE csv_data."user_agent_personalizations" ("id" TEXT, "user_id" TEXT, "agent_id" TEXT, "is_enabled" TEXT, "additional_prompt" TEXT, "attached_knowledge_files" TEXT, "use_all_knowledge" TEXT, "max_context_files" TEXT, "relevance_threshold" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."user_agent_personalizations" TO authenticated;
-GRANT SELECT ON csv_data."user_agent_personalizations" TO anon;
+CREATE TABLE csv_data."user_agent_personalizations" (
+  "id" text,
+  "user_id" text,
+  "agent_id" text,
+  "is_enabled" text,
+  "additional_prompt" text,
+  "attached_knowledge_files" text,
+  "use_all_knowledge" text,
+  "max_context_files" text,
+  "relevance_threshold" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."user_agent_personalizations" TO anon, authenticated;
 GRANT ALL ON csv_data."user_agent_personalizations" TO service_role;
-ALTER TABLE csv_data."user_agent_personalizations" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_user_agent_personalizations" ON csv_data."user_agent_personalizations" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."user_invites" CASCADE;
-CREATE TABLE csv_data."user_invites" ("id" TEXT, "email" TEXT, "role" TEXT, "agency_role" TEXT, "org_id" TEXT, "invited_by" TEXT, "token" TEXT, "expires_at" TEXT, "used_at" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."user_invites" TO authenticated;
-GRANT SELECT ON csv_data."user_invites" TO anon;
+CREATE TABLE csv_data."user_invites" (
+  "id" text,
+  "email" text,
+  "role" text,
+  "agency_role" text,
+  "org_id" text,
+  "invited_by" text,
+  "token" text,
+  "expires_at" text,
+  "used_at" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."user_invites" TO anon, authenticated;
 GRANT ALL ON csv_data."user_invites" TO service_role;
-ALTER TABLE csv_data."user_invites" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_user_invites" ON csv_data."user_invites" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."user_knowledge_files" CASCADE;
-CREATE TABLE csv_data."user_knowledge_files" ("id" TEXT, "user_id" TEXT, "file_name" TEXT, "file_type" TEXT, "file_size" TEXT, "storage_path" TEXT, "processing_status" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."user_knowledge_files" TO authenticated;
-GRANT SELECT ON csv_data."user_knowledge_files" TO anon;
+CREATE TABLE csv_data."user_knowledge_files" (
+  "id" text,
+  "user_id" text,
+  "file_name" text,
+  "file_type" text,
+  "file_size" text,
+  "storage_path" text,
+  "processing_status" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."user_knowledge_files" TO anon, authenticated;
 GRANT ALL ON csv_data."user_knowledge_files" TO service_role;
-ALTER TABLE csv_data."user_knowledge_files" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_user_knowledge_files" ON csv_data."user_knowledge_files" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."user_knowledge_sources" CASCADE;
-CREATE TABLE csv_data."user_knowledge_sources" ("id" TEXT, "user_id" TEXT, "name" TEXT, "source_type" TEXT, "config" TEXT, "is_active" TEXT, "last_sync_at" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."user_knowledge_sources" TO authenticated;
-GRANT SELECT ON csv_data."user_knowledge_sources" TO anon;
+CREATE TABLE csv_data."user_knowledge_sources" (
+  "id" text,
+  "user_id" text,
+  "name" text,
+  "source_type" text,
+  "config" text,
+  "is_active" text,
+  "last_sync_at" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."user_knowledge_sources" TO anon, authenticated;
 GRANT ALL ON csv_data."user_knowledge_sources" TO service_role;
-ALTER TABLE csv_data."user_knowledge_sources" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_user_knowledge_sources" ON csv_data."user_knowledge_sources" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."user_microsoft_teams" CASCADE;
-CREATE TABLE csv_data."user_microsoft_teams" ("id" TEXT, "user_id" TEXT, "team_id" TEXT, "team_name" TEXT, "is_active" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."user_microsoft_teams" TO authenticated;
-GRANT SELECT ON csv_data."user_microsoft_teams" TO anon;
+CREATE TABLE csv_data."user_microsoft_teams" (
+  "id" text,
+  "user_id" text,
+  "team_id" text,
+  "team_name" text,
+  "is_active" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."user_microsoft_teams" TO anon, authenticated;
 GRANT ALL ON csv_data."user_microsoft_teams" TO service_role;
-ALTER TABLE csv_data."user_microsoft_teams" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_user_microsoft_teams" ON csv_data."user_microsoft_teams" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."user_microsoft_teams_channels" CASCADE;
-CREATE TABLE csv_data."user_microsoft_teams_channels" ("id" TEXT, "user_id" TEXT, "team_id" TEXT, "channel_id" TEXT, "channel_name" TEXT, "is_active" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."user_microsoft_teams_channels" TO authenticated;
-GRANT SELECT ON csv_data."user_microsoft_teams_channels" TO anon;
+CREATE TABLE csv_data."user_microsoft_teams_channels" (
+  "id" text,
+  "user_id" text,
+  "team_id" text,
+  "channel_id" text,
+  "channel_name" text,
+  "is_active" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."user_microsoft_teams_channels" TO anon, authenticated;
 GRANT ALL ON csv_data."user_microsoft_teams_channels" TO service_role;
-ALTER TABLE csv_data."user_microsoft_teams_channels" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_user_microsoft_teams_channels" ON csv_data."user_microsoft_teams_channels" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."user_module_permissions" CASCADE;
-CREATE TABLE csv_data."user_module_permissions" ("id" TEXT, "user_id" TEXT, "module_id" TEXT, "has_access" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."user_module_permissions" TO authenticated;
-GRANT SELECT ON csv_data."user_module_permissions" TO anon;
+CREATE TABLE csv_data."user_module_permissions" (
+  "id" text,
+  "user_id" text,
+  "module_id" text,
+  "has_access" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."user_module_permissions" TO anon, authenticated;
 GRANT ALL ON csv_data."user_module_permissions" TO service_role;
-ALTER TABLE csv_data."user_module_permissions" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_user_module_permissions" ON csv_data."user_module_permissions" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."user_preferences" CASCADE;
-CREATE TABLE csv_data."user_preferences" ("id" TEXT, "user_id" TEXT, "agent_id" TEXT, "preference_key" TEXT, "preference_value" TEXT, "learned_from" TEXT, "confidence_score" TEXT, "evidence_count" TEXT, "times_used" TEXT, "last_used_at" TEXT, "is_active" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."user_preferences" TO authenticated;
-GRANT SELECT ON csv_data."user_preferences" TO anon;
+CREATE TABLE csv_data."user_preferences" (
+  "id" text,
+  "user_id" text,
+  "agent_id" text,
+  "preference_key" text,
+  "preference_value" text,
+  "learned_from" text,
+  "confidence_score" text,
+  "evidence_count" text,
+  "times_used" text,
+  "last_used_at" text,
+  "is_active" text,
+  "created_at" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."user_preferences" TO anon, authenticated;
 GRANT ALL ON csv_data."user_preferences" TO service_role;
-ALTER TABLE csv_data."user_preferences" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_user_preferences" ON csv_data."user_preferences" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."user_role_preferences" CASCADE;
-CREATE TABLE csv_data."user_role_preferences" ("id" TEXT, "user_id" TEXT, "role" TEXT, "agency_role" TEXT, "is_eos_user" TEXT, "created_at" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."user_role_preferences" TO authenticated;
-GRANT SELECT ON csv_data."user_role_preferences" TO anon;
+CREATE TABLE csv_data."user_role_preferences" (
+  "id" uuid,
+  "user_id" uuid,
+  "role" text,
+  "agency_role" text,
+  "is_eos_user" boolean,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+GRANT SELECT ON csv_data."user_role_preferences" TO anon, authenticated;
 GRANT ALL ON csv_data."user_role_preferences" TO service_role;
-ALTER TABLE csv_data."user_role_preferences" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_user_role_preferences" ON csv_data."user_role_preferences" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."user_roles" CASCADE;
-CREATE TABLE csv_data."user_roles" ("id" TEXT, "user_id" TEXT, "role" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."user_roles" TO authenticated;
-GRANT SELECT ON csv_data."user_roles" TO anon;
+CREATE TABLE csv_data."user_roles" (
+  "id" uuid,
+  "user_id" uuid,
+  "role" text,
+  "created_at" timestamptz
+);
+GRANT SELECT ON csv_data."user_roles" TO anon, authenticated;
 GRANT ALL ON csv_data."user_roles" TO service_role;
-ALTER TABLE csv_data."user_roles" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_user_roles" ON csv_data."user_roles" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."vector_search_logs" CASCADE;
-CREATE TABLE csv_data."vector_search_logs" ("id" TEXT, "user_id" TEXT, "query" TEXT, "results_count" TEXT, "latency_ms" TEXT, "metadata" TEXT, "created_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."vector_search_logs" TO authenticated;
-GRANT SELECT ON csv_data."vector_search_logs" TO anon;
+CREATE TABLE csv_data."vector_search_logs" (
+  "id" text,
+  "user_id" text,
+  "query" text,
+  "results_count" text,
+  "latency_ms" text,
+  "metadata" text,
+  "created_at" text
+);
+GRANT SELECT ON csv_data."vector_search_logs" TO anon, authenticated;
 GRANT ALL ON csv_data."vector_search_logs" TO service_role;
-ALTER TABLE csv_data."vector_search_logs" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_vector_search_logs" ON csv_data."vector_search_logs" FOR SELECT USING (true);
 DROP TABLE IF EXISTS csv_data."zoom_files" CASCADE;
-CREATE TABLE csv_data."zoom_files" ("id" TEXT, "meeting_id" TEXT, "file_url" TEXT, "file_type" TEXT, "file_size" TEXT, "download_url" TEXT, "recording_type" TEXT, "status" TEXT, "created_at" TEXT, "has_embeddings" TEXT, "processing_status" TEXT, "file_name" TEXT, "updated_at" TEXT);
-GRANT SELECT, INSERT, UPDATE, DELETE ON csv_data."zoom_files" TO authenticated;
-GRANT SELECT ON csv_data."zoom_files" TO anon;
+CREATE TABLE csv_data."zoom_files" (
+  "id" text,
+  "meeting_id" text,
+  "file_url" text,
+  "file_type" text,
+  "file_size" text,
+  "download_url" text,
+  "recording_type" text,
+  "status" text,
+  "created_at" text,
+  "has_embeddings" text,
+  "processing_status" text,
+  "file_name" text,
+  "updated_at" text
+);
+GRANT SELECT ON csv_data."zoom_files" TO anon, authenticated;
 GRANT ALL ON csv_data."zoom_files" TO service_role;
-ALTER TABLE csv_data."zoom_files" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read_all_zoom_files" ON csv_data."zoom_files" FOR SELECT USING (true);
