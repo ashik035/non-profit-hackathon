@@ -29,6 +29,8 @@ import {
   DEMO_AGENT_ACTIVITY,
   ORG_NAME,
 } from "@/shared/data/nonprofitDemoData";
+import { useBoardReportLive } from "@/hooks/useBoardReportLive";
+import { Link } from "react-router-dom";
 import { boardReportPdfFilename, downloadBoardReportPdf } from "@/lib/boardReportPdf";
 
 const { quarter } = DEMO_BOARD_REPORT;
