@@ -9,6 +9,7 @@ import { ShieldCheck, CalendarClock, FileText, TrendingUp, Sparkles, X } from "l
 import AITeamsDashboardCard from "@/components/dashboards/AITeamsDashboardCard";
 import AIActivityWidget from "@/components/dashboard/AIActivityWidget";
 import OrgHealthScore from "@/components/dashboard/OrgHealthScore";
+import { useOrgHealthScore } from "@/hooks/useOrgHealthScore";
 import SinceYouWereAway from "@/components/dashboard/SinceYouWereAway";
 import AgentROIHeroCard from "@/components/dashboard/AgentROIHeroCard";
 import QuickStatsRow from "@/components/dashboard/QuickStatsRow";
@@ -49,6 +50,7 @@ export default function ExecutiveDirectorDashboard() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [dismissedRecs, setDismissedRecs] = useState<string[]>([]);
+  const { data: liveHealth } = useOrgHealthScore();
 
   useEffect(() => {
     document.title = "Dashboard | Brightside Foundation";
@@ -74,10 +76,10 @@ export default function ExecutiveDirectorDashboard() {
 
       {/* Org Health Score */}
       <OrgHealthScore
-        score={DEMO_ORG_HEALTH.score}
-        scoreColor={DEMO_ORG_HEALTH.scoreColor}
-        breakdown={DEMO_ORG_HEALTH.breakdown}
-        insight={DEMO_ORG_HEALTH.insight}
+        score={liveHealth?.score ?? DEMO_ORG_HEALTH.score}
+        scoreColor={liveHealth?.scoreColor ?? DEMO_ORG_HEALTH.scoreColor}
+        breakdown={liveHealth?.breakdown ?? DEMO_ORG_HEALTH.breakdown}
+        insight={liveHealth?.insight ?? DEMO_ORG_HEALTH.insight}
       />
 
       <SinceYouWereAway

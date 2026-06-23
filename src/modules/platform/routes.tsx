@@ -40,6 +40,7 @@ import ReconciliationPage from "@/pages/ReconciliationPage";
 import EventsHubPage from "@/pages/EventsHubPage";
 import GrantsPage from "@/pages/GrantsPage";
 import BoardReportsPage from "@/pages/BoardReportsPage";
+import MissionControlPage from "@/pages/MissionControlPage";
 import AIAgentsPage from "@/pages/AIAgentsPage";
 import AIAgentDetailPage from "@/pages/AIAgentDetailPage";
 import AIAgentSettingsPage from "@/pages/AIAgentSettingsPage";
@@ -121,6 +122,7 @@ export const coreProtectedRoutes = (
     <Route element={<ModuleRoute module="board-reports" />}>
       <Route path="/board-reports" element={<BoardReportsPage />} />
     </Route>
+    <Route path="/mission-control" element={<MissionControlPage />} />
     <Route element={<ModuleRoute module="ai-agents" />}>
       <Route path="/ai-agents" element={<AIAgentsPage />} />
       <Route path="/ai-agents/:id" element={<AIAgentDetailPage />} />
