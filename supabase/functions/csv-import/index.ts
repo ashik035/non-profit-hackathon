@@ -1,13 +1,12 @@
 // One-shot CSV import runner. POST to execute create+insert SQL using DB connection.
 import { Client } from "https://deno.land/x/postgres@v0.19.3/mod.ts";
+import { sql as createSql } from "./create.ts";
+import { sql as insertSql } from "./insert.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-const createSql = await Deno.readTextFile(new URL("./create.sql", import.meta.url));
-const insertSql = await Deno.readTextFile(new URL("./insert.sql", import.meta.url));
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
