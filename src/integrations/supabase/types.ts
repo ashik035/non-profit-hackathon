@@ -2096,6 +2096,75 @@ export type Database = {
         }
         Relationships: []
       }
+      mission_control_actions: {
+        Row: {
+          action_type: string
+          approved_at: string | null
+          created_at: string
+          destination: Json | null
+          dismissed_reason: string | null
+          draft_content: string
+          edited_content: string | null
+          executed_at: string | null
+          finding_id: string | null
+          id: string
+          run_id: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          approved_at?: string | null
+          created_at?: string
+          destination?: Json | null
+          dismissed_reason?: string | null
+          draft_content: string
+          edited_content?: string | null
+          executed_at?: string | null
+          finding_id?: string | null
+          id?: string
+          run_id?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          approved_at?: string | null
+          created_at?: string
+          destination?: Json | null
+          dismissed_reason?: string | null
+          draft_content?: string
+          edited_content?: string | null
+          executed_at?: string | null
+          finding_id?: string | null
+          id?: string
+          run_id?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_control_actions_finding_id_fkey"
+            columns: ["finding_id"]
+            isOneToOne: false
+            referencedRelation: "mission_control_findings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_control_actions_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "mission_control_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mission_control_findings: {
         Row: {
           created_at: string
