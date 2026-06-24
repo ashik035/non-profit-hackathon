@@ -82,29 +82,13 @@ export function RoleSetupModal({ open }: RoleSetupModalProps) {
     if (!selected || !user) return;
     setSaving(true);
     try {
-      // Manual upsert: update existing row, otherwise insert. Avoids ON CONFLICT
-      // so it works even if the (user_id, role) unique constraint is missing
-      // on the live DB (Postgres 42P10).
-      const { data: existing, error: selectErr } = await supabase
-        .from("user_role_preferences")
-        .select("id")
-        .eq("user_id", user.id)
-        .limit(1)
-        .maybeSingle();
-      if (selectErr) throw selectErr;
-
-      if (existing?.id) {
-        const { error: updErr } = await supabase
-          .from("user_role_preferences")
-          .update({ agency_role: selected, role: "user" })
-          .eq("id", existing.id);
-        if (updErr) throw updErr;
-      } else {
-        const { error: insErr } = await supabase
-          .from("user_role_preferences")
-          .insert({ user_id: user.id, role: "user", agency_role: selected });
-        if (insErr) throw insErr;
-      }
+      // Save via edge function (service-role write) — direct INSERT into
+      // user_role_preferences is blocked by RLS on the live DB.
+      const { data, error } = await supabase.functions.invoke("save-agency-role", {
+        body: { agency_role: selected },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
       // Patch AuthContext profile so Dashboard re-routes instantly
       await refreshAgencyPreferences();
@@ -116,6 +100,7 @@ export function RoleSetupModal({ open }: RoleSetupModalProps) {
       setSaving(false);
     }
   };
+
 
   return (
     <Dialog open={open} modal>
