@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Building2, FolderKanban, DollarSign, Settings, ShieldCheck, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -81,21 +82,36 @@ export function RoleSetupModal({ open }: RoleSetupModalProps) {
     if (!selected || !user) return;
     setSaving(true);
     try {
-      const { error } = await supabase
+      // Manual upsert: update existing row, otherwise insert. Avoids ON CONFLICT
+      // so it works even if the (user_id, role) unique constraint is missing
+      // on the live DB (Postgres 42P10).
+      const { data: existing, error: selectErr } = await supabase
         .from("user_role_preferences")
-        .upsert(
-          {
-            user_id: user.id,
-            role: "user",
-            agency_role: selected,
-          },
-          { onConflict: "user_id,role" }
-        );
-      if (error) throw error;
+        .select("id")
+        .eq("user_id", user.id)
+        .limit(1)
+        .maybeSingle();
+      if (selectErr) throw selectErr;
+
+      if (existing?.id) {
+        const { error: updErr } = await supabase
+          .from("user_role_preferences")
+          .update({ agency_role: selected, role: "user" })
+          .eq("id", existing.id);
+        if (updErr) throw updErr;
+      } else {
+        const { error: insErr } = await supabase
+          .from("user_role_preferences")
+          .insert({ user_id: user.id, role: "user", agency_role: selected });
+        if (insErr) throw insErr;
+      }
+
       // Patch AuthContext profile so Dashboard re-routes instantly
       await refreshAgencyPreferences();
-    } catch (err) {
+      toast.success("Dashboard ready");
+    } catch (err: any) {
       console.error("Failed to save agency role:", err);
+      toast.error(err?.message ?? "Could not save your role. Please try again.");
     } finally {
       setSaving(false);
     }

@@ -74,13 +74,26 @@ export function useUpsertAgencyRole() {
 
   return useMutation({
     mutationFn: async ({ user_id, agency_role }: UpsertAgencyRolePayload) => {
-      const { error } = await supabase
+      const { data: existing, error: selErr } = await supabase
         .from("user_role_preferences")
-        .upsert(
-          { user_id, role: "user", agency_role },
-          { onConflict: "user_id,role" }
-        );
-      if (error) throw error;
+        .select("id")
+        .eq("user_id", user_id)
+        .limit(1)
+        .maybeSingle();
+      if (selErr) throw selErr;
+
+      if (existing?.id) {
+        const { error } = await supabase
+          .from("user_role_preferences")
+          .update({ agency_role, role: "user" })
+          .eq("id", existing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("user_role_preferences")
+          .insert({ user_id, role: "user", agency_role });
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ADMIN_AGENCY_ROLES_KEY });

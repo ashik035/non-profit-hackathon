@@ -49,13 +49,26 @@ export function useDashboardPreferences() {
 
   const mutation = useMutation({
     mutationFn: async (patch: Partial<DashboardPreferences>) => {
-      const { error } = await (supabase as any)
+      const { data: existing, error: selErr } = await (supabase as any)
         .from("user_role_preferences")
-        .upsert(
-          { user_id: user!.id, role: "user", ...patch },
-          { onConflict: "user_id,role" }
-        );
-      if (error) throw error;
+        .select("id")
+        .eq("user_id", user!.id)
+        .limit(1)
+        .maybeSingle();
+      if (selErr) throw selErr;
+
+      if (existing?.id) {
+        const { error } = await (supabase as any)
+          .from("user_role_preferences")
+          .update(patch)
+          .eq("id", existing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await (supabase as any)
+          .from("user_role_preferences")
+          .insert({ user_id: user!.id, role: "user", ...patch });
+        if (error) throw error;
+      }
     },
     onMutate: async (patch) => {
       await queryClient.cancelQueries({ queryKey: qKey });
