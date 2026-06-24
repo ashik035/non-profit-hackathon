@@ -106,7 +106,8 @@ export default function OnboardingWizard({
         throw new Error("No user found");
       }
 
-      // Update user profile
+      // Update user profile (includes onboarding completion flag in metadata
+      // — avoids writing to admin-only app_config and the RLS 42501 error).
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
@@ -115,21 +116,14 @@ export default function OnboardingWizard({
             company: data.company,
             role: data.role,
             bio: data.bio,
+            onboarding_completed: true,
+            onboarding_completed_at: new Date().toISOString(),
           },
         })
         .eq("id", user.id);
 
       if (profileError) throw profileError;
 
-      // Save onboarding completion status
-      const { error: configError } = await supabase.from("app_config").upsert({
-        key: `user.${user.id}.onboarding_completed`,
-        value: true,
-        category: "user_preferences",
-        description: "User onboarding completion status",
-      });
-
-      if (configError) throw configError;
 
       // Log the activity
       await supabase.functions.invoke("log-activity", {
