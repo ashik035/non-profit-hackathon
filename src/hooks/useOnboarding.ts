@@ -26,30 +26,21 @@ export function useOnboarding() {
 
       setUser(currentUser);
 
-      // Check if user has completed onboarding
-      const { data: config } = await supabase
-        .from("app_config")
-        .select("value")
-        .eq("key", `user.${currentUser.id}.onboarding_completed`)
-        .single();
-
-      // If no config exists or value is false, show onboarding
-      const hasCompletedOnboarding = config?.value === true;
-
-      // Also check if user profile is complete (has full_name)
+      // Read onboarding flag + profile from the user's own profile row
+      // (avoids admin-only app_config, which throws 42501 for non-admins).
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("full_name, metadata")
         .eq("id", currentUser.id)
-        .single();
+        .maybeSingle();
 
-      const hasProfile = profile?.full_name && profile.full_name.trim() !== "";
+      const meta = (profile?.metadata as Record<string, unknown> | null) ?? null;
+      const hasCompletedOnboarding = meta?.onboarding_completed === true;
+      const hasProfile = !!profile?.full_name && profile.full_name.trim() !== "";
 
-      // Show onboarding if either condition is not met
       setShowOnboarding(!hasCompletedOnboarding || !hasProfile);
     } catch (error) {
       console.error("Error checking onboarding status:", error);
-      // On error, assume onboarding is needed to be safe
       setShowOnboarding(true);
     } finally {
       setLoading(false);
@@ -60,19 +51,32 @@ export function useOnboarding() {
     if (!user) return;
 
     try {
-      // Mark onboarding as completed
-      await supabase.from("app_config").upsert({
-        key: `user.${user.id}.onboarding_completed`,
-        value: true,
-        category: "user_preferences",
-        description: "User onboarding completion status",
-      });
+      // Merge the flag into profiles.metadata. The wizard also writes this,
+      // but call this as a safety net for any other completion paths.
+      const { data: existing } = await supabase
+        .from("profiles")
+        .select("metadata")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      const meta = (existing?.metadata as Record<string, unknown> | null) ?? {};
+      await supabase
+        .from("profiles")
+        .update({
+          metadata: {
+            ...meta,
+            onboarding_completed: true,
+            onboarding_completed_at: new Date().toISOString(),
+          },
+        })
+        .eq("id", user.id);
 
       setShowOnboarding(false);
     } catch (error) {
       console.error("Error completing onboarding:", error);
     }
   };
+
 
   const skipOnboarding = () => {
     setShowOnboarding(false);
