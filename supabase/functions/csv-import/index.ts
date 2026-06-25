@@ -1,4 +1,5 @@
 // One-shot CSV import runner. POST to execute create+insert SQL using DB connection.
+// Optional body: { sql: string } — run only that SQL (no table drops).
 import { Client } from "https://deno.land/x/postgres@v0.19.3/mod.ts";
 import { sql as createSql } from "./create.ts";
 import { sql as insertSql } from "./insert.ts";
@@ -13,29 +14,47 @@ Deno.serve(async (req) => {
   const dbUrl = Deno.env.get("SUPABASE_DB_URL");
   if (!dbUrl) return new Response(JSON.stringify({ error: "SUPABASE_DB_URL missing" }), { status: 500, headers: corsHeaders });
 
+  let body: { sql?: string; fileName?: string } = {};
+  try {
+    if (req.headers.get("content-type")?.includes("application/json")) {
+      body = await req.json();
+    }
+  } catch {
+    // empty body — default import flow
+  }
+
   const client = new Client(dbUrl);
   await client.connect();
   const results: Record<string, unknown> = {};
-  try {
-    await client.queryArray(createSql);
-    results.created = true;
 
-    // Execute insert SQL split by statements (each ends with ";\n")
-    const statements = insertSql.split(/;\s*\n/).map((s) => s.trim()).filter(Boolean);
-    let ok = 0, failed: { idx: number; err: string }[] = [];
-    for (let i = 0; i < statements.length; i++) {
-      try {
-        await client.queryArray(statements[i]);
-        ok++;
-      } catch (e) {
-        failed.push({ idx: i, err: String(e).slice(0, 300) });
+  try {
+    if (body.sql && typeof body.sql === "string") {
+      const start = Date.now();
+      await client.queryArray(body.sql);
+      results.success = true;
+      results.fileName = body.fileName ?? "custom";
+      results.durationMs = Date.now() - start;
+    } else {
+      await client.queryArray(createSql);
+      results.created = true;
+
+      const statements = insertSql.split(/;\s*\n/).map((s) => s.trim()).filter(Boolean);
+      let ok = 0, failed: { idx: number; err: string }[] = [];
+      for (let i = 0; i < statements.length; i++) {
+        try {
+          await client.queryArray(statements[i]);
+          ok++;
+        } catch (e) {
+          failed.push({ idx: i, err: String(e).slice(0, 300) });
+        }
       }
+      results.inserts_ok = ok;
+      results.inserts_failed = failed.length;
+      results.failures = failed.slice(0, 10);
     }
-    results.inserts_ok = ok;
-    results.inserts_failed = failed.length;
-    results.failures = failed.slice(0, 10);
   } catch (e) {
     results.error = String(e);
+    results.success = false;
   } finally {
     await client.end();
   }

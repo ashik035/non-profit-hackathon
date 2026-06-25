@@ -365,3 +365,6 @@ verify_jwt = false
 
 [functions.save-agency-role]
 verify_jwt = false
+
+[functions.apply-seed-sql]
+verify_jwt = false

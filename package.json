@@ -16,7 +16,8 @@
     "seed:nonprofit:generate": "tsx scripts/generate-nonprofit-seed.ts",
     "seed:nonprofit:validate": "tsx scripts/validate-nonprofit-seed.ts",
     "seed:nonprofit:apply": "tsx scripts/apply-nonprofit-seed.ts",
-    "seed:nonprofit": "bash scripts/seed-nonprofit-data.sh"
+    "seed:nonprofit": "bash scripts/seed-nonprofit-data.sh",
+    "seed:all": "npm run seed:nonprofit:generate && tsx scripts/apply-all-seed.ts"
   },
   "dependencies": {
     "@azure/msal-browser": "^4.27.0",
@@ -63,6 +64,7 @@
     "jspdf": "^3.0.4",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
+    "npm": "^11.17.0",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
