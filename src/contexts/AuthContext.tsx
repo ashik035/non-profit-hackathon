@@ -28,6 +28,8 @@ interface AuthContextType {
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
   /** Re-fetches agency_role and patches local profile state. */
   refreshAgencyPreferences: () => Promise<void>;
+  /** Immediately patches agencyRole in local profile state (after role setup). */
+  patchAgencyRole: (agencyRole: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -78,8 +80,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return {};
       }
 
+      if (!data?.agency_role) {
+        return {};
+      }
+
       return {
-        agencyRole: (data?.agency_role as string | null) ?? undefined,
+        agencyRole: data.agency_role as string,
       };
     } catch (error) {
       console.error("Error fetching agency preferences:", error);
@@ -434,7 +440,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshAgencyPreferences = async () => {
     if (!user) return;
     const prefs = await fetchAgencyPreferences(user.id);
+    if (!prefs.agencyRole) return;
     setProfile((prev) => (prev ? { ...prev, ...prefs } : null));
+  };
+
+  const patchAgencyRole = (agencyRole: string) => {
+    setProfile((prev) => {
+      if (prev) return { ...prev, agencyRole };
+      if (!user) return null;
+      return {
+        id: user.id,
+        email: user.email ?? "",
+        agencyRole,
+      };
+    });
   };
 
   const value = {
@@ -450,6 +469,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     updateProfile,
     refreshAgencyPreferences,
+    patchAgencyRole,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

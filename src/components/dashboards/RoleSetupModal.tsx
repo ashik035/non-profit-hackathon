@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { AgencyRole } from "@/hooks/useAgencyRole";
+import { upsertAgencyRolePreference } from "@/lib/agencyRolePreferences";
 
 interface RoleOption {
   role: AgencyRole;
@@ -74,7 +74,7 @@ interface RoleSetupModalProps {
  * dashboard re-routes without a full page reload.
  */
 export function RoleSetupModal({ open }: RoleSetupModalProps) {
-  const { user, refreshAgencyPreferences } = useAuth();
+  const { user, refreshAgencyPreferences, patchAgencyRole } = useAuth();
   const [selected, setSelected] = useState<AgencyRole | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -82,15 +82,10 @@ export function RoleSetupModal({ open }: RoleSetupModalProps) {
     if (!selected || !user) return;
     setSaving(true);
     try {
-      // Save via edge function (service-role write) — direct INSERT into
-      // user_role_preferences is blocked by RLS on the live DB.
-      const { data, error } = await supabase.functions.invoke("save-agency-role", {
-        body: { agency_role: selected },
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      await upsertAgencyRolePreference(selected);
 
-      // Patch AuthContext profile so Dashboard re-routes instantly
+      // Update local state first so Dashboard re-routes immediately
+      patchAgencyRole(selected);
       await refreshAgencyPreferences();
       toast.success("Dashboard ready");
     } catch (err: any) {
