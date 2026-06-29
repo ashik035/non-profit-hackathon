@@ -114,6 +114,7 @@ export const navigationGroups: NavGroup[] = [
     isAI: true,
     items: [
       { title: "Mission Control", href: "/mission-control", icon: "Radio", isAI: true },
+      { title: "AI Boardroom", href: "/boardroom", icon: "Gavel", isAI: true },
       { title: "AI Agents", href: "/agents", icon: "Bot", isAI: true, module: "ai-agents" },
       { title: "Agent Activity", href: "/agents/activity", icon: "Activity", isAI: true, module: "ai-agents", requiredPermission: { type: "module", key: "agent-activity" } },
       { title: "AI Chat", href: "/ai-chat", icon: "MessageSquare", isAI: true },
