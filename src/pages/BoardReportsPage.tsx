@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Download, RefreshCw, Send, Loader2, FileText, CheckCircle } from "lucide-react";
+import { Download, RefreshCw, Send, Loader2, FileText, CheckCircle, Gavel, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,8 +30,14 @@ import {
   ORG_NAME,
 } from "@/shared/data/nonprofitDemoData";
 import { useBoardReportLive } from "@/hooks/useBoardReportLive";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { boardReportPdfFilename, downloadBoardReportPdf } from "@/lib/boardReportPdf";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  clearBoardroomPrep,
+  loadBoardroomPrep,
+  type BoardroomPrepPayload,
+} from "@/lib/boardroomFallback";
 
 const { quarter } = DEMO_BOARD_REPORT;
 const sections = DEMO_BOARD_REPORT_SECTIONS;
@@ -56,8 +62,10 @@ function varianceClasses(v: number) {
 }
 
 export default function BoardReportsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const { data: live } = useBoardReportLive();
+  const [prepMemo, setPrepMemo] = useState<BoardroomPrepPayload | null>(null);
   const [exporting, setExporting] = useState(false);
   const [approved, setApproved] = useState(false);
   const [draftModal, setDraftModal] = useState(false);
@@ -71,8 +79,21 @@ export default function BoardReportsPage() {
   useEffect(() => {
     document.title = `Board Reports | ${ORG_NAME}`;
     const timer = setTimeout(() => setIsLoading(false), 600);
+    const prep = loadBoardroomPrep();
+    if (prep && (searchParams.get("from") === "boardroom" || prep)) {
+      setPrepMemo(prep);
+    }
     return () => clearTimeout(timer);
-  }, []);
+  }, [searchParams]);
+
+  const dismissPrepMemo = () => {
+    clearBoardroomPrep();
+    setPrepMemo(null);
+    if (searchParams.get("from") === "boardroom") {
+      searchParams.delete("from");
+      setSearchParams(searchParams, { replace: true });
+    }
+  };
 
   const runPdfExport = (markApproved: boolean) => {
     setExporting(true);
@@ -133,6 +154,30 @@ export default function BoardReportsPage() {
 
   return (
     <div className="space-y-6">
+      {prepMemo && (
+        <Alert className="border-primary/30 bg-primary/5">
+          <Gavel className="h-4 w-4" />
+          <AlertTitle className="flex items-center justify-between gap-2">
+            <span>Boardroom prep memo attached</span>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={dismissPrepMemo} aria-label="Dismiss">
+              <X className="h-4 w-4" />
+            </Button>
+          </AlertTitle>
+          <AlertDescription className="space-y-2 text-sm">
+            <p className="font-medium text-foreground">{prepMemo.question}</p>
+            <p className="text-muted-foreground">{prepMemo.memo}</p>
+            {prepMemo.vote?.tally && (
+              <Badge variant="secondary">{prepMemo.vote.tally}</Badge>
+            )}
+            <div className="pt-1">
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/boardroom">Back to AI Boardroom</Link>
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Page header */}
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">

@@ -1,36 +1,21 @@
-// Boardroom Simulator — multi-persona debate orchestrator with streaming.
-// Streams NDJSON events to the client, one JSON object per line:
-//   { type: "session", session_id }
-//   { type: "turn_start", persona }
-//   { type: "tool", persona, tool, args }
-//   { type: "delta", persona, text }
-//   { type: "turn_end", persona, full_text }
-//   { type: "final", vote, memo, risks, dissent }
-//   { type: "error", message }
+// Boardroom Simulator — multi-persona debate orchestrator with NDJSON streaming.
+// Uses ai-provider-routing (OpenAI / Lovable / configured models), not Lovable-only.
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { chatCompletion } from "../_shared/ai-provider-routing.ts";
 import { PERSONAS, TURN_ORDER, type Persona, type PersonaId } from "./personas.ts";
-import { TOOL_DEFS, executeTool, makeServiceClient, type ToolContext } from "./tools.ts";
+import { executeTool, makeServiceClient, type ToolContext } from "./tools.ts";
 
-const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const MODEL = "google/gemini-3-flash-preview";
-const ROUNDS = 2;
+/** Hackathon default: 1 round (4 turns). Set BOARDROOM_ROUNDS=2 for full debate. */
+const ROUNDS = Math.min(2, Math.max(1, parseInt(Deno.env.get("BOARDROOM_ROUNDS") ?? "1", 10) || 1));
 
 interface Turn {
   persona: PersonaId;
   text: string;
 }
 
-async function callGateway(body: unknown): Promise<Response> {
-  return await fetch(GATEWAY_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Lovable-API-Key": Deno.env.get("LOVABLE_API_KEY") ?? "",
-    },
-    body: JSON.stringify(body),
-  });
-}
+type Enqueue = (obj: unknown) => void;
 
 function transcriptForPrompt(transcript: Turn[]): string {
   if (transcript.length === 0) return "(no prior turns — you are opening)";
@@ -42,110 +27,99 @@ function transcriptForPrompt(transcript: Turn[]): string {
     .join("\n\n");
 }
 
+function friendlyAiError(e: unknown): string {
+  const msg = e instanceof Error ? e.message : String(e);
+  if (msg.includes("402") || msg.toLowerCase().includes("credit")) {
+    return "AI credits exhausted — configure OPENAI_API_KEY or add Lovable credits, then reconvene.";
+  }
+  if (msg.includes("429") || msg.toLowerCase().includes("rate limit")) {
+    return "AI rate limit hit — wait a moment and reconvene the board.";
+  }
+  if (msg.toLowerCase().includes("unauthorized") || msg.includes("401")) {
+    return "Session expired — please sign in again.";
+  }
+  return msg.slice(0, 300);
+}
+
+async function simulateStreamDeltas(
+  text: string,
+  personaId: PersonaId,
+  enqueue: Enqueue,
+): Promise<void> {
+  const words = text.split(/(\s+)/);
+  for (const chunk of words) {
+    if (!chunk) continue;
+    enqueue({ type: "delta", persona: personaId, text: chunk });
+    await new Promise((r) => setTimeout(r, 18));
+  }
+}
+
+async function autoToolsForPersona(
+  personaId: PersonaId,
+  ctx: ToolContext,
+  enqueue: Enqueue,
+): Promise<string> {
+  const parts: string[] = [];
+  if (personaId === "marcus") {
+    enqueue({ type: "tool", persona: personaId, tool: "get_financial_snapshot", args: {} });
+    const fin = await executeTool("get_financial_snapshot", {}, ctx);
+    parts.push(`FINANCIAL DATA (from live DB):\n${JSON.stringify(fin, null, 2)}`);
+  }
+  if (personaId === "priya") {
+    enqueue({ type: "tool", persona: personaId, tool: "get_program_metrics", args: {} });
+    const prog = await executeTool("get_program_metrics", {}, ctx);
+    parts.push(`PROGRAM METRICS (from live DB):\n${JSON.stringify(prog, null, 2)}`);
+  }
+  if (personaId === "elena") {
+    enqueue({ type: "tool", persona: personaId, tool: "search_org_knowledge", args: { query: "mission charter governance" } });
+    const kb = await executeTool("search_org_knowledge", { query: "mission charter governance" }, ctx);
+    parts.push(`KNOWLEDGE BASE:\n${JSON.stringify(kb, null, 2)}`);
+  }
+  return parts.join("\n\n");
+}
+
 async function runPersonaTurn(
+  supabase: ReturnType<typeof makeServiceClient>,
   persona: Persona,
   question: string,
   transcript: Turn[],
   ctx: ToolContext,
-  enqueue: (obj: unknown) => void,
+  orgContext: string,
+  enqueue: Enqueue,
 ): Promise<string> {
-  // First pass: maybe tool calls.
-  const messages: any[] = [
-    { role: "system", content: persona.prompt },
-    {
-      role: "user",
-      content: `BOARD QUESTION:\n${question}\n\nDISCUSSION SO FAR:\n${transcriptForPrompt(transcript)}\n\nIt is now your turn to speak. Stay in character.`,
-    },
-  ];
+  const toolContext = await autoToolsForPersona(persona.id, ctx, enqueue);
 
-  // Up to 2 tool-call rounds, then a final streaming response.
-  for (let i = 0; i < 2; i++) {
-    const res = await callGateway({
-      model: MODEL,
-      messages,
-      tools: TOOL_DEFS,
-      tool_choice: "auto",
-      max_tokens: 400,
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`gateway ${res.status}: ${errText.slice(0, 200)}`);
-    }
-    const data = await res.json();
-    const msg = data.choices?.[0]?.message;
-    if (!msg) throw new Error("no choice from gateway");
+  const userContent = [
+    `BOARD QUESTION:\n${question}`,
+    orgContext ? `ORG SNAPSHOT:\n${orgContext}` : "",
+    toolContext,
+    `DISCUSSION SO FAR:\n${transcriptForPrompt(transcript)}`,
+    "It is now your turn to speak. Stay in character. Plain prose only, under 90 words.",
+  ]
+    .filter(Boolean)
+    .join("\n\n");
 
-    const toolCalls = msg.tool_calls;
-    if (!toolCalls || toolCalls.length === 0) {
-      // We got direct text — but we wanted streaming. Fall through to streamed call.
-      break;
-    }
-
-    messages.push(msg);
-    for (const call of toolCalls) {
-      let args: Record<string, unknown> = {};
-      try {
-        args = JSON.parse(call.function.arguments || "{}");
-      } catch { /* ignore */ }
-      enqueue({ type: "tool", persona: persona.id, tool: call.function.name, args });
-      const result = await executeTool(call.function.name, args, ctx);
-      messages.push({
-        role: "tool",
-        tool_call_id: call.id,
-        content: JSON.stringify(result),
-      });
-    }
-  }
-
-  // Streaming final answer.
-  const streamRes = await callGateway({
+  const result = await chatCompletion(supabase, {
     model: MODEL,
     messages: [
-      ...messages,
-      { role: "system", content: "Now deliver your spoken turn. Plain prose only. No markdown. Under 90 words." },
+      { role: "system", content: persona.prompt },
+      { role: "user", content: userContent },
     ],
     max_tokens: 350,
-    stream: true,
+    temperature: 0.75,
   });
 
-  if (!streamRes.ok || !streamRes.body) {
-    const errText = await streamRes.text();
-    throw new Error(`stream gateway ${streamRes.status}: ${errText.slice(0, 200)}`);
-  }
-
-  const reader = streamRes.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let full = "";
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
-    for (const raw of lines) {
-      const line = raw.trim();
-      if (!line.startsWith("data:")) continue;
-      const payload = line.slice(5).trim();
-      if (payload === "[DONE]") continue;
-      try {
-        const evt = JSON.parse(payload);
-        const delta = evt.choices?.[0]?.delta?.content;
-        if (typeof delta === "string" && delta.length > 0) {
-          full += delta;
-          enqueue({ type: "delta", persona: persona.id, text: delta });
-        }
-      } catch { /* ignore */ }
-    }
-  }
-  return full.trim();
+  const full = (result.content ?? "").trim();
+  await simulateStreamDeltas(full, persona.id, enqueue);
+  return full;
 }
 
 async function generateFinalMemo(
+  supabase: ReturnType<typeof makeServiceClient>,
   question: string,
   transcript: Turn[],
-): Promise<{ vote: any; memo: string; risks: string[]; dissent: string }> {
-  const res = await callGateway({
+): Promise<{ vote: Record<string, string>; memo: string; risks: string[]; dissent: string }> {
+  const result = await chatCompletion(supabase, {
     model: MODEL,
     messages: [
       {
@@ -159,16 +133,22 @@ async function generateFinalMemo(
       },
     ],
     max_tokens: 700,
+    temperature: 0.3,
   });
-  if (!res.ok) throw new Error(`memo gateway ${res.status}`);
-  const data = await res.json();
-  const text = (data.choices?.[0]?.message?.content ?? "").trim();
-  const cleaned = text.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+
+  const text = (result.content ?? "").trim();
+  const cleaned = text.replace(/^```(?:json)?/i, "").replace(/```$/m, "").trim();
   try {
     return JSON.parse(cleaned);
   } catch {
     return {
-      vote: { elena: "conditional", marcus: "conditional", david: "conditional", priya: "conditional", tally: "Inconclusive" },
+      vote: {
+        elena: "conditional",
+        marcus: "conditional",
+        david: "conditional",
+        priya: "conditional",
+        tally: "Inconclusive",
+      },
       memo: text.slice(0, 600),
       risks: [],
       dissent: "",
@@ -188,84 +168,111 @@ serve(async (req) => {
     });
   }
 
-  let body: any;
-  try { body = await req.json(); } catch {
+  let body: { question?: string };
+  try {
+    body = await req.json();
+  } catch {
     return new Response(JSON.stringify({ error: "invalid JSON" }), {
-      status: 400, headers: { ...cors, "Content-Type": "application/json" },
-    });
-  }
-  const question = String(body?.question ?? "").trim();
-  if (!question || question.length > 600) {
-    return new Response(JSON.stringify({ error: "question required (max 600 chars)" }), {
-      status: 400, headers: { ...cors, "Content-Type": "application/json" },
+      status: 400,
+      headers: { ...cors, "Content-Type": "application/json" },
     });
   }
 
-  // Auth: get user from JWT.
+  const question = String(body?.question ?? "").trim();
+  if (!question || question.length > 600) {
+    return new Response(JSON.stringify({ error: "question required (max 600 chars)" }), {
+      status: 400,
+      headers: { ...cors, "Content-Type": "application/json" },
+    });
+  }
+
   const authHeader = req.headers.get("Authorization") ?? "";
   const jwt = authHeader.replace(/^Bearer\s+/i, "");
   const supabase = makeServiceClient();
   const { data: userData, error: userErr } = await supabase.auth.getUser(jwt);
   if (userErr || !userData?.user) {
     return new Response(JSON.stringify({ error: "unauthorized" }), {
-      status: 401, headers: { ...cors, "Content-Type": "application/json" },
+      status: 401,
+      headers: { ...cors, "Content-Type": "application/json" },
     });
   }
   const userId = userData.user.id;
 
-  // Create session row up front.
+  let sessionId: string | null = null;
   const { data: session, error: sessErr } = await supabase
     .from("boardroom_sessions")
     .insert({ user_id: userId, question, transcript: [], status: "running" })
     .select("id")
     .single();
-  if (sessErr || !session) {
-    return new Response(JSON.stringify({ error: `session insert failed: ${sessErr?.message}` }), {
-      status: 500, headers: { ...cors, "Content-Type": "application/json" },
-    });
+
+  if (!sessErr && session?.id) {
+    sessionId = session.id;
   }
-  const sessionId = session.id;
 
   const ctx: ToolContext = { supabase, userId };
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream({
     async start(controller) {
-      const enqueue = (obj: unknown) => {
+      const enqueue: Enqueue = (obj) => {
         controller.enqueue(encoder.encode(JSON.stringify(obj) + "\n"));
       };
+
       try {
         enqueue({ type: "session", session_id: sessionId });
+
+        const [finSnap, progSnap] = await Promise.all([
+          executeTool("get_financial_snapshot", {}, ctx),
+          executeTool("get_program_metrics", {}, ctx),
+        ]);
+        const orgContext = `YTD raised: $${(finSnap as { year_to_date?: { total_raised_usd?: number } })?.year_to_date?.total_raised_usd ?? 0}; active members: ${(progSnap as { active_members?: number })?.active_members ?? 0}; volunteers: ${(progSnap as { volunteer_count?: number })?.volunteer_count ?? 0}`;
+
         const transcript: Turn[] = [];
 
         for (let round = 0; round < ROUNDS; round++) {
           for (const pid of TURN_ORDER) {
             const persona = PERSONAS.find((p) => p.id === pid)!;
             enqueue({ type: "turn_start", persona: pid, round });
-            const text = await runPersonaTurn(persona, question, transcript, ctx, enqueue);
+            const text = await runPersonaTurn(
+              supabase,
+              persona,
+              question,
+              transcript,
+              ctx,
+              orgContext,
+              enqueue,
+            );
             transcript.push({ persona: pid, text });
             enqueue({ type: "turn_end", persona: pid, full_text: text });
           }
         }
 
-        const finalDoc = await generateFinalMemo(question, transcript);
+        const finalDoc = await generateFinalMemo(supabase, question, transcript);
         enqueue({ type: "final", ...finalDoc });
 
-        await supabase
-          .from("boardroom_sessions")
-          .update({
-            transcript: transcript as any,
-            vote: finalDoc.vote,
-            memo: finalDoc.memo,
-            risks: finalDoc.risks as any,
-            dissent: finalDoc.dissent,
-            status: "complete",
-          })
-          .eq("id", sessionId);
+        if (sessionId) {
+          await supabase
+            .from("boardroom_sessions")
+            .update({
+              transcript: transcript as unknown as Record<string, unknown>[],
+              vote: finalDoc.vote,
+              memo: finalDoc.memo,
+              risks: finalDoc.risks,
+              dissent: finalDoc.dissent,
+              status: "complete",
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", sessionId);
+        }
       } catch (e) {
-        const message = e instanceof Error ? e.message : String(e);
+        const message = friendlyAiError(e);
         enqueue({ type: "error", message });
-        await supabase.from("boardroom_sessions").update({ status: "error" }).eq("id", sessionId);
+        if (sessionId) {
+          await supabase
+            .from("boardroom_sessions")
+            .update({ status: "error", updated_at: new Date().toISOString() })
+            .eq("id", sessionId);
+        }
       } finally {
         controller.close();
       }
