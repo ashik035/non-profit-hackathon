@@ -368,3 +368,7 @@ verify_jwt = false
 
 [functions.apply-seed-sql]
 verify_jwt = false
+
+[functions.boardroom-simulate]
+verify_jwt = false
+
