@@ -51,13 +51,13 @@ async function getCreatedBy(supabase: ReturnType<typeof createClient>): Promise<
   return data.users[0]?.id ?? null;
 }
 
-async function upsert<T extends Record<string, unknown>>(
+async function insertRows<T extends Record<string, unknown>>(
   supabase: ReturnType<typeof createClient>,
   table: string,
   rows: T[]
 ): Promise<void> {
   if (rows.length === 0) return;
-  const { error } = await supabase.from(table).upsert(rows, { onConflict: "id" });
+  const { error } = await supabase.from(table).insert(rows);
   if (error) throw new Error(`${table}: ${error.message}`);
 }
 
@@ -114,7 +114,7 @@ async function main(): Promise<void> {
   await deleteByIds(supabase, "nonprofit_programs", programIds);
 
   console.log("Inserting members...");
-  await upsert(
+  await insertRows(
     supabase,
     "nonprofit_members",
     DEMO_MEMBERS.map((m) => ({
@@ -133,7 +133,7 @@ async function main(): Promise<void> {
   );
 
   console.log("Inserting volunteers + shifts...");
-  await upsert(
+  await insertRows(
     supabase,
     "nonprofit_volunteers",
     DEMO_VOLUNTEERS.map((v) => ({
@@ -150,7 +150,7 @@ async function main(): Promise<void> {
       donor_total_giving: v.donorTotalGiving ?? null,
     }))
   );
-  await upsert(
+  await insertRows(
     supabase,
     "nonprofit_volunteer_shifts",
     DEMO_VOLUNTEERS.flatMap((v) =>
@@ -166,7 +166,7 @@ async function main(): Promise<void> {
   );
 
   console.log("Inserting campaigns + donations...");
-  await upsert(
+  await insertRows(
     supabase,
     "nonprofit_campaigns",
     DEMO_CAMPAIGNS.map((c) => ({
@@ -183,7 +183,7 @@ async function main(): Promise<void> {
       fund_designation: c.fundDesignation,
     }))
   );
-  await upsert(
+  await insertRows(
     supabase,
     "nonprofit_donations",
     DEMO_DONATIONS_RECENT.map((d) => ({
@@ -201,7 +201,7 @@ async function main(): Promise<void> {
   );
 
   console.log("Inserting events + related rows...");
-  await upsert(
+  await insertRows(
     supabase,
     "nonprofit_events",
     DEMO_MANAGED_EVENTS.map((e) => ({
@@ -216,7 +216,7 @@ async function main(): Promise<void> {
       fund_raised: e.fundRaised ?? null,
     }))
   );
-  await upsert(
+  await insertRows(
     supabase,
     "nonprofit_event_ticket_types",
     DEMO_MANAGED_EVENTS.flatMap((e) =>
@@ -230,7 +230,7 @@ async function main(): Promise<void> {
       }))
     )
   );
-  await upsert(
+  await insertRows(
     supabase,
     "nonprofit_event_speakers",
     DEMO_MANAGED_EVENTS.flatMap((e) =>
@@ -244,7 +244,7 @@ async function main(): Promise<void> {
       }))
     )
   );
-  await upsert(
+  await insertRows(
     supabase,
     "nonprofit_event_agenda_items",
     DEMO_MANAGED_EVENTS.flatMap((e) =>
@@ -258,7 +258,7 @@ async function main(): Promise<void> {
       }))
     )
   );
-  await upsert(
+  await insertRows(
     supabase,
     "nonprofit_event_registrants",
     DEMO_MANAGED_EVENTS.flatMap((e) =>
@@ -275,7 +275,7 @@ async function main(): Promise<void> {
   );
 
   console.log("Inserting programs...");
-  await upsert(
+  await insertRows(
     supabase,
     "nonprofit_programs",
     DEMO_PROGRAMS.map((p) => ({

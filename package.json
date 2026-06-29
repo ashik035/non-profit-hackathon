@@ -17,7 +17,12 @@
     "seed:nonprofit:validate": "tsx scripts/validate-nonprofit-seed.ts",
     "seed:nonprofit:apply": "tsx scripts/apply-nonprofit-seed.ts",
     "seed:nonprofit": "bash scripts/seed-nonprofit-data.sh",
-    "seed:all": "npm run seed:nonprofit:generate && tsx scripts/apply-all-seed.ts"
+    "seed:all": "npm run seed:nonprofit:generate && tsx scripts/apply-all-seed.ts",
+    "boardroom:migrate": "tsx scripts/apply-boardroom-migration.ts",
+    "boardroom:seed-users": "tsx scripts/seed-demo-auth-users.ts",
+    "boardroom:verify": "tsx scripts/verify-boardroom-deploy.ts",
+    "deploy:boardroom": "bash scripts/deploy-boardroom-function.sh",
+    "seed:nonprofit:verify": "tsx scripts/verify-nonprofit-seed.ts"
   },
   "dependencies": {
     "@azure/msal-browser": "^4.27.0",

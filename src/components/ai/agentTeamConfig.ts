@@ -440,6 +440,26 @@ export const agentTeams: Record<string, AgentTeamDef> = {
         ],
         whereToFind: { label: "Board Reports", path: "/board-reports" },
       },
+      {
+        name: "AI Boardroom Simulator",
+        slug: "boardroom-simulator",
+        description:
+          "Rehearse any strategic board decision with four AI director personas who debate using live financial and program data, then vote and produce a decision memo.",
+        icon: "Gavel",
+        capabilities: [
+          "Simulate four distinct board personas with live data tool calls",
+          "Stream multi-round debate with tension tracking",
+          "Generate vote tally and one-page decision memo",
+          "Adopt memo as board prep document for quarterly reports",
+        ],
+        howToUse: [
+          "Open AI Boardroom from the sidebar",
+          "Pick a starter question or type your own strategic decision",
+          "Click Convene the board and watch personas debate",
+          "Adopt the decision memo into Board Reports",
+        ],
+        whereToFind: { label: "AI Boardroom", path: "/boardroom" },
+      },
     ],
   },
 };
@@ -474,6 +494,7 @@ export const AGENT_ICON_MAP: Record<string, string> = {
   "strategic-insights": "BookOpen",
   "event-intelligence": "Calendar",
   "board-reporting": "BarChart3",
+  "boardroom-simulator": "Gavel",
   "grant-budget-watcher": "AlertTriangle",
   "integration-health-monitor": "Plug",
   "onboarding-checklist-ai": "ClipboardList",

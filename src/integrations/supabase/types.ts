@@ -731,6 +731,48 @@ export type Database = {
         }
         Relationships: []
       }
+      boardroom_sessions: {
+        Row: {
+          created_at: string
+          dissent: string | null
+          id: string
+          memo: string | null
+          question: string
+          risks: Json | null
+          status: string
+          transcript: Json
+          updated_at: string
+          user_id: string
+          vote: Json | null
+        }
+        Insert: {
+          created_at?: string
+          dissent?: string | null
+          id?: string
+          memo?: string | null
+          question: string
+          risks?: Json | null
+          status?: string
+          transcript?: Json
+          updated_at?: string
+          user_id: string
+          vote?: Json | null
+        }
+        Update: {
+          created_at?: string
+          dissent?: string | null
+          id?: string
+          memo?: string | null
+          question?: string
+          risks?: Json | null
+          status?: string
+          transcript?: Json
+          updated_at?: string
+          user_id?: string
+          vote?: Json | null
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           company: string | null
