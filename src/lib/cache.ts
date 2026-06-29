@@ -218,6 +218,12 @@ export const queryKeys = {
     },
   },
 
+  boardroom: {
+    all: ["boardroom", "sessions"] as const,
+    list: () => ["boardroom", "sessions", "list"] as const,
+    detail: (id: string) => ["boardroom", "sessions", "detail", id] as const,
+  },
+
   // Dashboard (agency-first)
   dashboard: {
     ownerMetrics: ["dashboard", "ownerMetrics"] as const,
@@ -363,5 +369,8 @@ export const invalidateKeys = {
   },
   nonprofitPrograms: (queryClient: any) => {
     queryClient.invalidateQueries({ queryKey: queryKeys.nonprofit.programs.all });
+  },
+  boardroomSessions: (queryClient: any) => {
+    queryClient.invalidateQueries({ queryKey: queryKeys.boardroom.all });
   },
 };

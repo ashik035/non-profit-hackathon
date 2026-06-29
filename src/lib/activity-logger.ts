@@ -25,6 +25,7 @@ export type ResourceType =
   | "nonprofit_event_registrant"
   | "nonprofit_campaign"
   | "nonprofit_donation"
+  | "boardroom_session"
   | null;
 
 interface LogActivityParams {

@@ -251,27 +251,49 @@ serve(async (req) => {
         enqueue({ type: "final", ...finalDoc });
 
         if (sessionId) {
-          await supabase
+          const completePayload = {
+            transcript: transcript as unknown as Record<string, unknown>[],
+            vote: finalDoc.vote,
+            memo: finalDoc.memo,
+            risks: finalDoc.risks,
+            dissent: finalDoc.dissent,
+            status: "complete",
+            source: "live",
+            completed_at: new Date().toISOString(),
+          };
+          const { error: updateErr } = await supabase
             .from("boardroom_sessions")
-            .update({
-              transcript: transcript as unknown as Record<string, unknown>[],
-              vote: finalDoc.vote,
-              memo: finalDoc.memo,
-              risks: finalDoc.risks,
-              dissent: finalDoc.dissent,
-              status: "complete",
-              updated_at: new Date().toISOString(),
-            })
+            .update(completePayload)
             .eq("id", sessionId);
+          if (updateErr) {
+            console.error("boardroom session update failed:", updateErr.message);
+            const { error: retryErr } = await supabase
+              .from("boardroom_sessions")
+              .update({
+                transcript: completePayload.transcript,
+                vote: completePayload.vote,
+                memo: completePayload.memo,
+                risks: completePayload.risks,
+                dissent: completePayload.dissent,
+                status: "complete",
+              })
+              .eq("id", sessionId);
+            if (retryErr) {
+              console.error("boardroom session retry update failed:", retryErr.message);
+            }
+          }
         }
       } catch (e) {
         const message = friendlyAiError(e);
         enqueue({ type: "error", message });
         if (sessionId) {
-          await supabase
+          const { error: errUpdate } = await supabase
             .from("boardroom_sessions")
-            .update({ status: "error", updated_at: new Date().toISOString() })
+            .update({ status: "error" })
             .eq("id", sessionId);
+          if (errUpdate) {
+            console.error("boardroom session error status update failed:", errUpdate.message);
+          }
         }
       } finally {
         controller.close();
