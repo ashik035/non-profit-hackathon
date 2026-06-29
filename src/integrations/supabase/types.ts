@@ -739,6 +739,8 @@ export type Database = {
           memo: string | null
           question: string
           risks: Json | null
+          source: string | null
+          completed_at: string | null
           status: string
           transcript: Json
           updated_at: string
@@ -747,11 +749,13 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          completed_at?: string | null
           dissent?: string | null
           id?: string
           memo?: string | null
           question: string
           risks?: Json | null
+          source?: string | null
           status?: string
           transcript?: Json
           updated_at?: string
@@ -760,11 +764,13 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          completed_at?: string | null
           dissent?: string | null
           id?: string
           memo?: string | null
           question?: string
           risks?: Json | null
+          source?: string | null
           status?: string
           transcript?: Json
           updated_at?: string

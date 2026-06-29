@@ -38,6 +38,8 @@ import {
   loadBoardroomPrep,
   type BoardroomPrepPayload,
 } from "@/lib/boardroomFallback";
+import { useRecentBoardroomSessions } from "@/hooks/useBoardroomSessions";
+import { formatDistanceToNow } from "date-fns";
 
 const { quarter } = DEMO_BOARD_REPORT;
 const sections = DEMO_BOARD_REPORT_SECTIONS;
@@ -65,6 +67,7 @@ export default function BoardReportsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const { data: live } = useBoardReportLive();
+  const { sessions: recentBoardroom, isLoading: recentBoardroomLoading } = useRecentBoardroomSessions(3);
   const [prepMemo, setPrepMemo] = useState<BoardroomPrepPayload | null>(null);
   const [exporting, setExporting] = useState(false);
   const [approved, setApproved] = useState(false);
@@ -176,6 +179,39 @@ export default function BoardReportsPage() {
             </div>
           </AlertDescription>
         </Alert>
+      )}
+
+      {!recentBoardroomLoading && recentBoardroom.length > 0 && (
+        <Card>
+          <CardContent className="p-5 space-y-3">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <Gavel className="h-4 w-4 text-primary" />
+              Your recent boardroom simulations
+            </div>
+            <ul className="space-y-2">
+              {recentBoardroom.map((session) => {
+                const vote = session.vote as { tally?: string } | null;
+                return (
+                  <li key={session.id}>
+                    <Link
+                      to={`/boardroom/sessions/${session.id}`}
+                      className="block rounded-md border p-3 text-sm transition-colors hover:bg-muted/50"
+                    >
+                      <p className="font-medium line-clamp-2">{(session.question ?? "").trim() || "Untitled board question"}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(session.created_at), { addSuffix: true })}
+                        {vote?.tally ? ` · ${vote.tally}` : ""}
+                      </p>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/boardroom">Open AI Boardroom</Link>
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
       {/* Page header */}
