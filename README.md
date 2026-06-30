@@ -19,6 +19,7 @@ Choose your deployment path:
 - ✍️ **Grant Writer** — AI-assisted section-by-section grant draft generation
 - 🎪 **Events** — Post-event engagement intelligence and follow-up automation
 - 📋 **Board Reports** — Generate board-ready KPI summaries and financial snapshots
+- 🏛️ **AI Boardroom** — Live multi-persona board simulation: four AI directors debate a strategic question, produce a vote tally, decision memo, risks, and dissent; sessions auto-save and appear in a collapsible history sidebar
 - 🔍 **Data Health** — Surface CRM data quality issues (duplicates, incomplete profiles)
 - 💱 **Reconciliation** — Match transactions across payment processors and CRM/finance systems
 - 🪪 **Membership Management** — Member directory, tier/status tracking, renewals, onboarding
@@ -32,6 +33,38 @@ Choose your deployment path:
 - 📚 **Knowledge Base** — Semantic search across documents
 - 🔐 **Role-Based Access** — Admin, moderator, and user roles
 - 🔑 **SSO Authentication** — Google and Microsoft sign-in
+
+## AI Boardroom
+
+Simulate a nonprofit board meeting before the real one. Ask a strategic question (e.g. *Should we pilot youth mentorship in Q3?*); four AI personas debate in rounds, grounding claims in live org data (financials, programs, knowledge base), then deliver a structured decision memo.
+
+| Persona | Role |
+|---------|------|
+| Elena Vasquez | Board Chair — mission alignment, governance |
+| Marcus Chen | Treasurer / CFO — runway, restricted funds, audit risk |
+| David Okafor | Vice Chair, Growth — partnerships, bold pilots, donor pipeline |
+| Priya Raman | Community Director — equity, program quality, beneficiary voice |
+
+**Routes**
+
+| Path | Description |
+|------|-------------|
+| `/boardroom` | Run a new simulation; past sessions in the sidebar |
+| `/boardroom/sessions/:sessionId` | Full audit view (transcript, memo, vote, copy JSON) |
+
+**Persistence** — Completed sessions are stored in `boardroom_sessions` (transcript, vote, memo, risks, dissent). The edge function saves on completion; the client syncs as a backup and refreshes the history list.
+
+**Deploy (self-host / Supabase CLI)**
+
+```bash
+npm run boardroom:migrate      # apply boardroom_sessions migrations
+npm run deploy:boardroom       # deploy boardroom-simulate edge function
+npm run boardroom:verify       # smoke-check table + function
+```
+
+On Lovable Cloud, run the SQL from `supabase/migrations/20260629120000_boardroom_sessions.sql` and the audit/repair migrations in the SQL Editor, then deploy the `boardroom-simulate` function from the repo.
+
+**Try it** — Log in at `/login` (demo: `director@nonprofitai.software` / `Demo@123`), open **AI Boardroom** in the sidebar under Reporting + AI, and click **Convene the board**.
 
 ## Technology Stack
 
