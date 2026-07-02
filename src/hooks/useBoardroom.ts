@@ -32,9 +32,23 @@ export interface PersonaTurn {
   tools: ToolEvent[];
 }
 
+export interface BoardroomAnalysis {
+  financial: string;
+  programs: string;
+  growth: string;
+  governance: string;
+  summary: string;
+}
+
 export interface BoardroomFinal {
   vote: Record<string, string> & { tally?: string };
+  vote_breakdown?: import("@/lib/boardroomVote").VoteBreakdown;
+  persona_votes?: Partial<Record<PersonaId, import("@/lib/boardroomVote").PersonaVoteDetail>>;
   memo: string;
+  analysis?: BoardroomAnalysis;
+  conditions?: string[];
+  chair_guidance?: string;
+  data_used?: string[];
   risks: string[];
   dissent: string;
 }
@@ -269,14 +283,7 @@ export function useBoardroom() {
               ];
             }
             if (evt.type === "final") {
-              capturedFinal = {
-                vote: (evt.vote as BoardroomFinal["vote"]) ?? { tally: "Unknown" },
-                memo: String(evt.memo ?? ""),
-                risks: Array.isArray(evt.risks)
-                  ? evt.risks.filter((r): r is string => typeof r === "string")
-                  : [],
-                dissent: String(evt.dissent ?? ""),
-              };
+              capturedFinal = parseFinalEvent(evt);
             }
             if (evt.type === "delta" || evt.type === "turn_end" || evt.type === "final") {
               gotContent = true;
@@ -424,12 +431,7 @@ function applyEvent(
           ...s,
           status: "complete",
           activePersona: null,
-          final: {
-            vote: evt.vote as BoardroomFinal["vote"],
-            memo: evt.memo as string,
-            risks: (evt.risks as string[]) ?? [],
-            dissent: (evt.dissent as string) ?? "",
-          },
+          final: parseFinalEvent(evt),
         };
       case "error":
         return { ...s, status: "error", error: (evt.message as string) ?? "Unknown error" };
@@ -442,4 +444,36 @@ function applyEvent(
 function lastIndex(turns: PersonaTurn[], persona: PersonaId): number {
   for (let i = turns.length - 1; i >= 0; i--) if (turns[i].persona === persona) return i;
   return -1;
+}
+
+function parseFinalEvent(evt: Record<string, unknown>): BoardroomFinal {
+  const vote = (evt.vote as BoardroomFinal["vote"]) ?? { tally: "Unknown" };
+  const analysisRaw = evt.analysis as Record<string, string> | undefined;
+
+  return {
+    vote,
+    vote_breakdown: evt.vote_breakdown as BoardroomFinal["vote_breakdown"],
+    persona_votes: evt.persona_votes as BoardroomFinal["persona_votes"],
+    memo: String(evt.memo ?? ""),
+    analysis: analysisRaw
+      ? {
+          financial: String(analysisRaw.financial ?? ""),
+          programs: String(analysisRaw.programs ?? ""),
+          growth: String(analysisRaw.growth ?? ""),
+          governance: String(analysisRaw.governance ?? ""),
+          summary: String(analysisRaw.summary ?? ""),
+        }
+      : undefined,
+    conditions: Array.isArray(evt.conditions)
+      ? evt.conditions.filter((c): c is string => typeof c === "string")
+      : [],
+    chair_guidance: String(evt.chair_guidance ?? ""),
+    data_used: Array.isArray(evt.data_used)
+      ? evt.data_used.filter((d): d is string => typeof d === "string")
+      : [],
+    risks: Array.isArray(evt.risks)
+      ? evt.risks.filter((r): r is string => typeof r === "string")
+      : [],
+    dissent: String(evt.dissent ?? ""),
+  };
 }

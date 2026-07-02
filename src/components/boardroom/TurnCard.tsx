@@ -88,7 +88,7 @@ export const TurnCard = forwardRef<HTMLDivElement, Props>(function TurnCard(
             </div>
           )}
 
-          <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed">
+          <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/95">
             {isWaiting ? (
               <span className="italic text-muted-foreground/60">Waiting to speak…</span>
             ) : (

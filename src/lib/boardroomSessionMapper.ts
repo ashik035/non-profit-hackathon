@@ -5,6 +5,7 @@ import type {
   PersonaTurn,
 } from "@/hooks/useBoardroom";
 import type { Database } from "@/integrations/supabase/types";
+import { parseVoteBreakdown, type PersonaVoteDetail, type VoteBreakdown } from "@/lib/boardroomVote";
 
 export type BoardroomSessionRow = Database["public"]["Tables"]["boardroom_sessions"]["Row"];
 
@@ -19,11 +20,25 @@ interface StoredTranscriptTurn {
   round?: number;
 }
 
-function parseVote(vote: BoardroomSessionRow["vote"]): BoardroomFinal["vote"] {
+interface StoredVotePayload extends Record<string, unknown> {
+  elena?: string;
+  marcus?: string;
+  david?: string;
+  priya?: string;
+  tally?: string;
+  persona_votes?: Partial<Record<PersonaId, PersonaVoteDetail>>;
+  vote_breakdown?: VoteBreakdown;
+  analysis?: BoardroomFinal["analysis"];
+  conditions?: string[];
+  chair_guidance?: string;
+  data_used?: string[];
+}
+
+function parseVote(vote: BoardroomSessionRow["vote"]): StoredVotePayload {
   if (!vote || typeof vote !== "object" || Array.isArray(vote)) {
     return { tally: "Unknown" };
   }
-  return vote as BoardroomFinal["vote"];
+  return vote as StoredVotePayload;
 }
 
 function parseRisks(risks: BoardroomSessionRow["risks"]): string[] {
@@ -52,17 +67,29 @@ export function turnsToTranscript(turns: PersonaTurn[]): StoredTranscriptTurn[] 
   }));
 }
 
+function buildFinalFromVote(vote: StoredVotePayload, row: BoardroomSessionRow): BoardroomFinal | null {
+  if (!row.memo && !row.vote) return null;
+
+  const personaVotes = vote.persona_votes;
+  const voteBreakdown = vote.vote_breakdown ?? parseVoteBreakdown(vote as Record<string, string>) ?? undefined;
+
+  return {
+    vote: vote as BoardroomFinal["vote"],
+    vote_breakdown: voteBreakdown,
+    persona_votes: personaVotes,
+    memo: row.memo ?? "",
+    analysis: vote.analysis,
+    conditions: vote.conditions ?? [],
+    chair_guidance: vote.chair_guidance ?? "",
+    data_used: vote.data_used ?? [],
+    risks: parseRisks(row.risks),
+    dissent: row.dissent ?? "",
+  };
+}
+
 export function sessionRowToState(row: BoardroomSessionRow): BoardroomState {
   const vote = parseVote(row.vote);
-  const final: BoardroomFinal | null =
-    row.memo || row.vote
-      ? {
-          vote,
-          memo: row.memo ?? "",
-          risks: parseRisks(row.risks),
-          dissent: row.dissent ?? "",
-        }
-      : null;
+  const final = buildFinalFromVote(vote, row);
 
   return {
     sessionId: row.id,
@@ -84,9 +111,19 @@ export interface SaveBoardroomSessionInput {
 }
 
 function sessionPayloadFromInput(input: SaveBoardroomSessionInput) {
+  const votePayload = {
+    ...input.final.vote,
+    persona_votes: input.final.persona_votes,
+    vote_breakdown: input.final.vote_breakdown,
+    analysis: input.final.analysis,
+    conditions: input.final.conditions,
+    chair_guidance: input.final.chair_guidance,
+    data_used: input.final.data_used,
+  };
+
   return {
     transcript: turnsToTranscript(input.turns) as unknown as Database["public"]["Tables"]["boardroom_sessions"]["Update"]["transcript"],
-    vote: input.final.vote as unknown as Database["public"]["Tables"]["boardroom_sessions"]["Update"]["vote"],
+    vote: votePayload as unknown as Database["public"]["Tables"]["boardroom_sessions"]["Update"]["vote"],
     memo: input.final.memo,
     risks: input.final.risks as unknown as Database["public"]["Tables"]["boardroom_sessions"]["Update"]["risks"],
     dissent: input.final.dissent,
