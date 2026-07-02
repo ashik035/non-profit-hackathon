@@ -62,9 +62,10 @@ export function usePreferences() {
         .from("profiles")
         .select("metadata")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) return DEFAULT_PREFERENCES;
 
       // Extract preferences from metadata.preferences
       const metadata = data?.metadata as Record<string, unknown> | null;
@@ -109,7 +110,7 @@ export function useUpdatePreferences() {
         .from("profiles")
         .select("metadata")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       const currentMetadata = (currentProfile?.metadata as Record<string, unknown>) || {};
       const currentPrefs = (currentMetadata.preferences as Record<string, unknown>) || {};
@@ -147,7 +148,7 @@ export function useUpdatePreferences() {
         })
         .eq("id", user.id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
@@ -177,7 +178,7 @@ export function useResetPreferences() {
         .from("profiles")
         .select("metadata")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       const currentMetadata = (currentProfile?.metadata as Record<string, unknown>) || {};
 
@@ -191,7 +192,7 @@ export function useResetPreferences() {
         })
         .eq("id", user.id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;

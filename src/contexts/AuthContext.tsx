@@ -48,12 +48,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .from("user_roles")
         .select("role")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
       if (error) {
-        if (error.code !== "PGRST116") {
-          console.error("Error fetching user role:", error);
-        }
+        console.error("Error fetching user role:", error);
         return undefined;
       }
       return data?.role;
@@ -96,11 +94,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Fetch or create user profile
   const fetchProfile = async (userId: string) => {
     try {
+      const { data: authUser } = await supabase.auth.getUser();
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", userId)
-        .single();
+        .maybeSingle();
 
       // Fetch role and agency preferences in parallel
       const [role, agencyPrefs] = await Promise.all([
@@ -108,27 +107,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         fetchAgencyPreferences(userId),
       ]);
 
-      if (error) {
-        // Profile doesn't exist, create it
-        if (error.code === "PGRST116") {
-          const user = (await supabase.auth.getUser()).data.user;
-          const { data: newProfile, error: createError } = await supabase
-            .from("profiles")
-            .insert([
-              {
-                id: userId,
-                email: user?.email,
-                full_name: user?.user_metadata?.full_name || user?.user_metadata?.name,
-                avatar_url: user?.user_metadata?.avatar_url,
-              },
-            ])
-            .select()
-            .single();
+      if (error) throw error;
 
-          if (createError) throw createError;
+      if (!data) {
+        const { data: newProfile, error: createError } = await supabase
+          .from("profiles")
+          .upsert(
+            {
+              id: userId,
+              email: authUser.user?.email ?? null,
+              full_name:
+                authUser.user?.user_metadata?.full_name ||
+                authUser.user?.user_metadata?.name ||
+                null,
+              avatar_url: authUser.user?.user_metadata?.avatar_url ?? null,
+            },
+            { onConflict: "id" },
+          )
+          .select()
+          .maybeSingle();
+
+        if (createError) throw createError;
+        if (newProfile) {
           setProfile({ ...newProfile, role, ...agencyPrefs });
-        } else {
-          throw error;
         }
       } else {
         setProfile({ ...data, role, ...agencyPrefs });
