@@ -1,4 +1,5 @@
 import type { BoardroomFinal, PersonaId, PersonaTurn } from "@/hooks/useBoardroom";
+import { computeVoteBreakdown } from "@/lib/boardroomVote";
 
 export const BOARDROOM_PREP_STORAGE_KEY = "boardroom_prep_memo";
 
@@ -19,25 +20,25 @@ export function getBoardroomFallbackEvents(question: string): Array<Record<strin
       persona: "elena",
       round: 0,
       text:
-        "Thank you all. Our mission charter commits us to youth outcomes — but we must sequence this against governance readiness. I want to hear Marcus on runway before we vote.",
+        "Thank you, everyone. Our mission points toward stronger youth outcomes, but I want us honest about sequencing — with the active programs and member base we have today, we cannot treat this as a slide-deck exercise. Marcus, I need you on runway; Priya, I need you on whether staff can absorb this without breaking what's already working. I'm open to a careful Q3 start, but only if governance and community voice are in the room before we vote.",
     },
     {
       persona: "marcus",
       round: 0,
       text:
-        "I pulled our financials — YTD giving is solid, but unrestricted cash is tighter than it looks once restricted grants are carved out. A Q3 launch needs a phased budget, not a full build-out.",
+        "Elena, I pulled our numbers — YTD giving and the last ninety days tell me we're healthier than last year, but campaign goal progress still leaves a gap, and unrestricted cash is tighter once you carve out restricted grants. A full Q3 build-out isn't something I can sign off on; a capped pilot with monthly cash checkpoints is the fiscally responsible path. I'd support that version, not an open-ended launch.",
     },
     {
       persona: "david",
       round: 0,
       text:
-        "Marcus, the cost of waiting is donor fatigue in the pipeline. A pilot in one neighborhood de-risks the bet and gives us a story for the fall appeal.",
+        "Marcus, I hear you, but our pipeline and upcoming event registrants show real appetite — waiting six months costs us donor momentum and a fall appeal story. What if we pilot in one neighborhood, chase a corporate underwrite for year one, and use campaign completion rates to prove demand? The risk of standing still is invisible on the balance sheet but it's still real. I'm ready to move on a pilot now.",
     },
     {
       persona: "priya",
       round: 0,
       text:
-        "Our program metrics show members asking for mentorship — but frontline staff are at capacity. If we launch, we need community co-design and protected staff time, not another boardroom-only plan.",
+        "David, members are asking for mentorship — I see that in our program load and volunteer hours — but our active programs are already running hot on budget utilization. If we launch, it has to come out of community co-design, not another decision made only around this table. Give me two member sessions and protected staff hours in the budget, and I can support a limited pilot; without that, I'd ask us to wait.",
     },
   ];
 
@@ -47,11 +48,14 @@ export function getBoardroomFallbackEvents(question: string): Array<Record<strin
 
   for (const t of turns) {
     events.push({ type: "turn_start", persona: t.persona, round: t.round });
-    if (t.persona === "marcus") {
-      events.push({ type: "tool", persona: "marcus", tool: "get_financial_snapshot", args: {} });
+    if (t.persona === "marcus" || t.persona === "david") {
+      events.push({ type: "tool", persona: t.persona, tool: "get_financial_snapshot", args: {} });
     }
-    if (t.persona === "priya") {
-      events.push({ type: "tool", persona: "priya", tool: "get_program_metrics", args: {} });
+    if (t.persona === "priya" || t.persona === "elena") {
+      events.push({ type: "tool", persona: t.persona, tool: "get_program_metrics", args: {} });
+    }
+    if (t.persona === "elena" || t.persona === "david") {
+      events.push({ type: "tool", persona: t.persona, tool: "search_org_knowledge", args: { query: "mission strategy" } });
     }
     for (const word of t.text.split(/(\s+)/)) {
       if (word) events.push({ type: "delta", persona: t.persona, text: word });
@@ -59,22 +63,58 @@ export function getBoardroomFallbackEvents(question: string): Array<Record<strin
     events.push({ type: "turn_end", persona: t.persona, full_text: t.text });
   }
 
+  const vote = {
+    elena: "conditional",
+    marcus: "conditional",
+    david: "yes",
+    priya: "conditional",
+  };
+  const vote_breakdown = computeVoteBreakdown(vote);
+
   events.push({
     type: "final",
     vote: {
-      elena: "conditional",
-      marcus: "conditional",
-      david: "yes",
-      priya: "conditional",
-      tally: "1 Yes / 3 Conditional",
+      ...vote,
+      tally: vote_breakdown.tally,
+      yes_pct: String(vote_breakdown.yes_pct),
+      no_pct: String(vote_breakdown.no_pct),
+      conditional_pct: String(vote_breakdown.conditional_pct),
+      lean: vote_breakdown.lean,
     },
-    memo: `Regarding "${q}": the board supports a limited Q3 pilot if Marcus confirms 6-month cash runway and Priya signs off on a staffing plan. Defer full multi-site expansion until Q1 after gala revenue is booked.`,
+    vote_breakdown,
+    persona_votes: {
+      elena: { vote: "conditional", rationale: "Mission-aligned only with staffing plan and runway confirmed." },
+      marcus: { vote: "conditional", rationale: "Phased pilot with capped budget — full Q3 launch is not fiscally sound." },
+      david: { vote: "yes", rationale: "Pipeline momentum favors a regional pilot with corporate underwriting." },
+      priya: { vote: "conditional", rationale: "Community demand exists but staff capacity requires co-design first." },
+    },
+    memo: `Regarding "${q}": the board supports a limited Q3 pilot if Marcus confirms 6-month cash runway, Priya signs off on a staffing plan with protected hours, and David secures pilot underwriting. Defer full multi-site expansion until Q1 after fall campaign revenue is booked.`,
+    analysis: {
+      financial: "YTD giving and campaign pipeline progress suggest a capped pilot is affordable; full launch risks unrestricted cash strain.",
+      programs: "Active programs and beneficiary counts indicate existing load — new mentorship must not add net staff burden without budget.",
+      growth: "Event registrants and campaign momentum support a visible pilot before fall appeal season.",
+      governance: "Mission alignment is strong; governance requires co-design and phased approval gates.",
+      summary: "Proceed with a regional Q3 pilot under strict financial caps and community co-design — not full expansion.",
+    },
+    conditions: [
+      "6-month unrestricted cash runway confirmed by Treasurer",
+      "Staffing plan with protected hours approved by Community Director",
+      "Two member co-design sessions completed",
+      "Pilot budget capped at 15% of YTD raised",
+    ],
+    chair_guidance: "Approve a regional Q3 pilot with conditions above. Reject full multi-site launch until Q1 review.",
+    data_used: [
+      "YTD donations and last-90-day giving trend",
+      "Active campaign goal progress",
+      "Program budget utilization and beneficiary counts",
+      "Upcoming event registrant totals",
+    ],
     risks: [
       "Unrestricted cash may not cover full program staffing in Q3",
       "Frontline capacity without protected hours risks burnout",
       "Donor expectations if pilot outcomes are not measured clearly",
     ],
-    dissent: "David would proceed faster with corporate underwriting; Marcus wants audited budget scenarios first.",
+    dissent: "David would proceed faster with corporate underwriting; Marcus wants audited budget scenarios before any launch.",
   });
 
   return events;
@@ -134,9 +174,15 @@ export function buildTurnsFromFallback(question: string): {
     } else if (type === "final") {
       final = {
         vote: evt.vote as BoardroomFinal["vote"],
+        vote_breakdown: evt.vote_breakdown as BoardroomFinal["vote_breakdown"],
+        persona_votes: evt.persona_votes as BoardroomFinal["persona_votes"],
         memo: evt.memo as string,
+        analysis: evt.analysis as BoardroomFinal["analysis"],
+        conditions: (evt.conditions as string[]) ?? [],
+        chair_guidance: String(evt.chair_guidance ?? ""),
+        data_used: (evt.data_used as string[]) ?? [],
         risks: (evt.risks as string[]) ?? [],
-        dissent: (evt.dissent as string) ?? "",
+        dissent: String(evt.dissent ?? ""),
       };
     }
   }
