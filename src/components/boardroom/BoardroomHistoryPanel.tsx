@@ -5,10 +5,10 @@ import { History, Loader2, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import { HistoryScrollArea } from "@/components/boardroom/HistoryScrollArea";
 import { cn } from "@/lib/utils";
 import {
   useBoardroomSessions,
@@ -94,7 +94,7 @@ function SessionList({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 pb-1">
       {sessions.map((session) => {
         const isActive = activeSessionId === session.id;
         const question = (session.question ?? "").trim() || "Untitled board question";
@@ -109,8 +109,8 @@ function SessionList({
             type="button"
             onClick={() => onSelect(session)}
             className={cn(
-              "w-full rounded-lg border p-3 text-left transition-colors hover:bg-muted/50",
-              isActive && "border-primary/50 bg-primary/5 ring-1 ring-primary/30",
+              "w-full rounded-lg border border-border/70 bg-card/40 p-3 text-left shadow-sm transition-all hover:border-border hover:bg-muted/40 hover:shadow",
+              isActive && "border-primary/40 bg-primary/5 shadow-md ring-1 ring-primary/20",
             )}
           >
             <p className="line-clamp-2 text-sm font-medium leading-snug">{question}</p>
@@ -208,28 +208,30 @@ export function BoardroomHistoryPanel({
         ) : (
           <Collapsible open={open} onOpenChange={setOpen} className="w-[280px] shrink-0">
             <CollapsibleContent forceMount className="data-[state=closed]:hidden">
-              <Card className="flex min-h-[320px] max-h-[calc(100vh-12rem)] flex-col p-3">
-                <div className="mb-3 flex items-center justify-between gap-2">
-                  <div className="flex min-w-0 items-center gap-2 text-sm font-semibold">
-                    <History className="h-4 w-4 shrink-0 text-primary" />
-                    <span className="truncate">Past simulations ({sessions.length})</span>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7"
-                      onClick={() => setOpen(false)}
-                      aria-label="Collapse past simulations"
-                    >
-                      <PanelLeftClose className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={onNewSimulation} disabled={disabled}>
-                      New
-                    </Button>
+              <Card className="flex h-[min(640px,calc(100vh-10rem))] flex-col overflow-hidden border-border/70 p-0 shadow-sm">
+                <div className="shrink-0 border-b border-border/60 px-3 py-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex min-w-0 items-center gap-2 text-sm font-semibold">
+                      <History className="h-4 w-4 shrink-0 text-primary" />
+                      <span className="truncate">Past simulations ({sessions.length})</span>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7"
+                        onClick={() => setOpen(false)}
+                        aria-label="Collapse past simulations"
+                      >
+                        <PanelLeftClose className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={onNewSimulation} disabled={disabled}>
+                        New
+                      </Button>
+                    </div>
                   </div>
                 </div>
-                <ScrollArea className="flex-1 pr-2">{list}</ScrollArea>
+                <HistoryScrollArea className="min-h-0 flex-1 px-2 py-2">{list}</HistoryScrollArea>
               </Card>
             </CollapsibleContent>
           </Collapsible>
@@ -253,7 +255,7 @@ export function BoardroomHistoryPanel({
               <Button variant="outline" size="sm" className="mb-3 w-full" onClick={onNewSimulation}>
                 New simulation
               </Button>
-              <ScrollArea className="max-h-[calc(100vh-8rem)]">{list}</ScrollArea>
+              <HistoryScrollArea className="h-[calc(100vh-10rem)] min-h-0 pr-1">{list}</HistoryScrollArea>
             </div>
           </SheetContent>
         </Sheet>
