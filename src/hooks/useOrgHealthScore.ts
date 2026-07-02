@@ -27,10 +27,10 @@ export function useOrgHealthScore() {
         { data: actions },
         { data: mcRun },
       ] = await Promise.all([
-        (supabase as any).from("nonprofit_donations").select("donor_name, amount, donated_at, created_at").limit(2000),
+        (supabase as any).from("nonprofit_donations").select("donor_name, amount, created_at").limit(2000),
         (supabase as any).from("nonprofit_members").select("email, phone, status").limit(1000),
-        (supabase as any).from("nonprofit_volunteer_shifts").select("shift_date, hours, created_at").limit(1000),
-        (supabase as any).from("nonprofit_campaigns").select("goal_amount, raised_amount, status").limit(200),
+        (supabase as any).from("nonprofit_volunteer_shifts").select("date, hours, created_at").limit(1000),
+        (supabase as any).from("nonprofit_campaigns").select("goal, raised, is_active").limit(200),
         (supabase as any).from("meeting_action_items").select("status").limit(500),
         (supabase as any).from("mission_control_runs").select("health_score, synthesis, completed_at").order("started_at", { ascending: false }).limit(1),
       ]);
@@ -48,15 +48,15 @@ export function useOrgHealthScore() {
       // Volunteer engagement: shifts last 30 days vs total
       const now = Date.now();
       const recentShifts = (volunteerShifts ?? []).filter((s: any) => {
-        const dt = new Date(s.shift_date ?? s.created_at).getTime();
+        const dt = new Date(s.date ?? s.created_at).getTime();
         return now - dt < 1000 * 60 * 60 * 24 * 30;
       }).length;
       const volPct = Math.min(100, (recentShifts / Math.max(1, (volunteerShifts ?? []).length)) * 100 * 3);
 
       // Grant pipeline health: avg raised/goal
-      const camp = (campaigns ?? []).filter((c: any) => Number(c.goal_amount ?? 0) > 0);
+      const camp = (campaigns ?? []).filter((c: any) => Number(c.goal ?? 0) > 0);
       const pipelinePct = camp.length === 0 ? 100 :
-        (camp.reduce((s: number, c: any) => s + Math.min(100, (Number(c.raised_amount ?? 0) / Number(c.goal_amount)) * 100), 0) / camp.length);
+        (camp.reduce((s: number, c: any) => s + Math.min(100, (Number(c.raised ?? 0) / Number(c.goal)) * 100), 0) / camp.length);
 
       // Data completeness
       const mRows = members ?? [];

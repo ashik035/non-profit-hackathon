@@ -229,14 +229,19 @@ export function useAITeamSummary() {
 
       const { data, error } = await supabase
         .from("ai_agents")
-        .select("id, name, description, slug, avatar")
+        .select("id, name, description, slug, metadata")
         .eq("is_enabled", true)
-        .is("deleted_at", null)
         .order("created_at", { ascending: false })
         .limit(6);
 
       if (error) throw error;
-      return (data || []) as AITeamMember[];
+      return (data || []).map((row) => ({
+        id: row.id as string,
+        name: row.name as string,
+        description: (row.description as string | null) ?? null,
+        slug: (row.slug as string) ?? "",
+        avatar: ((row.metadata as Record<string, unknown> | null)?.avatar as string | null) ?? null,
+      })) as AITeamMember[];
     },
     enabled: !!user,
     staleTime: 1000 * 60 * 5,

@@ -3,7 +3,7 @@
  * SECURITY: DO NOT use '*' as origin - use explicit whitelist
  */
 
-// List of allowed origins for API requests
+// Static allowlist (exact origins)
 const ALLOWED_ORIGINS = [
   'http://localhost:3000',
   'http://localhost:5173',
@@ -11,6 +11,8 @@ const ALLOWED_ORIGINS = [
   'http://127.0.0.1:3000',
   'http://127.0.0.1:5173',
   'http://127.0.0.1:8080',
+  'https://non-profit-hackathon.vercel.app',
+  'https://controltower.collabai.software',
 ];
 
 /**
@@ -19,12 +21,18 @@ const ALLOWED_ORIGINS = [
 export function isAllowedAppOrigin(origin: string | null | undefined): boolean {
   if (!origin) return false;
 
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+
   const isLovablePreview =
     origin.endsWith('.lovableproject.com') || origin.endsWith('.lovable.app');
   const isLocalhost =
     origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:');
+  const isVercelPreview =
+    origin.endsWith('.vercel.app') && origin.startsWith('https://');
+  const isNonprofitAi =
+    origin.endsWith('.nonprofitai.software') && origin.startsWith('https://');
 
-  return isLovablePreview || isLocalhost;
+  return isLovablePreview || isLocalhost || isVercelPreview || isNonprofitAi;
 }
 
 /**
