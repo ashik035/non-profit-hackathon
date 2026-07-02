@@ -202,7 +202,7 @@ export default function BoardroomSessionPage() {
           <TensionMeter turns={state.turns} />
           <div className="space-y-3">
             {state.turns.map((t, i) => (
-              <TurnCard key={`${t.persona}-${t.round}-${i}`} turn={t} />
+              <TurnCard key={`${t.persona}-${t.round}-${i}`} turn={t} instant />
             ))}
           </div>
         </>
